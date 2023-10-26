@@ -513,7 +513,7 @@ sub simulate($$%)                                                               
 
 =head1 Name
 
-Silicon::Chip - Design a silicon chip by combining gates and sub chips.
+Silicon::Chip - Design a silicon chip by combining lgs and sub chips .
 
 =head1 Synopsis
 
@@ -538,7 +538,7 @@ Create and simulate a 4 bit comparator:
 
 =head1 Description
 
-Design a silicon chip by combining gates and sub chips.
+Design a silicon chip by combining lgs and sub chips .
 
 
 Version 20231025.
@@ -555,7 +555,7 @@ Construct a representation of a digital circuit using standard gates.
 
 =head2 newChip(%options)
 
-Create a new chip
+Create a new chip.
 
      Parameter  Description
   1  %options   Options
@@ -564,8 +564,8 @@ B<Example:>
 
 
   if (1)                                                                           Single AND gate
-
-   {my $c = newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+  
+   {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->gate("input",  "i1");
     $c->gate("input",  "i2");
@@ -575,10 +575,10 @@ B<Example:>
     ok($s->steps          == 2);
     ok($s->values->{and1} == 1);
    }
-
+  
   if (1)                                                                           Single AND gate
-
-   {my $c = newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+  
+   {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->input ("i1");
     $c->input ("i2");
@@ -588,7 +588,7 @@ B<Example:>
     ok($s->steps          == 2);
     ok($s->values->{and1} == 1);
    }
-
+  
 
 =head2 gate($chip, $type, $output, $inputs)
 
@@ -603,32 +603,32 @@ A gate of some sort to be added to the chip.
 B<Example:>
 
 
-
+  
   if (1)                                                                           Two AND gates driving an OR gate a tree  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
    {my $c = newChip;
-
+  
     $c->gate("input",  "i11");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+  
     $c->gate("input",  "i12");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+  
     $c->gate("and",    "and1", {1=>q(i11),  2=>q(i12)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+  
     $c->gate("input",  "i21");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+  
     $c->gate("input",  "i22");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+  
     $c->gate("and",    "and2", {1=>q(i21),  2=>q(i22)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+  
     $c->gate("or",     "or",   {1=>q(and1), 2=>q(and2)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+  
     $c->gate("output", "o", "or");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $s = $c->simulate({i11=>1, i12=>1, i21=>1, i22=>1});
@@ -641,7 +641,7 @@ B<Example:>
     ok($s->steps         == 3);
     ok($s->values->{o}   == 0);
    }
-
+  
 
 =head2 install($chip, $subChip, $inputs, $outputs, %options)
 
@@ -662,20 +662,20 @@ B<Example:>
        $i->gate("input", "Ii");
        $i->gate("not",   "In", "Ii");
        $i->gate("output","Io", "In");
-
+  
     my $o = newChip(name=>"outer");
        $o->gate("input",    "Oi1");
        $o->gate("output",   "Oo1", "Oi1");
        $o->gate("input",    "Oi2");
        $o->gate("output",    "Oo", "Oi2");
-
-
+  
+  
     $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
     is_deeply($s, {steps  => 2, values => { "(inner 1 In)" => 0, "Oi1" => 1, "Oo" => 0 }});
    }
-
+  
 
 =head1 Visualize
 
@@ -697,12 +697,12 @@ Simulate the set of gates until nothing changes.  This should be possible as fee
 B<Example:>
 
 
-  if (1)
+  if (1)                                                                          
    {my $i = newChip(name=>"inner");
        $i->gate("input", "Ii");
        $i->gate("not",   "In", "Ii");
        $i->gate("output","Io", "In");
-
+  
     my $o = newChip(name=>"outer");
        $o->gate("input",    "Oi1");
        $o->gate("output",   "Oo1", "Oi1");
@@ -712,17 +712,17 @@ B<Example:>
        $o->gate("output",   "Oo3", "Oi3");
        $o->gate("input",    "Oi4");
        $o->gate("output",    "Oo", "Oi4");
-
+  
     $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});
     $o->install($i, {Ii=>"Oo2"}, {Io=>"Oi3"});
     $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
-
+  
     my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->values->{Oo}, 0);
     is_deeply($s->steps,        4);
    }
-
+  
 
 
 =head1 Hash Definitions
@@ -753,6 +753,10 @@ Chips installed within the chip
 
 Name of chip
 
+=head4 title
+
+Title if known
+
 
 
 =head1 Private Methods
@@ -775,7 +779,7 @@ Autoload by gate name to provide a more readable way to specify the gates on a c
 
 3 L<install|/install> - Install a chip within another chip specifying the connections between the inner and outer chip.
 
-4 L<newChip|/newChip> - Create a new chip
+4 L<newChip|/newChip> - Create a new chip.
 
 5 L<simulate|/simulate> - Simulate the set of gates until nothing changes.
 
