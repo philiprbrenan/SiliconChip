@@ -18,7 +18,8 @@ Create and simulate a 4 [bit](https://en.wikipedia.org/wiki/Bit) comparator:
 
     my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,
                           b1=>1, b2=>0, b3=>1, b4=>0}, svg=>"svg/Compare4");
-    is_deeply($s->steps, 3);                                                      # Three [steps](http://docs.oasis-open.org/dita/dita/v1.3/errata02/os/complete/part3-all-inclusive/contentmodels/cmlts.html#cmlts__steps)     is_deeply($s->values->{out}, 1);                                              # Result is 1
+    is_deeply($s->steps, 3);                                                      # Three steps
+    is_deeply($s->values->{out}, 1);                                              # Result is 1
 
 <div>
     <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/svg/Compare4.svg">
