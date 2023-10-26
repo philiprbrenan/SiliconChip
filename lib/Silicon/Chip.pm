@@ -31,9 +31,10 @@ my $possibleTypes = q(and|input|nand|nor|not|nxor|or|output|xor);               
 sub newChip(%)                                                                  # Create a new chip.
  {my (%options) = @_;                                                           # Options
   genHash(__PACKAGE__,                                                          # Chip description
-    name    => $options{name   } // "Unnamed chip: ".timeStamp,                 # Name of chip
-    gates   => $options{gates  } // {},                                         # Gates in chip
-    installs=> $options{chips  } // [],                                         # Chips installed within the chip
+    name    => $options{name}  // "Unnamed chip: ".timeStamp,                   # Name of chip
+    gates   => $options{gates} // {},                                           # Gates in chip
+    installs=> $options{chips} // [],                                           # Chips installed within the chip
+    title   => $options{title},                                                 # Title if known
    );
  }
 
@@ -379,6 +380,14 @@ my sub newGatePosition(%)                                                       
 
 my sub svgGates($$%)                                                            # Dump a set of gates.
  {my ($chip, $gates, %options) = @_;                                            # Chip, gates, options
+  my $title  = $chip->title;                                                    # Title of chip
+  my $values = $options{values};                                                # Values of each gate if known
+  my $steps  = $options{steps};                                                 # Number of steps to equilibrium
+
+  my $fs = 0.2; my $fw = 0.02;                                                  # Font sizes
+  my $Fs = 0.4; my $Fw = 0.04;
+
+  my $s = Svg::Simple::new(defaults=>{stroke_width=>$fw, font_size=>$fs});      # Draw each gate via Svg
 
   my %p;                                                                        # Dimensions and drawing positions of gates
   if (1)                                                                        # Position each gate
@@ -393,9 +402,19 @@ my sub svgGates($$%)                                                            
       $y += 1.2;
       $pg = $g;                                                                 # Previous gate seen
      }
-   }
 
-  my $s = Svg::Simple::new(defaults=>{stroke_width=>0.02, font_size=>0.2});     # Draw each gate via Svg
+    if (defined($title))                                                        # Title if known
+     {$s->text(x=>$x/2, y=>1.5, fill=>"darkGreen", text_anchor=>"middle",
+       stroke_width=>$Fw, font_size=>$Fs,
+       cdata=>$title);
+     }
+
+    if (defined($steps))                                                        # Number of steps taken if known
+     {$s->text(x=>$x-2, y=>1.5, fill=>"darkGreen", text_anchor=>"end",
+       stroke_width=>$Fw, font_size=>$Fs,
+       cdata=>"$steps steps");
+     }
+   }
 
   for my $P(sort keys %p)                                                       # Each gate with text describing it
    {my $p = $p{$P};
@@ -414,8 +433,15 @@ my sub svgGates($$%)                                                            
      {$s->rect(x=>$x, y=>$y, width=>$w, height=>1, fill=>"white", stroke=>$color);
      }
 
-    $s->text(x=>$x+$w/2, y=>$y + 2/5, fill=>"red",      text_anchor=>"middle", alignment_baseline=>"middle", cdata=>$g->type);
-    $s->text(x=>$x+$w/2, y=>$y + 4/5, fill=>"darkblue", text_anchor=>"middle", alignment_baseline=>"middle", cdata=>$g->output);
+
+    if (defined(my $v = $$values{$g->output}))                                  # Value of gate if known
+     {$s->text(x=>$x, y=>$y, fill=>"black", stroke_width=>$Fw, font_size=>$Fs,
+        text_anchor=>"start", dominant_baseline=>"hanging",
+       cdata=>$v ? "1" : "0");
+     }
+
+    $s->text(x=>$x+$w/2, y=>$y + 2/5, fill=>"red",      text_anchor=>"middle", dominant_baseline=>"middle", cdata=>$g->type);
+    $s->text(x=>$x+$w/2, y=>$y + 4/5, fill=>"darkblue", text_anchor=>"middle", dominant_baseline=>"middle", cdata=>$g->output);
 
     if ($g->io != gateOuterInput)                                               # Not an input pin
      {my %i = $g->inputs ? $g->inputs->%* : ();
@@ -431,11 +457,17 @@ my sub svgGates($$%)                                                            
         my $cy = $Y+$dY+1/2;                                                    # Horizontal line corner y
 
         my $xc = $X < $x ? q(black) : q(darkBlue);                              # Horizontal line color
-        $s->line(x1=>$X+$dX, x2=>$cx, y1=>$cy, y2=>$cy,    stroke=>$xc);        # Horizontal lines
+        $s->line(x1=>$X+$dX, x2=>$cx, y1=>$cy, y2=>$cy,    stroke=>$xc);        # Outgoing value along horizontal lines
 
         my $yc = $Y < $y ? q(purple) : q(darkRed);                              # Vertical lines
-        $s->line(x1=>$cx,   x2=>$cx, y1=>$cy, y2=>$y+$dy, stroke=>$yc);
-        $s->circle(cx=>$cx, cy=>$cy, r=>0.04, fill=>"black");
+        $s->line(x1=>$cx,   x2=>$cx, y1=>$cy, y2=>$y+$dy, stroke=>$yc);         # Incoming value along vertical line
+        $s->circle(cx=>$cx, cy=>$cy, r=>0.04, fill=>"black");                   # Line corner
+
+        if (defined(my $v = $$values{$G->output}))                              # Value of gate if known
+         {$s->text(x=>$cx, y=>$y+$dy, fill=>"black", stroke_width=>$fw, font_size=>$fs,
+            text_anchor=>"end", $X < $x ? (dominant_baseline=>"hanging") : (),
+            cdata=>$v ? "1" : "0");
+         }
        }
      }
     owf(fpe($options{svg}, q(svg)), $s->print);
@@ -450,7 +482,6 @@ sub simulate($$%)                                                               
   setOuterGates($chip, $gates);                                                 # Set the outer gates which are to be connected to in the real word
   removeExcessIO($chip, $gates);                                                # By pass and then remove all interior IO gates as they are no longer needed
 
-
   dumpGates($chip, $gates, %options) if $options{dumpGates};                    # Print the gates
   svgGates ($chip, $gates, %options) if $options{svg};                          # Draw the gates using svg
   checkIO $chip, $gates;                                                        # Check all inputs are connected to valid gates and that all outputs are used
@@ -461,7 +492,12 @@ sub simulate($$%)                                                               
   for my $t(0..$T)                                                              # Steps in time
    {my %changes = simulationStep $chip, $gates, \%values;                       # Changes made
 
-    return simulationResults $chip, \%values, steps=>$t unless keys %changes;   # Keep going until nothing changes
+    if (!keys %changes)                                                         # Keep going until nothing changes
+     {if ($options{svg})                                                        # Draw the gates using svg withthe final values attached
+       {svgGates ($chip, $gates, values=>\%values, steps=>$t, %options);
+       }
+      return simulationResults $chip, \%values, steps=>$t;                      # Keep going until nothing changes
+     }
 
     for my $c(keys %changes)                                                    # Update state of circuit
      {$values{$c} = $changes{$c};
@@ -866,7 +902,7 @@ if (1)                                                                          
 #latest:;
 if (1)                                                                          # 4 bit comparator
  {my $B = 4;
-  my $c = Silicon::Chip::newChip;
+  my $c = Silicon::Chip::newChip(title=>"$B bit comparator");
   $c->gate("input",  "a$_") for 1..$B;                                          # First number
   $c->gate("input",  "b$_") for 1..$B;                                          # Second number
   $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit for equality
@@ -880,6 +916,7 @@ if (1)                                                                          
 
   is_deeply($c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                           b1=>1, b2=>0, b3=>1, b4=>0})->values->{out}, 0);
+exit;
  }
 
 #latest:;
