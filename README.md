@@ -22,7 +22,7 @@ Create and simulate a 4 [bit](https://en.wikipedia.org/wiki/Bit) comparator:
     is_deeply($s->values->{out}, 1);                                              # Result is 1
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/svg/Compare4.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare4.svg">
 </div>
 
 # Description
