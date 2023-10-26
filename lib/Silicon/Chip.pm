@@ -908,7 +908,7 @@ if (1)                                                                          
 #latest:;
 if (1)                                                                          # 4 bit comparator
  {my $B = 4;
-  my $c = Silicon::Chip::newChip(title=>"$B bit comparator");
+  my $c = Silicon::Chip::newChip(title=>"$B Bit Comparator");
   $c->input ("a$_") for 1..$B;                                                  # First number
   $c->input ("b$_") for 1..$B;                                                  # Second number
   $c->nxor  ("e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                            # Test each bit for equality
