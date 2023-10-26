@@ -41,7 +41,7 @@ push my @files, searchDirectoryTreesForMatchingFiles($home, qw(.md .pl .pm .svg)
 
 for my $s(@files)                                                               # Upload each selected file
  {say STDERR $s;
-  next if $s =~ m(build)i;
+  next if $s =~ m(blib)i;
   my $c = readFile($s);                                                         # Load file
   my $t = swapFilePrefix $s, $home;
   my $w = writeFileUsingSavedToken($user, $repo, $t, $c);
