@@ -534,7 +534,7 @@ Create and simulate a 4 bit comparator:
   is_deeply($s->steps, 3);                                                      # Three steps
   is_deeply($s->values->{out}, 1);                                              # Result is 1
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/svg/Compare4.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare4.svg">
 
 =head1 Description
 
