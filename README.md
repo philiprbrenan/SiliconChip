@@ -8,7 +8,7 @@ Create and simulate a 4 [bit](https://en.wikipedia.org/wiki/Bit) [comparator](ht
     use Silicon::Chip;
 
     my $B = 4;
-    my $c = Silicon::Chip::newChip(title=>"$B [bit](https://en.wikipedia.org/wiki/Bit) comparator");
+    my $c = Silicon::Chip::newChip(title=>"$B Bit Comparator");
     $c->input ("a$_") for 1..$B;                                                  # First number
     $c->input ("b$_") for 1..$B;                                                  # Second number
     $c->nxor  ("e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                            # Test each [bit](https://en.wikipedia.org/wiki/Bit) for equality
