@@ -410,7 +410,7 @@ my sub svgGates($$%)                                                            
      }
 
     if (defined($steps))                                                        # Number of steps taken if known
-     {$s->text(x=>$x-2, y=>1.5, fill=>"darkGreen", text_anchor=>"end",
+     {$s->text(x=>$x, y=>1.5, fill=>"darkGreen", text_anchor=>"end",
        stroke_width=>$Fw, font_size=>$Fs,
        cdata=>"$steps steps");
      }
@@ -916,7 +916,6 @@ if (1)                                                                          
 
   is_deeply($c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                           b1=>1, b2=>0, b3=>1, b4=>0})->values->{out}, 0);
-exit;
  }
 
 #latest:;
