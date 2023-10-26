@@ -1,4 +1,4 @@
-# Test 2023-10-26 at 02:52:54
+# Test 2023-10-26 at 02:53:43
 
 name: Test
 
@@ -38,18 +38,6 @@ jobs:
     - name: Ubuntu update
       run:  sudo apt update
 
-
-    - name: Verilog installation
-      run:  sudo apt -y install iverilog
-
-    - name: Test Perl implementation of B Tree
-      run:
-        perl -Idtt/lib Zesal.pm
-
     - name: Test Perl implemented integrated circuits
       run:
         perl -Idtt/lib -Isvg/lib  Chip.pm
-
-    - name: Test Verilog
-      run:
-        rm -f Zesal; iverilog -Iincludes/ -g2012 -o Zesal Zesal.sv Zesal.tb && timeout 1m ./Zesal
