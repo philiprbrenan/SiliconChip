@@ -1,0 +1,55 @@
+# Test 2023-10-26 at 01:41:52
+
+name: Test
+
+on:
+  push
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        ref: 'main'
+
+    - uses: actions/checkout@v3
+      with:
+        repository: philiprbrenan/DataTableText
+        path: dtt
+
+    - uses: actions/checkout@v3
+      with:
+        repository: philiprbrenan/SvgSimple
+        path: svg
+
+    - name: Install Tree
+      run:
+        sudo apt install tree
+
+    - name: Tree
+      run:
+        tree
+
+    - name: Cpan
+      run:  sudo cpan install -T Data::Dump
+    - name: Ubuntu update
+      run:  sudo apt update
+
+
+    - name: Verilog installation
+      run:  sudo apt -y install iverilog
+
+    - name: Test Perl implementation of B Tree
+      run:
+        perl -Idtt/lib Zesal.pm
+
+    - name: Test Perl implemented integrated circuits
+      run:
+        perl -Idtt/lib -Isvg/lib  Chip.pm
+
+    - name: Test Verilog
+      run:
+        rm -f Zesal; iverilog -Iincludes/ -g2012 -o Zesal Zesal.sv Zesal.tb && timeout 1m ./Zesal
