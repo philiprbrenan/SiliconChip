@@ -440,8 +440,8 @@ my sub svgGates($$%)                                                            
        cdata=>$v ? "1" : "0");
      }
 
-    $s->text(x=>$x+$w/2, y=>$y + 2/5, fill=>"red",      text_anchor=>"middle", dominant_baseline=>"middle", cdata=>$g->type);
-    $s->text(x=>$x+$w/2, y=>$y + 4/5, fill=>"darkblue", text_anchor=>"middle", dominant_baseline=>"middle", cdata=>$g->output);
+    $s->text(x=>$x+$w/2, y=>$y+5/12, fill=>"red",      text_anchor=>"middle", dominant_baseline=>"auto",    cdata=>$g->type);
+    $s->text(x=>$x+$w/2, y=>$y+7/12, fill=>"darkblue", text_anchor=>"middle", dominant_baseline=>"hanging", cdata=>$g->output);
 
     if ($g->io != gateOuterInput)                                               # Not an input pin
      {my %i = $g->inputs ? $g->inputs->%* : ();
