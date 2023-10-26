@@ -1,6 +1,6 @@
 # Name
 
-Silicon::Chip - Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and [sub](https://perldoc.perl.org/perlsub.html) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) .
+Silicon::Chip - Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and [sub](https://perldoc.perl.org/perlsub.html) [chips](https://en.wikipedia.org/wiki/Integrated_circuit) .
 
 # Synopsis
 
@@ -26,7 +26,7 @@ Create and simulate a 4 [bit](https://en.wikipedia.org/wiki/Bit) [comparator](ht
 
 # Description
 
-Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and [sub](https://perldoc.perl.org/perlsub.html) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) .
+Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and [sub](https://perldoc.perl.org/perlsub.html) [chips](https://en.wikipedia.org/wiki/Integrated_circuit) .
 
 Version 20231025.
 
