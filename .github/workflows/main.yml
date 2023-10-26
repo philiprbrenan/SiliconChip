@@ -1,4 +1,4 @@
-# Test 2023-10-26 at 03:08:44
+# Test 2023-10-26 at 03:10:44
 
 name: Test
 
@@ -40,4 +40,4 @@ jobs:
 
     - name: Test Perl implemented integrated circuits
       run:
-        perl -Idtt/lib -Isvg/lib  lib.Silicon/Chip.pm
+        perl -Idtt/lib -Isvg/lib  lib/Silicon/Chip.pm
