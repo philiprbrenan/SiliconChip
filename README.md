@@ -4,6 +4,26 @@ Silicon::Chip - Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) chip b
 
 # Synopsis
 
+Create and simulate a 4 [bit](https://en.wikipedia.org/wiki/Bit) comparator:
+
+    use Silicon::Chip;
+
+    my $B = 4;
+    my $c = Silicon::Chip::newChip;
+    $c->gate("input",  "a$_") for 1..$B;                                          # First number
+    $c->gate("input",  "b$_") for 1..$B;                                          # Second number
+    $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each [bit](https://en.wikipedia.org/wiki/Bit) for equality
+    $c->gate("and",    "and", {map{$_=>"e$_"}           1..$B});                  # And tests together to get equality
+    $c->gate("output", "out", "and");
+
+    my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,
+                          b1=>1, b2=>0, b3=>1, b4=>0}, svg=>"svg/Compare4");
+    is_deeply($s->steps, 3);                                                      # Three [steps](http://docs.oasis-open.org/dita/dita/v1.3/errata02/os/complete/part3-all-inclusive/contentmodels/cmlts.html#cmlts__steps)     is_deeply($s->values->{out}, 1);                                              # Result is 1
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/svg/Compare4.svg">
+</div>
+
 # Description
 
 Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) chip by combining gates and [sub](https://perldoc.perl.org/perlsub.html) chips.
