@@ -481,6 +481,25 @@ Silicon::Chip - Design a silicon chip by combining gates and sub chips.
 
 =head1 Synopsis
 
+Create and simulate a 4 bit comparator:
+
+  use Silicon::Chip;
+
+  my $B = 4;
+  my $c = Silicon::Chip::newChip;
+  $c->gate("input",  "a$_") for 1..$B;                                          # First number
+  $c->gate("input",  "b$_") for 1..$B;                                          # Second number
+  $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit for equality
+  $c->gate("and",    "and", {map{$_=>"e$_"}           1..$B});                  # And tests together to get equality
+  $c->gate("output", "out", "and");
+
+  my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,
+                        b1=>1, b2=>0, b3=>1, b4=>0}, svg=>"svg/Compare4");
+  is_deeply($s->steps, 3);                                                      # Three steps
+  is_deeply($s->values->{out}, 1);                                              # Result is 1
+
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/svg/Compare4.svg">
+
 =head1 Description
 
 Design a silicon chip by combining gates and sub chips.
@@ -755,14 +774,14 @@ eval "Test::More->builder->output('/dev/null');" if -e q(/home/phil2/);
 eval {goto latest};
 
 if (1)                                                                          # Unused output
- {my $c = newChip;
+ {my $c = Silicon::Chip::newChip;
   $c->gate("input",  "i1");
   eval {$c->simulate({i1=>1})};
   ok($@ =~ m(Output from gate 'i1' is never used)i);
  }
 
 if (1)                                                                          # Gate already specified
- {my $c = newChip;
+ {my $c = Silicon::Chip::newChip;
         $c->gate("input",  "i1");
   eval {$c->gate("input",  "i1")};
   ok($@ =~ m(Gate i1 has already been specified));
@@ -770,7 +789,7 @@ if (1)                                                                          
 
 #latest:;
 if (1)                                                                          # Check all inputs
- {my $c = newChip;
+ {my $c = Silicon::Chip::newChip;
   $c->gate("input",  "i1");
   $c->gate("input",  "i2");
   $c->gate("and",    "and1", {1=>q(i1), i2=>q(i2)});
@@ -781,7 +800,7 @@ if (1)                                                                          
 
 #latest:;
 if (1)                                                                          #TnewChip Single AND gate
- {my $c = newChip;
+ {my $c = Silicon::Chip::newChip;
   $c->gate("input",  "i1");
   $c->gate("input",  "i2");
   $c->gate("and",    "and1", {1=>q(i1), 2=>q(i2)});
@@ -793,7 +812,7 @@ if (1)                                                                          
 
 #latest:;
 if (1)                                                                          #TnewChip Single AND gate
- {my $c = newChip;
+ {my $c = Silicon::Chip::newChip;
   $c->input ("i1");
   $c->input ("i2");
   $c->and   ("and1", {1=>q(i1), 2=>q(i2)});
@@ -805,7 +824,7 @@ if (1)                                                                          
 
 #latest:;
 if (1)                                                                          # Three AND gates in a tree
- {my $c = newChip;
+ {my $c = Silicon::Chip::newChip;
   $c->gate("input",  "i11");
   $c->gate("input",  "i12");
   $c->gate("and",    "and1", {1=>q(i11),  2=>q(i12)});
@@ -847,14 +866,18 @@ if (1)                                                                          
 #latest:;
 if (1)                                                                          # 4 bit comparator
  {my $B = 4;
-  my $c = newChip;
+  my $c = Silicon::Chip::newChip;
   $c->gate("input",  "a$_") for 1..$B;                                          # First number
   $c->gate("input",  "b$_") for 1..$B;                                          # Second number
   $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit for equality
-  $c->gate("and",    "and", {map{$_=>"e$_"} 1..$B});                            # And tests together to get equality
+  $c->gate("and",    "and", {map{$_=>"e$_"}           1..$B});                  # And tests together to get equality
   $c->gate("output", "out", "and");
-  is_deeply($c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,
-                          b1=>1, b2=>0, b3=>1, b4=>0}, svg=>"svg/Compare4")->values->{out}, 1);
+
+  my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,
+                        b1=>1, b2=>0, b3=>1, b4=>0}, svg=>"svg/Compare4");
+  is_deeply($s->steps, 3);                                                      # Three steps
+  is_deeply($s->values->{out}, 1);                                              # Result is 1
+
   is_deeply($c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                           b1=>1, b2=>0, b3=>1, b4=>0})->values->{out}, 0);
  }
@@ -862,7 +885,7 @@ if (1)                                                                          
 #latest:;
 if (1)                                                                          # 4 bit 'a' greater than 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
  {my $B = 4;
-  my $c = newChip;
+  my $c = Silicon::Chip::newChip;
   $c->gate("input",  "a$_") for 1..$B;                                          # First number
   $c->gate("input",  "b$_") for 1..$B;                                          # Second number
   $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;                  # Test each bit for equality
