@@ -26,7 +26,7 @@ my sub gateOuterOutput    {6}                                                   
 
 my $possibleTypes = q(and|input|nand|nor|not|nxor|or|output|xor);               # Possible gate types
 
-#D1 Construct                                                                   # Construct a silicon L<chip> using standard L<lgs>.
+#D1 Construct                                                                   # Construct a L<silicon> L<chip> using standard L<lgs>.
 
 sub newChip(%)                                                                  # Create a new L<chip>.
  {my (%options) = @_;                                                           # Options
@@ -554,7 +554,11 @@ sub simulate($$%)                                                               
 
 =head1 Name
 
-Silicon::Chip - Design a silicon L<chip> by combining L<lgs> and sub L<chips>.
+Silicon::Chip - Design a
+L<silicon|https://en.wikipedia.org/wiki/Silicon>
+L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> by combining L<logic
+gates|https://en.wikipedia.org/wiki/Logic_gate> and sub
+L<chips|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
 =head1 Synopsis
 
@@ -581,7 +585,7 @@ To obtain:
 
 =head1 Description
 
-Design a silicon L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> by combining L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> and sub L<chips|https://en.wikipedia.org/wiki/Integrated_circuit>.
+Design a
 
 
 Version 20231026.
@@ -594,7 +598,7 @@ module.  For an alphabetic listing of all methods by name see L<Index|/Index>.
 
 =head1 Construct
 
-Construct a silicon L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> using standard L<logic gates|https://en.wikipedia.org/wiki/Logic_gate>.
+Construct a L<Silicon|https://en.wikipedia.org/wiki/Silicon> L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> using standard L<logic gates|https://en.wikipedia.org/wiki/Logic_gate>.
 
 =head2 newChip(%options)
 
