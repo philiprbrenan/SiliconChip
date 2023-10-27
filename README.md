@@ -1,6 +1,10 @@
 # Name
 
-Silicon::Chip - Design a silicon [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and sub [chips](https://en.wikipedia.org/wiki/Integrated_circuit).
+Silicon::Chip - Design a
+[silicon](https://en.wikipedia.org/wiki/Silicon)
+[chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic
+gates](https://en.wikipedia.org/wiki/Logic_gate) and sub
+[chips](https://en.wikipedia.org/wiki/Integrated_circuit).
 
 # Synopsis
 
@@ -29,7 +33,7 @@ To obtain:
 
 # Description
 
-Design a silicon [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and sub [chips](https://en.wikipedia.org/wiki/Integrated_circuit).
+Design a
 
 Version 20231026.
 
@@ -38,7 +42,7 @@ module.  For an alphabetic listing of all methods by name see [Index](#index).
 
 # Construct
 
-Construct a silicon [chip](https://en.wikipedia.org/wiki/Integrated_circuit) using standard [logic gates](https://en.wikipedia.org/wiki/Logic_gate).
+Construct a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) using standard [logic gates](https://en.wikipedia.org/wiki/Logic_gate).
 
 ## newChip(%options)
 
