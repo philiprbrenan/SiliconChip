@@ -147,6 +147,13 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
       is_deeply($s, {steps  => 2, values => { "(inner 1 In)" => 0, "Oi1" => 1, "Oo" => 0 }});
      }
 
+## merge($chip, %options)
+
+Merge a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) and all its [sub](https://perldoc.perl.org/perlsub.html) [chips](https://en.wikipedia.org/wiki/Integrated_circuit) to make a single [chip](https://en.wikipedia.org/wiki/Integrated_circuit) 
+       Parameter  Description
+    1  $chip      Chip
+    2  %options   Options
+
 # Visualize
 
 Visualize the [chip](https://en.wikipedia.org/wiki/Integrated_circuit) in various ways.
@@ -226,8 +233,9 @@ Autoload by gate name to provide a more readable way to specify the gates on a [
 1 [AUTOLOAD](#autoload) - Autoload by gate name to provide a more readable way to specify the gates on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
 2 [gate](#gate) - A gate of some [sort](https://en.wikipedia.org/wiki/Sorting) to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
 3 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
-4 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
-5 [simulate](#simulate) - Simulate the set of gates until nothing changes.
+4 [merge](#merge) - Merge a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) and all its [sub](https://perldoc.perl.org/perlsub.html) [chips](https://en.wikipedia.org/wiki/Integrated_circuit) to make a single [chip](https://en.wikipedia.org/wiki/Integrated_circuit) 
+5 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
+6 [simulate](#simulate) - Simulate the set of gates until nothing changes.
 
 # Installation
 
