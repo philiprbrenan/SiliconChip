@@ -5,6 +5,7 @@ Silicon::Chip - Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip]
 # Synopsis
 
 Create and simulate a 4 [bit](https://en.wikipedia.org/wiki/Bit) [comparator](https://en.wikipedia.org/wiki/Digital_comparator): 
+
     use Silicon::Chip;
 
     my $B = 4;
