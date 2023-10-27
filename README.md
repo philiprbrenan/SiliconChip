@@ -32,7 +32,7 @@ Create and simulate a 4 bit comparator by running this code:
 To obtain:
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare4.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Comparator4.svg">
 </div>
 
 # Description
