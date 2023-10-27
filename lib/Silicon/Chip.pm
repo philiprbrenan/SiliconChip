@@ -93,6 +93,7 @@ our $AUTOLOAD;                                                                  
 sub AUTOLOAD($@)                                                                #P Autoload by L<lg> name to provide a more readable way to specify the L<lgs> on a L<chip>.
  {my ($chip, @options) = @_;                                                    # Chip, options
   my $type = $AUTOLOAD =~ s(\A.*::) ()r;
+  confess "Unknown method: $type" unless $type =~ m(\A($possibleTypes|DESTROY)\Z);
   &gate($chip, $type, @options) if $type =~ m(\A($possibleTypes)\Z);
  }
 
@@ -330,30 +331,6 @@ my sub simulationStep($$%)                                                      
   %changes
  }
 
-my sub merge($%)                                                                # Merge a L<chip> and all its sub L<chips> to make a single L<chip>.
- {my ($chip, %options) = @_;                                                    # Chip, options
-  my $gates = getGates $chip;                                                   # Gates implementing the chip and all of its sub chips
-  setOuterGates ($chip, $gates);                                                # Set the outer gates which are to be connected to in the real word
-  removeExcessIO($chip, $gates);                                                # By pass and then remove all interior IO gates as they are no longer needed
-  my $c = newChip %$chip, %options, gates=>$gates;                              # Create the new chip
-
-  dumpGates($c, %options) if $options{dumpGates};                               # Print the gates
-  svgGates ($c, %options) if $options{svg};                                     # Draw the gates using svg
-  checkIO $c;                                                                   # Check all inputs are connected to valid gates and that all outputs are used
-
-  $c
- }
-
-my sub simulationResults($%)                                                    # Simulation results obtained by specifying the inputs to all the L<lgs> on the L<chip> and allowing its output L<lgs> to stabilize.
- {my ($chip, %options) = @_;                                                    # Chip, hash of final values for each gate, options
-
-  genHash("Idc::Designer::Simulation::Results",                                 # Simulation results
-    changed => $options{changed},                                               # Last time this gate changed
-    steps   => $options{steps},                                                 # Number of steps to reach stability
-    values  => $options{values},                                                # Values of every output at point of stability
-   );
- }
-
 ##D1 Visualize                                                                  # Visualize the L<chip> in various ways.
 
 my sub orderGates($%)                                                           # Order the L<lgs> on a L<chip> so that input L<lg> are first, the output L<lgs> are last and the non io L<lgs> are in between. All L<lgs> are first ordered alphabetically. The non io L<lgs> are then ordered by the step number at which they last changed during simulation of the L<chip>.
@@ -517,7 +494,52 @@ my sub svgGates($%)                                                             
    }
  }
 
+#D1 Basic Circuits                                                              # Some well known basic circuits.
+
+sub compareGt($%)                                                               # Comparator to compare two unsigned binary integers of a specified width.
+ {my ($bits, %options) = @_;                                                    # Bits, options
+  my $B = $bits;
+  my $C = Silicon::Chip::newChip(title=>"$B Bit Compare");
+
+  $C->gate("input",  "a$_") for 1..$B;                                          # First number
+  $C->gate("input",  "b$_") for 1..$B;                                          # Second number
+  $C->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;                  # Test each bit for equality
+  $C->gate("gt",     "g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit pair for greater
+
+  for my $b(2..$B)
+   {$C->gate("and",  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});            # Greater on one bit and all preceding bits are equal
+   }
+  $C->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
+  $C->gate("output", "out", "or");                                              # Output 1 if a > b else 0
+
+  $C
+ }
+
 #D1 Simulate                                                                    # Simulate the behavior of the L<chip>.
+
+my sub merge($%)                                                                # Merge a L<chip> and all its sub L<chips> to make a single L<chip>.
+ {my ($chip, %options) = @_;                                                    # Chip, options
+  my $gates = getGates $chip;                                                   # Gates implementing the chip and all of its sub chips
+  setOuterGates ($chip, $gates);                                                # Set the outer gates which are to be connected to in the real word
+  removeExcessIO($chip, $gates);                                                # By pass and then remove all interior IO gates as they are no longer needed
+  my $c = newChip %$chip, %options, gates=>$gates;                              # Create the new chip
+
+  dumpGates($c, %options) if $options{dumpGates};                               # Print the gates
+  svgGates ($c, %options) if $options{svg};                                     # Draw the gates using svg
+  checkIO $c;                                                                   # Check all inputs are connected to valid gates and that all outputs are used
+
+  $c
+ }
+
+my sub simulationResults($%)                                                    # Simulation results obtained by specifying the inputs to all the L<lgs> on the L<chip> and allowing its output L<lgs> to stabilize.
+ {my ($chip, %options) = @_;                                                    # Chip, hash of final values for each gate, options
+
+  genHash("Idc::Designer::Simulation::Results",                                 # Simulation results
+    changed => $options{changed},                                               # Last time this gate changed
+    steps   => $options{steps},                                                 # Number of steps to reach stability
+    values  => $options{values},                                                # Values of every output at point of stability
+   );
+ }
 
 sub simulate($$%)                                                               # Simulate the action of the L<lgs> on a L<chip> for a given set of inputs until the output values of each L<lg> stabilize.
  {my ($chip, $inputs, %options) = @_;                                           # Chip, Hash of input names to values, options
@@ -716,6 +738,37 @@ B<Example:>
    }
   
 
+=head1 Basic Circuits
+
+Some well known basic circuits.
+
+=head2 compareGt($bits, %options)
+
+Comparator to compare two unsigned binary integers of a specified width.
+
+     Parameter  Description
+  1  $bits      Bits
+  2  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                           Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+   {my $B = 8;
+  
+    my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+  
+    my %a = map {("a$_"=>0)} 1..$B;
+    my %b = map {("b$_"=>0)} 1..$B;
+  
+  # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
+    my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
+    is_deeply($s->values->{out}, 1);
+    is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+   }
+  
+
 =head1 Simulate
 
 Simulate the behavior of the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
@@ -810,13 +863,15 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 1 L<AUTOLOAD|/AUTOLOAD> - Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provide a more readable way to specify the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-2 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+2 L<compareGt|/compareGt> - Comparator to compare two unsigned binary integers of a specified width.
 
-3 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+3 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-4 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+4 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-5 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
+5 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+
+6 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
 
 =head1 Installation
 
@@ -948,8 +1003,8 @@ if (1)                                                                          
                           b1=>1, b2=>0, b3=>1, b4=>0})->values->{out}, 0);
  }
 
-latest:;
-if (1)                                                                          # Compare 4 bit 'a' greater than 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+#latest:;
+if (1)                                                                          # Compare two 4 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
  {my $B = 4;
   my $c = Silicon::Chip::newChip(title=>"$B Bit Compare");
 
@@ -964,15 +1019,28 @@ if (1)                                                                          
   $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
   $c->gate("output", "out", "or");                                              # Output 1 if a > b else 0
 
-  my %a = map {("a$_"=>0)} 1..$B;
-  my %b = map {("b$_"=>0)} 1..$B;
+  my %a = map {("a$_"=>0)} 1..$B;                                               # Number a
+  my %b = map {("b$_"=>0)} 1..$B;                                               # Number b
 
-  my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1});
+  my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1});                             # Two equal numbers
   is_deeply($s->values->{out}, 0);
 
   my $t = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/Comparator$B");             # Svg drawing of layout
   is_deeply($t->values->{out}, 1);
-exit;
+ }
+
+#latest:;
+if (1)                                                                          #TcompareGt Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+ {my $B = 8;
+  my $c = Silicon::Chip::compareGt($B);
+
+  my %a = map {("a$_"=>0)} 1..$B;
+  my %b = map {("b$_"=>0)} 1..$B;
+
+# my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
+  my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
+  is_deeply($s->values->{out}, 1);
+  is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
  }
 
 #latest:;
