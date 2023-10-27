@@ -1,11 +1,10 @@
 # Name
 
-Silicon::Chip - Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and [sub](https://perldoc.perl.org/perlsub.html) [chips](https://en.wikipedia.org/wiki/Integrated_circuit) .
+Silicon::Chip - Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) CHIP by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and [sub](https://perldoc.perl.org/perlsub.html) CHIPS .
 
 # Synopsis
 
 Create and simulate a 4 [bit](https://en.wikipedia.org/wiki/Bit) [comparator](https://en.wikipedia.org/wiki/Digital_comparator): 
-
     use Silicon::Chip;
 
     my $B = 4;
@@ -27,9 +26,9 @@ Create and simulate a 4 [bit](https://en.wikipedia.org/wiki/Bit) [comparator](ht
 
 # Description
 
-Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and [sub](https://perldoc.perl.org/perlsub.html) [chips](https://en.wikipedia.org/wiki/Integrated_circuit) .
+Design a [Silicon](https://en.wikipedia.org/wiki/Silicon) CHIP by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and [sub](https://perldoc.perl.org/perlsub.html) CHIPS .
 
-Version 20231025.
+Version 20231026.
 
 The following sections describe the methods in each functional area of this [module](https://en.wikipedia.org/wiki/Modular_programming).  For an alphabetic listing of all methods by name see [Index](#index).
 
@@ -39,14 +38,14 @@ Construct a representation of a digital circuit using standard gates.
 
 ## newChip(%options)
 
-Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
+Create a new [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit). 
        Parameter  Description
     1  %options   Options
 
 **Example:**
 
     if (1)                                                                           Single AND gate
-
+    
      {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       $c->gate("input",  "i1");
@@ -57,9 +56,9 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
       ok($s->steps          == 2);
       ok($s->values->{and1} == 1);
      }
-
+    
     if (1)                                                                           Single AND gate
-
+    
      {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       $c->input ("i1");
@@ -70,10 +69,11 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
       ok($s->steps          == 2);
       ok($s->values->{and1} == 1);
      }
+    
 
 ## gate($chip, $type, $output, $inputs)
 
-A gate of some [sort](https://en.wikipedia.org/wiki/Sorting) to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
+A gate of some [sort](https://en.wikipedia.org/wiki/Sorting) to be added to the [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit). 
        Parameter  Description
     1  $chip      Chip
     2  $type      Gate type
@@ -85,28 +85,28 @@ A gate of some [sort](https://en.wikipedia.org/wiki/Sorting) to be added to the 
     if (1)                                                                           Two AND gates driving an OR gate a [tree](https://en.wikipedia.org/wiki/Tree_(data_structure))  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
      {my $c = newChip;
-
+    
       $c->gate("input",  "i11");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+    
       $c->gate("input",  "i12");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+    
       $c->gate("and",    "and1", {1=>q(i11),  2=>q(i12)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+    
       $c->gate("input",  "i21");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+    
       $c->gate("input",  "i22");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+    
       $c->gate("and",    "and2", {1=>q(i21),  2=>q(i22)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+    
       $c->gate("or",     "or",   {1=>q(and1), 2=>q(and2)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-
+    
       $c->gate("output", "o", "or");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       my $s = $c->simulate({i11=>1, i12=>1, i21=>1, i22=>1});
@@ -119,49 +119,54 @@ A gate of some [sort](https://en.wikipedia.org/wiki/Sorting) to be added to the 
       ok($s->steps         == 3);
       ok($s->values->{o}   == 0);
      }
+    
 
 ## install($chip, $subChip, $inputs, $outputs, %options)
 
-Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).  The same [chip](https://en.wikipedia.org/wiki/Integrated_circuit) can be installed multiple times as each [chip](https://en.wikipedia.org/wiki/Integrated_circuit) description is read only.
+Install a [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) within another [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit).  The same [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) can be installed multiple times as each [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) description is read only.
 
        Parameter  Description
-    1  $chip      Outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit)     2  $subChip   Inner [chip](https://en.wikipedia.org/wiki/Integrated_circuit)     3  $inputs    Inputs of inner [chip](https://en.wikipedia.org/wiki/Integrated_circuit) to to outputs of outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit)     4  $outputs   Outputs of inner [chip](https://en.wikipedia.org/wiki/Integrated_circuit) to inputs of outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit)     5  %options   Options
+    1  $chip      Outer [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit)     2  $subChip   Inner [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit)     3  $inputs    Inputs of inner [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) to to outputs of outer [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit)     4  $outputs   Outputs of inner [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) to inputs of outer [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit)     5  %options   Options
 
 **Example:**
 
-    if (1)                                                                           Install one inside another [chip](https://en.wikipedia.org/wiki/Integrated_circuit), specifically one [chip](https://en.wikipedia.org/wiki/Integrated_circuit) that performs NOT is installed three times sequentially to flip a value
+    if (1)                                                                           Install one inside another [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit), specifically one [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) that performs NOT is installed three times sequentially to flip a value
      {my $i = newChip(name=>"inner");
          $i->gate("input", "Ii");
          $i->gate("not",   "In", "Ii");
          $i->gate("output","Io", "In");
-
+    
       my $o = newChip(name=>"outer");
          $o->gate("input",    "Oi1");
          $o->gate("output",   "Oo1", "Oi1");
          $o->gate("input",    "Oi2");
          $o->gate("output",    "Oo", "Oi2");
-
-
+    
+    
       $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
-      is_deeply($s, {steps  => 2, values => { "(inner 1 In)" => 0, "Oi1" => 1, "Oo" => 0 }});
+    
+      is_deeply($s, {steps  => 2,
+        changed => { "(inner 1 In)" => 0,             "Oo" => 1 },
+        values  => { "(inner 1 In)" => 0, "Oi1" => 1, "Oo" => 0 }});
      }
+    
 
 ## merge($chip, %options)
 
-Merge a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) and all its [sub](https://perldoc.perl.org/perlsub.html) [chips](https://en.wikipedia.org/wiki/Integrated_circuit) to make a single [chip](https://en.wikipedia.org/wiki/Integrated_circuit) 
+Merge a [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) and all its [sub](https://perldoc.perl.org/perlsub.html) [CHIPS](https://en.wikipedia.org/wiki/Integrated_circuit) to make a single [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) 
        Parameter  Description
     1  $chip      Chip
     2  %options   Options
 
 # Visualize
 
-Visualize the [chip](https://en.wikipedia.org/wiki/Integrated_circuit) in various ways.
+Visualize the [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) in various ways.
 
 # Simulate
 
-Simulate the behavior of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
+Simulate the behavior of the [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit). 
 ## simulate($chip, $inputs, %options)
 
 Simulate the set of gates until nothing changes.  This should be possible as feedback loops are banned.
@@ -173,12 +178,12 @@ Simulate the set of gates until nothing changes.  This should be possible as fee
 
 **Example:**
 
-    if (1)
+    if (1)                                                                          
      {my $i = newChip(name=>"inner");
          $i->gate("input", "Ii");
          $i->gate("not",   "In", "Ii");
          $i->gate("output","Io", "In");
-
+    
       my $o = newChip(name=>"outer");
          $o->gate("input",    "Oi1");
          $o->gate("output",   "Oo1", "Oi1");
@@ -188,16 +193,17 @@ Simulate the set of gates until nothing changes.  This should be possible as fee
          $o->gate("output",   "Oo3", "Oi3");
          $o->gate("input",    "Oi4");
          $o->gate("output",    "Oo", "Oi4");
-
+    
       $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});
       $o->install($i, {Ii=>"Oo2"}, {Io=>"Oi3"});
       $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
-
+    
       my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->values->{Oo}, 0);
       is_deeply($s->steps,        4);
      }
+    
 
 # Hash Definitions
 
@@ -209,13 +215,13 @@ Chip description
 
 #### gates
 
-Gates in [chip](https://en.wikipedia.org/wiki/Integrated_circuit) 
+Gates in [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) 
 #### installs
 
-Chips installed within the [chip](https://en.wikipedia.org/wiki/Integrated_circuit) 
+Chips installed within the [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) 
 #### name
 
-Name of [chip](https://en.wikipedia.org/wiki/Integrated_circuit) 
+Name of [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) 
 #### title
 
 Title if known
@@ -224,18 +230,18 @@ Title if known
 
 ## AUTOLOAD($chip, @options)
 
-Autoload by gate name to provide a more readable way to specify the gates on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
+Autoload by gate name to provide a more readable way to specify the gates on a [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit). 
        Parameter  Description
     1  $chip      Chip
     2  @options   Options
 
 # Index
 
-1 [AUTOLOAD](#autoload) - Autoload by gate name to provide a more readable way to specify the gates on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
-2 [gate](#gate) - A gate of some [sort](https://en.wikipedia.org/wiki/Sorting) to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
-3 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
-4 [merge](#merge) - Merge a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) and all its [sub](https://perldoc.perl.org/perlsub.html) [chips](https://en.wikipedia.org/wiki/Integrated_circuit) to make a single [chip](https://en.wikipedia.org/wiki/Integrated_circuit) 
-5 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit). 
+1 [AUTOLOAD](#autoload) - Autoload by gate name to provide a more readable way to specify the gates on a [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit). 
+2 [gate](#gate) - A gate of some [sort](https://en.wikipedia.org/wiki/Sorting) to be added to the [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit). 
+3 [install](#install) - Install a [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) within another [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit). 
+4 [merge](#merge) - Merge a [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) and all its [sub](https://perldoc.perl.org/perlsub.html) [CHIPS](https://en.wikipedia.org/wiki/Integrated_circuit) to make a single [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit) 
+5 [newChip](#newchip) - Create a new [CHIP](https://en.wikipedia.org/wiki/Integrated_circuit). 
 6 [simulate](#simulate) - Simulate the set of gates until nothing changes.
 
 # Installation
