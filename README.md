@@ -10,23 +10,24 @@ Silicon::Chip - Design a [silicon](https://en.wikipedia.org/wiki/Silicon) [chip]
 
 Create and simulate a 4 bit comparator by running this code:
 
-    use Silicon::Chip;
-
     my $B = 4;
-    my $c = Silicon::Chip::newChip(title=>"$B Bit Comparator");
+    my $c = Silicon::Chip::newChip(title=>"$B Bit Compare");
 
-    $c->input ("a$_")                       for 1..$B;                            # First number
-    $c->input ("b$_")                       for 1..$B;                            # Second number
-    $c->nxor  ("e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                            # Test each bit for equality
-    $c->and   ("and", {map{$_=>"e$_"}           1..$B});                          # And tests together to get equality
-    $c->output("out", "and");
+    $c->gate("input",  "a$_") for 1..$B;                                          # First number
+    $c->gate("input",  "b$_") for 1..$B;                                          # Second number
+    $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;                  # Test each bit for equality
+    $c->gate("gt",     "g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit pair for greater
 
-    my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
+    for my $b(2..$B)
+     {$c->gate("and",  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});            # Greater on one bit and all preceding bits are equal
+     }
+    $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
+    $c->gate("output", "out", "or");                                              # Output 1 if a > b else 0
+
+    my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                           b1=>1, b2=>0, b3=>1, b4=>0},
-                          svg=>"svg/Compare4");                                   # Svg drawing of layout
-
-    is_deeply($s->steps, 3);                                                      # Three steps
-    is_deeply($s->values->{out}, 1);                                              # Result is 1
+                          svg=>"svg/Compare$B");                                  # Svg drawing of layout
+    is_deeply($t->values->{out}, 1);
 
 To obtain:
 
@@ -38,7 +39,7 @@ To obtain:
 
 Design a [silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and sub [chips](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-Version 20231026.
+Version 20231027.
 
 The following sections describe the methods in each functional area of this
 module.  For an alphabetic listing of all methods by name see [Index](#index).
