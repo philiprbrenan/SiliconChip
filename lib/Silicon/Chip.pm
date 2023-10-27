@@ -26,9 +26,9 @@ my sub gateOuterOutput    {6}                                                   
 
 my $possibleTypes = q(and|input|nand|nor|not|nxor|or|output|xor);               # Possible gate types
 
-#D1 Construct                                                                   # Construct a representation of a digital circuit using standard gates.
+#D1 Construct                                                                   # Construct a silicon L<chip> using standard L<lgs>.
 
-sub newChip(%)                                                                  # Create a new chip.
+sub newChip(%)                                                                  # Create a new L<chip>.
  {my (%options) = @_;                                                           # Options
   genHash(__PACKAGE__,                                                          # Chip description
     name    => $options{name}  // "Unnamed chip: ".timeStamp,                   # Name of chip
@@ -38,7 +38,7 @@ sub newChip(%)                                                                  
    );
  }
 
-my sub newGate($$$$)                                                            # Make a gate
+my sub newGate($$$$)                                                            # Make a L<lg>.
  {my ($chip, $type, $output, $inputs) = @_;                                     # Chip, gate type, output name, input names to output from another gate
 
   my $g = genHash("Silicon::Chip::Gate",                                        # Gate
@@ -49,7 +49,7 @@ my sub newGate($$$$)                                                            
   );
  }
 
-sub gate($$$;$)                                                                 # A gate of some sort to be added to the chip.
+sub gate($$$;$)                                                                 # A L<lg> of some sort to be added to the L<chip>.
  {my ($chip, $type, $output, $inputs) = @_;                                     # Chip, gate type, output name, input names to output from another gate
   my $gates = $chip->gates;                                                     # Gates implementing the chip
 
@@ -90,18 +90,18 @@ sub gate($$$;$)                                                                 
 
 our $AUTOLOAD;                                                                  # The method to be autoloaded appears here
 
-sub AUTOLOAD($@)                                                                #P Autoload by gate name to provide a more readable way to specify the gates on a chip.
+sub AUTOLOAD($@)                                                                #P Autoload by L<lg> name to provide a more readable way to specify the L<lgs> on a L<chip>.
  {my ($chip, @options) = @_;                                                    # Chip, options
   my $type = $AUTOLOAD =~ s(\A.*::) ()r;
   &gate($chip, $type, @options) if $type =~ m(\A($possibleTypes)\Z);
  }
 
-my sub cloneGate($$)                                                            # Clone a gate
+my sub cloneGate($$)                                                            # Clone a L<lg> on a L<chip>.
  {my ($chip, $gate) = @_;                                                       # Chip, gate
   newGate($chip, $gate->type, $gate->output, $gate->inputs)
  }
 
-my sub renameGateInputs($$$)                                                    # Rename the inputs of a gate
+my sub renameGateInputs($$$)                                                    # Rename the inputs of a L<lg> on a L<chip>.
  {my ($chip, $gate, $name) = @_;                                                # Chip, gate, prefix name
   for my $p(qw(inputs))
    {my %i;
@@ -114,13 +114,13 @@ my sub renameGateInputs($$$)                                                    
   $gate
  }
 
-my sub renameGate($$$)                                                          # Rename a gate by adding a prefix
+my sub renameGate($$$)                                                          # Rename a L<lg> on a L<chip> by adding a prefix.
  {my ($chip, $gate, $name) = @_;                                                # Chip, gate, prefix name
   $gate->output = sprintf "(%s %s)", $name, $gate->output;
   $gate
  }
 
-sub install($$$$%)                                                              # Install a chip within another chip specifying the connections between the inner and outer chip.  The same chip can be installed multiple times as each chip description is read only.
+sub install($$$$%)                                                              # Install a L<chip> within another L<chip> specifying the connections between the inner and outer L<chip>.  The same L<chip> can be installed multiple times as each L<chip> description is read only.
  {my ($chip, $subChip, $inputs, $outputs, %options) = @_;                       # Outer chip, inner chip, inputs of inner chip to to outputs of outer chip, outputs of inner chip to inputs of outer chip, options
   my $c = genHash("Chip::Install",                                              # Installation of a chip within a chip
     chip    => $subChip,                                                        # Chip being installed
@@ -131,7 +131,7 @@ sub install($$$$%)                                                              
   $c
  }
 
-my sub getGates($%)                                                             # Get the gates of a chip and all it installed sub chips
+my sub getGates($%)                                                             # Get the L<lgs> of a L<chip> and all it installed sub chips.
  {my ($chip, %options) = @_;                                                    # Chip, options
 
   my %outerGates;
@@ -193,7 +193,7 @@ my sub getGates($%)                                                             
   \%outerGates                                                                  # Return all the gates in the chip extended by its sub chips
  }
 
-my sub checkIO($%)                                                              # Check that every input is connected to one output
+my sub checkIO($%)                                                              # Check that each input L<lg> is connected to one output  L<lg>.
  {my ($chip, %options) = @_;                                                    # Chip, options
   my $gates = $chip->gates;                                                     # Gates on chip
 
@@ -220,7 +220,7 @@ my sub checkIO($%)                                                              
    }
  }
 
-my sub setOuterGates($$%)                                                       # Set outer gates on external chip that connect to the outer world
+my sub setOuterGates($$%)                                                       # Set outer  L<lgs> on external chip that connect to the outer world.
  {my ($chip, $gates, %options) = @_;                                            # Chip, gates in chip plus all sub chips as supplied by L<getGates>.
 
   for my $G(sort keys %$gates)                                                  # Find all inputs and outputs
@@ -244,7 +244,7 @@ my sub setOuterGates($$%)                                                       
    }
  }
 
-my sub removeExcessIO($$%)                                                      # Remove unneeded IO gates
+my sub removeExcessIO($$%)                                                      # Remove unneeded IO L<lgs> .
  {my ($chip, $gates, %options) = @_;                                            # Chip, gates in chip plus all sub chips as supplied by L<getGates>.
 
   gate: for my $G(sort keys %$gates)                                            # Find all inputs and outputs
@@ -268,7 +268,7 @@ my sub removeExcessIO($$%)                                                      
    }
  }
 
-my sub simulationStep($$%)                                                      # One step in the simulation of the chip after expansion of inner chips
+my sub simulationStep($$%)                                                      # One step in the simulation of the L<chip> after expansion of inner L<chips>.
  {my ($chip, $values, %options) = @_;                                           # Chip, current value of each gate, options
   my $gates = $chip->gates;                                                     # Gates on chip
   my %changes;                                                                  # Changes made
@@ -330,7 +330,7 @@ my sub simulationStep($$%)                                                      
   %changes
  }
 
-sub merge($%)                                                                   # Merge a chip and all its sub chips to make a single chip
+my sub merge($%)                                                                # Merge a L<chip> and all its sub L<chips> to make a single L<chip>.
  {my ($chip, %options) = @_;                                                    # Chip, options
   my $gates = getGates $chip;                                                   # Gates implementing the chip and all of its sub chips
   setOuterGates ($chip, $gates);                                                # Set the outer gates which are to be connected to in the real word
@@ -344,7 +344,7 @@ sub merge($%)                                                                   
   $c
  }
 
-my sub simulationResults($%)                                                    # Simulation results.
+my sub simulationResults($%)                                                    # Simulation results obtained by specifying the inputs to all the L<lgs> on the L<chip> and allowing its output L<lgs> to stabilize.
  {my ($chip, %options) = @_;                                                    # Chip, hash of final values for each gate, options
 
   genHash("Idc::Designer::Simulation::Results",                                 # Simulation results
@@ -354,9 +354,9 @@ my sub simulationResults($%)                                                    
    );
  }
 
-#D1 Visualize                                                                   # Visualize the chip in various ways.
+##D1 Visualize                                                                  # Visualize the L<chip> in various ways.
 
-my sub orderGates($%)                                                           # Order the gates so that input are first, output are last and the non io gates are in between. All gates are first ordered alphabetically. The non io gates are then ordered by the step number at which they last changed during simulation.
+my sub orderGates($%)                                                           # Order the L<lgs> on a L<chip> so that input L<lg> are first, the output L<lgs> are last and the non io L<lgs> are in between. All L<lgs> are first ordered alphabetically. The non io L<lgs> are then ordered by the step number at which they last changed during simulation of the L<chip>.
  {my ($chip, %options) = @_;                                                    # Chip, options
 
   my $gates = $chip->gates;                                                     # Gates on chip
@@ -375,7 +375,7 @@ my sub orderGates($%)                                                           
   (\@i, \@n, \@o)
  }
 
-my sub dumpGates($%)                                                            # Dump some gates
+my sub dumpGates($%)                                                            # Dump the L<lgs> present on a L<chip>.
  {my ($chip, %options) = @_;                                                    # Chip, gates, options
   my $gates = $chip->gates;                                                     # Gates on chip
   my @s;
@@ -392,7 +392,7 @@ my sub dumpGates($%)                                                            
   owf fpe($options{dumpGates}, q(txt)), join "\n", @s;                          # Write representation of gates as text to the named file
  }
 
-my sub newGatePosition(%)                                                       # Gate position
+my sub newGatePosition(%)                                                       # Specify the position of a L<lg> on a drawing of the containing L<chip>.
  {my (%options) = @_;                                                           # Options
 
   genHash("Silicon::Chip::Gate::Position",                                      # Gate position
@@ -403,7 +403,7 @@ my sub newGatePosition(%)                                                       
    )
  }
 
-my sub svgGates($%)                                                             # Dump a set of gates as an SVG drawing to help visualzie teh structure of the chip.
+my sub svgGates($%)                                                             # Dump the L<lgs> on a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip>.
  {my ($chip, %options) = @_;                                                    # Chip, options
   my $gates   = $chip->gates;                                                   # Gates on chip
   my $title   = $chip->title;                                                   # Title of chip
@@ -413,6 +413,7 @@ my sub svgGates($%)                                                             
 
   my $fs = 0.2; my $fw = 0.02;                                                  # Font sizes
   my $Fs = 0.4; my $Fw = 0.04;
+  my $op0 = q(transparent);
 
   my $s = Svg::Simple::new(defaults=>{stroke_width=>$fw, font_size=>$fs});      # Draw each gate via Svg
 
@@ -438,7 +439,7 @@ my sub svgGates($%)                                                             
   for my $GI(keys @$oG)                                                         # Index of each output gate
    {my $G = $$oG[$GI];                                                          # Gate name
     my $g = $$gates{$G};                                                        # Gate
-    $p{$G} = newGatePosition(gate=>$g, x=>2+$W, y=>@$iG+@$nG+$GI, width=>1);    # Position gate
+    $p{$G} = newGatePosition(gate=>$g, x=>1+$W, y=>@$iG+@$nG+$GI, width=>1);    # Position gate
    }
 
   if (defined($title))                                                          # Title if known
@@ -464,16 +465,16 @@ my sub svgGates($%)                                                             
      }->();
 
     if ($g->io)                                                                 # Circle for io pin
-     {$s->circle(cx=>$x+1/2, cy=>$y+1/2, r=>1/2, fill=>"white", stroke=>$color);
+     {$s->circle(cx=>$x+1/2, cy=>$y+1/2, r=>1/2,   fill=>$op0, stroke=>$color);
      }
     else                                                                        # Rectangle for non io gate
-     {$s->rect(x=>$x, y=>$y, width=>$w, height=>1, fill=>"white", stroke=>$color);
+     {$s->rect(x=>$x, y=>$y, width=>$w, height=>1, fill=>$op0, stroke=>$color);
      }
 
     if (defined(my $v = $$values{$g->output}))                                  # Value of gate if known
      {$s->text(x=>$x, y=>$y, fill=>"black", stroke_width=>$Fw, font_size=>$Fs,
         text_anchor=>"start", dominant_baseline=>"hanging",
-       cdata=>$v ? "1" : "0");
+        cdata=>$v ? "1" : "0");
      }
 
     $s->text(x=>$x+$w/2, y=>$y+5/12, fill=>"red",      text_anchor=>"middle", dominant_baseline=>"auto",    cdata=>$g->type);
@@ -497,12 +498,18 @@ my sub svgGates($%)                                                             
 
         my $yc = $Y < $y ? q(purple) : q(darkRed);                              # Vertical lines
         $s->line(x1=>$cx,   x2=>$cx, y1=>$cy, y2=>$y+$dy, stroke=>$yc);         # Incoming value along vertical line
-        $s->circle(cx=>$cx, cy=>$cy, r=>0.04, fill=>"black");                   # Line corner
+        $s->circle(cx=>$cx, cy=>$cy,    r=>0.04, fill=>"black");                # Line corner
+        $s->circle(cx=>$cx, cy=>$y+$dy, r=>0.04, fill=>"blue");                 # Line entering chip
+        $s->circle(cx=>$X+$W,  cy=>$cy, r=>0.04, fill=>"red");                  # Line exiting chip
 
         if (defined(my $v = $$values{$G->output}))                              # Value of gate if known
-         {$s->text(x=>$cx, y=>$y+$dy, fill=>"black", stroke_width=>$fw, font_size=>$fs,
-            text_anchor=>"end", $X < $x ? (dominant_baseline=>"hanging") : (),
-            cdata=>$v ? "1" : "0");
+         {$s->text(
+            x           => $cx,
+            y           => $y+$dy+($X < $x ? 0.1 : -0.1),
+            fill        => "black", stroke_width=>$fw, font_size=>$fs,
+            text_anchor => "middle",
+            $X < $x ? (dominant_baseline=>"hanging") : (),
+            cdata       =>  $v ? "1" : "0");
          }
        }
      }
@@ -510,9 +517,9 @@ my sub svgGates($%)                                                             
    }
  }
 
-#D1 Simulate                                                                    # Simulate the behavior of the chip.
+#D1 Simulate                                                                    # Simulate the behavior of the L<chip>.
 
-sub simulate($$%)                                                               # Simulate the set of gates until nothing changes.  This should be possible as feedback loops are banned.
+sub simulate($$%)                                                               # Simulate the action of the L<lgs> on a L<chip> for a given set of inputs until the output values of each L<lg> stabilize.
  {my ($chip, $inputs, %options) = @_;                                           # Chip, Hash of input names to values, options
 
   my $c = merge($chip, %options);                                               # Merge all the sub chips to make one chip with no sub chips
@@ -547,12 +554,11 @@ sub simulate($$%)                                                               
 
 =head1 Name
 
-Silicon::Chip - Design a silicon CHIP by combining lgs and sub CHIPS .
+Silicon::Chip - Design a silicon L<chip> by combining L<lgs> and sub L<chip>s.
 
 =head1 Synopsis
 
 Create and simulate a 4 bit comparator:
-
 
   use Silicon::Chip;
 
@@ -569,11 +575,13 @@ Create and simulate a 4 bit comparator:
   is_deeply($s->steps, 3);                                                      # Three steps
   is_deeply($s->values->{out}, 1);                                              # Result is 1
 
+To obtain:
+
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare4.svg">
 
 =head1 Description
 
-Design a silicon CHIP by combining lgs and sub CHIPS .
+Design a silicon L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> by combining L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> and sub L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>s.
 
 
 Version 20231026.
@@ -586,11 +594,11 @@ module.  For an alphabetic listing of all methods by name see L<Index|/Index>.
 
 =head1 Construct
 
-Construct a representation of a digital circuit using standard gates.
+Construct a silicon L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> using standard L<logic gates|https://en.wikipedia.org/wiki/Logic_gate>.
 
 =head2 newChip(%options)
 
-Create a new chip.
+Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
      Parameter  Description
   1  %options   Options
@@ -599,20 +607,7 @@ B<Example:>
 
 
   if (1)                                                                           Single AND gate
-  
-   {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-    $c->gate("input",  "i1");
-    $c->gate("input",  "i2");
-    $c->gate("and",    "and1", {1=>q(i1), 2=>q(i2)});
-    $c->gate("output", "o", "and1");
-    my $s = $c->simulate({i1=>1, i2=>1});
-    ok($s->steps          == 2);
-    ok($s->values->{and1} == 1);
-   }
-  
-  if (1)                                                                           Single AND gate
-  
    {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->input ("i1");
@@ -623,11 +618,11 @@ B<Example:>
     ok($s->steps          == 2);
     ok($s->values->{and1} == 1);
    }
-  
+
 
 =head2 gate($chip, $type, $output, $inputs)
 
-A gate of some sort to be added to the chip.
+A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
      Parameter  Description
   1  $chip      Chip
@@ -638,32 +633,32 @@ A gate of some sort to be added to the chip.
 B<Example:>
 
 
-  
+
   if (1)                                                                           Two AND gates driving an OR gate a tree  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
    {my $c = newChip;
-  
+
     $c->gate("input",  "i11");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("input",  "i12");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("and",    "and1", {1=>q(i11),  2=>q(i12)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("input",  "i21");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("input",  "i22");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("and",    "and2", {1=>q(i21),  2=>q(i22)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("or",     "or",   {1=>q(and1), 2=>q(and2)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("output", "o", "or");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $s = $c->simulate({i11=>1, i12=>1, i21=>1, i22=>1});
@@ -676,11 +671,11 @@ B<Example:>
     ok($s->steps         == 3);
     ok($s->values->{o}   == 0);
    }
-  
+
 
 =head2 install($chip, $subChip, $inputs, $outputs, %options)
 
-Install a chip within another chip specifying the connections between the inner and outer chip.  The same chip can be installed multiple times as each chip description is read only.
+Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.  The same L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> can be installed multiple times as each L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> description is read only.
 
      Parameter  Description
   1  $chip      Outer chip
@@ -697,43 +692,31 @@ B<Example:>
        $i->gate("input", "Ii");
        $i->gate("not",   "In", "Ii");
        $i->gate("output","Io", "In");
-  
+
     my $o = newChip(name=>"outer");
        $o->gate("input",    "Oi1");
        $o->gate("output",   "Oo1", "Oi1");
        $o->gate("input",    "Oi2");
        $o->gate("output",    "Oo", "Oi2");
-  
-  
+
+
     $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
-  
+
     is_deeply($s, {steps  => 2,
       changed => { "(inner 1 In)" => 0,             "Oo" => 1 },
       values  => { "(inner 1 In)" => 0, "Oi1" => 1, "Oo" => 0 }});
    }
-  
 
-=head2 merge($chip, %options)
-
-Merge a chip and all its sub chips to make a single chip
-
-     Parameter  Description
-  1  $chip      Chip
-  2  %options   Options
-
-=head1 Visualize
-
-Visualize the chip in various ways.
 
 =head1 Simulate
 
-Simulate the behavior of the chip.
+Simulate the behavior of the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
 =head2 simulate($chip, $inputs, %options)
 
-Simulate the set of gates until nothing changes.  This should be possible as feedback loops are banned.
+Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
 
      Parameter  Description
   1  $chip      Chip
@@ -743,12 +726,12 @@ Simulate the set of gates until nothing changes.  This should be possible as fee
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $i = newChip(name=>"inner");
        $i->gate("input", "Ii");
        $i->gate("not",   "In", "Ii");
        $i->gate("output","Io", "In");
-  
+
     my $o = newChip(name=>"outer");
        $o->gate("input",    "Oi1");
        $o->gate("output",   "Oo1", "Oi1");
@@ -758,17 +741,17 @@ B<Example:>
        $o->gate("output",   "Oo3", "Oi3");
        $o->gate("input",    "Oi4");
        $o->gate("output",    "Oo", "Oi4");
-  
+
     $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});
     $o->install($i, {Ii=>"Oo2"}, {Io=>"Oi3"});
     $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
-  
+
     my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->values->{Oo}, 0);
     is_deeply($s->steps,        4);
    }
-  
+
 
 
 =head1 Hash Definitions
@@ -809,7 +792,7 @@ Title if known
 
 =head2 AUTOLOAD($chip, @options)
 
-Autoload by gate name to provide a more readable way to specify the gates on a chip.
+Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provide a more readable way to specify the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
      Parameter  Description
   1  $chip      Chip
@@ -819,17 +802,15 @@ Autoload by gate name to provide a more readable way to specify the gates on a c
 =head1 Index
 
 
-1 L<AUTOLOAD|/AUTOLOAD> - Autoload by gate name to provide a more readable way to specify the gates on a chip.
+1 L<AUTOLOAD|/AUTOLOAD> - Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provide a more readable way to specify the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-2 L<gate|/gate> - A gate of some sort to be added to the chip.
+2 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-3 L<install|/install> - Install a chip within another chip specifying the connections between the inner and outer chip.
+3 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-4 L<merge|/merge> - Merge a chip and all its sub chips to make a single chip
+4 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-5 L<newChip|/newChip> - Create a new chip.
-
-6 L<simulate|/simulate> - Simulate the set of gates until nothing changes.
+5 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
 
 =head1 Installation
 
@@ -884,18 +865,6 @@ if (1)                                                                          
   $c->gate("output", "o",    q(an1));
   eval {$c->simulate({i1=>1, i2=>1})};
   ok($@ =~ m(No output driving input 'an1' on gate 'o')i);
- }
-
-#latest:;
-if (1)                                                                          #TnewChip Single AND gate
- {my $c = Silicon::Chip::newChip;
-  $c->gate("input",  "i1");
-  $c->gate("input",  "i2");
-  $c->gate("and",    "and1", {1=>q(i1), 2=>q(i2)});
-  $c->gate("output", "o", "and1");
-  my $s = $c->simulate({i1=>1, i2=>1});
-  ok($s->steps          == 2);
-  ok($s->values->{and1} == 1);
  }
 
 #latest:;
