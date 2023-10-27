@@ -583,7 +583,7 @@ Create and simulate a 4 bit comparator by running this code:
 
 To obtain:
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare4.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Comparator4.svg">
 
 =head1 Description
 
@@ -948,7 +948,7 @@ if (1)                                                                          
                           b1=>1, b2=>0, b3=>1, b4=>0})->values->{out}, 0);
  }
 
-#latest:;
+latest:;
 if (1)                                                                          # Compare 4 bit 'a' greater than 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
  {my $B = 4;
   my $c = Silicon::Chip::newChip(title=>"$B Bit Compare");
@@ -964,14 +964,15 @@ if (1)                                                                          
   $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
   $c->gate("output", "out", "or");                                              # Output 1 if a > b else 0
 
-  my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,
-                        b1=>1, b2=>0, b3=>1, b4=>0});
+  my %a = map {("a$_"=>0)} 1..$B;
+  my %b = map {("b$_"=>0)} 1..$B;
+
+  my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1});
   is_deeply($s->values->{out}, 0);
 
-  my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
-                        b1=>1, b2=>0, b3=>1, b4=>0},
-                        svg=>"svg/Compare$B");                                  # Svg drawing of layout
+  my $t = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/Comparator$B");             # Svg drawing of layout
   is_deeply($t->values->{out}, 1);
+exit;
  }
 
 #latest:;
