@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------
 use v5.34;
 package Silicon::Chip;
-our $VERSION = 20231026;                                                        # Version
+our $VERSION = 20231027;                                                        # Version
 use warnings FATAL => qw(all);
 use strict;
 use Carp;
@@ -562,23 +562,24 @@ Silicon::Chip - Design a L<silicon|https://en.wikipedia.org/wiki/Silicon> L<chip
 
 Create and simulate a 4 bit comparator by running this code:
 
-  use Silicon::Chip;
-
   my $B = 4;
-  my $c = Silicon::Chip::newChip(title=>"$B Bit Comparator");
+  my $c = Silicon::Chip::newChip(title=>"$B Bit Compare");
 
-  $c->input ("a$_")                       for 1..$B;                            # First number
-  $c->input ("b$_")                       for 1..$B;                            # Second number
-  $c->nxor  ("e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                            # Test each bit for equality
-  $c->and   ("and", {map{$_=>"e$_"}           1..$B});                          # And tests together to get equality
-  $c->output("out", "and");
+  $c->gate("input",  "a$_") for 1..$B;                                          # First number
+  $c->gate("input",  "b$_") for 1..$B;                                          # Second number
+  $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;                  # Test each bit for equality
+  $c->gate("gt",     "g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit pair for greater
 
-  my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
+  for my $b(2..$B)
+   {$c->gate("and",  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});            # Greater on one bit and all preceding bits are equal
+   }
+  $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
+  $c->gate("output", "out", "or");                                              # Output 1 if a > b else 0
+
+  my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                         b1=>1, b2=>0, b3=>1, b4=>0},
-                        svg=>"svg/Compare4");                                   # Svg drawing of layout
-
-  is_deeply($s->steps, 3);                                                      # Three steps
-  is_deeply($s->values->{out}, 1);                                              # Result is 1
+                        svg=>"svg/Compare$B");                                  # Svg drawing of layout
+  is_deeply($t->values->{out}, 1);
 
 To obtain:
 
@@ -589,7 +590,7 @@ To obtain:
 Design a L<silicon|https://en.wikipedia.org/wiki/Silicon> L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> by combining L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> and sub L<chips|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
 
-Version 20231026.
+Version 20231027.
 
 
 The following sections describe the methods in each functional area of this
@@ -927,9 +928,9 @@ if (1)                                                                          
 
 
 #latest:;
-if (1)                                                                          # 4 bit comparator
+if (1)                                                                          # 4 bit equal
  {my $B = 4;
-  my $c = Silicon::Chip::newChip(title=>"$B Bit Comparator");
+  my $c = Silicon::Chip::newChip(title=>"$B Bit Equals");
   $c->input ("a$_")                       for 1..$B;                            # First number
   $c->input ("b$_")                       for 1..$B;                            # Second number
   $c->nxor  ("e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                            # Test each bit for equality
@@ -938,7 +939,7 @@ if (1)                                                                          
 
   my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                         b1=>1, b2=>0, b3=>1, b4=>0},
-                        svg=>"svg/Compare4");                                   # Svg drawing of layout
+                        svg=>"svg/Equals$B");                                   # Svg drawing of layout
 
   is_deeply($s->steps, 3);                                                      # Three steps
   is_deeply($s->values->{out}, 1);                                              # Result is 1
@@ -948,22 +949,29 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          # 4 bit 'a' greater than 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+if (1)                                                                          # Compare 4 bit 'a' greater than 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
  {my $B = 4;
-  my $c = Silicon::Chip::newChip;
+  my $c = Silicon::Chip::newChip(title=>"$B Bit Compare");
+
   $c->gate("input",  "a$_") for 1..$B;                                          # First number
   $c->gate("input",  "b$_") for 1..$B;                                          # Second number
   $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;                  # Test each bit for equality
   $c->gate("gt",     "g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit pair for greater
-  $c->gate("and",    "c2",  {1=>"e1", 2=>                  "g2"});              # Greater on bit 2 and all preceding bits are equal
-  $c->gate("and",    "c3",  {1=>"e1", 2=>"e2", 3=>         "g3"});              # Greater on bit 3 and all preceding bits are equal
-  $c->gate("and",    "c4",  {1=>"e1", 2=>"e2", 3=>"e3", 4=>"g4"});              # Greater on bit 4 and all preceding bits are equal
-  $c->gate("or",     "or",  {1=>"g1", 2=>"c2", 3=>"c3", 4=>"c4"});              # Any set bit indicates that 'a' is greater than 'b'
-  $c->gate("output", "out", "or");
-  is_deeply($c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,
-                          b1=>1, b2=>0, b3=>1, b4=>0})->values->{out}, 0);
-  is_deeply($c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
-                          b1=>1, b2=>0, b3=>1, b4=>0})->values->{out}, 1);
+
+  for my $b(2..$B)
+   {$c->gate("and",  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});            # Greater on one bit and all preceding bits are equal
+   }
+  $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
+  $c->gate("output", "out", "or");                                              # Output 1 if a > b else 0
+
+  my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,
+                        b1=>1, b2=>0, b3=>1, b4=>0});
+  is_deeply($s->values->{out}, 0);
+
+  my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
+                        b1=>1, b2=>0, b3=>1, b4=>0},
+                        svg=>"svg/Compare$B");                                  # Svg drawing of layout
+  is_deeply($t->values->{out}, 1);
  }
 
 #latest:;
