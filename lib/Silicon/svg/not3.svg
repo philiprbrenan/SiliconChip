@@ -1,41 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg height="100%" viewBox="0 0 6.5 6" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg height="100%" viewBox="0 0 6 6" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="3" y="1.5">4 steps</text>
-<rect fill="white" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="1" y="1"/>
+<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="1" y="1"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="1" y="1">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="1.41666666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="1.58333333333333">(inner 1 In)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="1.5" y1="0.5" y2="0.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="1.5" x2="1.5" y1="0.5" y2="1"/>
 <circle cx="1.5" cy="0.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="1.5" y="1">1</text>
-<rect fill="white" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="2" y="2"/>
+<circle cx="1.5" cy="1" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="1" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="1.1">1</text>
+<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="2" y="2"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="2" y="2">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="2.41666666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="2.58333333333333">(inner 2 In)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="2" x2="2.5" y1="1.5" y2="1.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="2.5" x2="2.5" y1="1.5" y2="2"/>
 <circle cx="2.5" cy="1.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="2.5" y="2">0</text>
-<rect fill="white" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="3" y="3"/>
+<circle cx="2.5" cy="2" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="2" cy="1.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="2.1">0</text>
+<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="3" y="3"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="3" y="3">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="3.41666666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="3.58333333333333">(inner 3 In)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="3" x2="3.5" y1="2.5" y2="2.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="3.5" x2="3.5" y1="2.5" y2="3"/>
 <circle cx="3.5" cy="2.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="3.5" y="3">1</text>
-<circle cx="0.5" cy="0.5" fill="white" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
+<circle cx="3.5" cy="3" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="3" cy="2.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="3.1">1</text>
+<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="0">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.583333333333333">Oi1</text>
-<circle cx="5.5" cy="4.5" fill="white" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="5" y="4">0</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="4.41666666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="4.58333333333333">Oo</text>
-<line font-size="0.2" stroke="black" stroke-width="0.02" x1="4" x2="5.5" y1="3.5" y2="3.5"/>
-<line font-size="0.2" stroke="purple" stroke-width="0.02" x1="5.5" x2="5.5" y1="3.5" y2="4"/>
-<circle cx="5.5" cy="3.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="5.5" y="4">0</text>
+<circle cx="4.5" cy="4.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="4" y="4">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="4.41666666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="4.58333333333333">Oo</text>
+<line font-size="0.2" stroke="black" stroke-width="0.02" x1="4" x2="4.5" y1="3.5" y2="3.5"/>
+<line font-size="0.2" stroke="purple" stroke-width="0.02" x1="4.5" x2="4.5" y1="3.5" y2="4"/>
+<circle cx="4.5" cy="3.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="4.5" cy="4" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="4" cy="3.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="4.1">0</text>
 </svg>
