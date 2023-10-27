@@ -158,6 +158,36 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
      }
     
 
+# Basic Circuits
+
+Some well known basic circuits.
+
+## compareGt($bits, %options)
+
+Comparator to compare two unsigned binary integers of a specified width.
+
+       Parameter  Description
+    1  $bits      Bits
+    2  %options   Options
+
+**Example:**
+
+    if (1)                                                                           Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+     {my $B = 8;
+    
+      my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    
+      my %a = map {("a$_"=>0)} 1..$B;
+      my %b = map {("b$_"=>0)} 1..$B;
+    
+    # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
+      my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
+      is_deeply($s->values->{out}, 1);
+      is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+     }
+    
+
 # Simulate
 
 Simulate the behavior of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
@@ -238,13 +268,15 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 1 [AUTOLOAD](#autoload) - Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provide a more readable way to specify the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-2 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+2 [compareGt](#comparegt) - Comparator to compare two unsigned binary integers of a specified width.
 
-3 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+3 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-4 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+4 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-5 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
+5 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+
+6 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
 
 # Installation
 
