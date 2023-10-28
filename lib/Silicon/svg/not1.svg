@@ -8,7 +8,7 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="1.58333333333333">(inner 1 In)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="1.5" y1="0.5" y2="0.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="1.5" x2="1.5" y1="0.5" y2="1"/>
-<circle cx="1.5" cy="0.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="1.5" cy="0.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="1.5" cy="1" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="1.1">1</text>
