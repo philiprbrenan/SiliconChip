@@ -57,7 +57,7 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
 **Example:**
 
-    if (1)                                                                           Single AND gate
+    if (1)                                                                           # Single AND gate
 
      {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
@@ -82,7 +82,7 @@ A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be adde
 
 **Example:**
 
-    if (1)                                                                           Two AND gates driving an OR gate a tree  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+    if (1)                                                                           # Two AND gates driving an OR gate a tree  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
      {my $c = newChip;
 
@@ -133,7 +133,7 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
 
 **Example:**
 
-    if (1)                                                                           Install one inside another chip, specifically one chip that performs NOT is installed three times sequentially to flip a value
+    if (1)                                                                           # Install one inside another chip, specifically one chip that performs NOT is installed three times sequentially to flip a value
      {my $i = newChip(name=>"inner");
          $i->gate("input", "Ii");
          $i->gate("not",   "In", "Ii");
@@ -161,7 +161,7 @@ Some well known basic circuits.
 
 ## compareGt($bits, %options)
 
-Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
+Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**. Output **1** if **a** > **b** else **0**
 
        Parameter  Description
     1  $bits      Bits
@@ -169,7 +169,7 @@ Compare two unsigned binary integers "a", "b" of a specified width for "a" great
 
 **Example:**
 
-    if (1)                                                                           Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+    if (1)                                                                           # Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
      {my $B = 8;
 
       my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
@@ -182,6 +182,31 @@ Compare two unsigned binary integers "a", "b" of a specified width for "a" great
       my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
       is_deeply($s->values->{out}, 1);
       is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+     }
+
+## pointToInteger($bits, %options)
+
+Convert a mask known to have at most a single bit on - also known as a **point** - to an output number representing the location in the mask of the bit set to **1**. If no such bit exists in the point then output is **0**.
+
+       Parameter  Description
+    1  $bits      Bits
+    2  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $B = 4;
+
+      my $c = pointToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+      my %i = map {(sprintf("i%02d", $_)=>0)} 1..2**$B-1;
+         $i{i05} = 1;
+      my $s = $c->simulate(\%i, svg=>"svg/point2");
+      is_deeply($s->steps, 2);
+      is_deeply($s->values->{o01}, 1);
+      is_deeply($s->values->{o02}, 0);
+      is_deeply($s->values->{o03}, 1);
+      is_deeply($s->values->{o04}, 0);
      }
 
 # Simulate
@@ -263,7 +288,7 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 1 [AUTOLOAD](#autoload) - Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provide a more readable way to specify the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-2 [compareGt](#comparegt) - Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
+2 [compareGt](#comparegt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**.
 
 3 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
@@ -271,7 +296,9 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 5 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-6 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
+6 [pointToInteger](#pointtointeger) - Convert a mask known to have at most a single bit on - also known as a **point** - to an output number representing the location in the mask of the bit set to **1**.
+
+7 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
 
 # Installation
 
