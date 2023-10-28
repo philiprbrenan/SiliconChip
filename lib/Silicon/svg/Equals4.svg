@@ -25,25 +25,25 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="11" y="12.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="3" x2="9.5" y1="8.5" y2="8.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="9.5" x2="9.5" y1="8.5" y2="12"/>
-<circle cx="9.5" cy="8.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="9.5" cy="8.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="9.5" cy="12" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="3" cy="8.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="9.5" y="12.1">1</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="5" x2="10.5" y1="9.5" y2="9.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="10.5" x2="10.5" y1="9.5" y2="12"/>
-<circle cx="10.5" cy="9.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="10.5" cy="9.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="10.5" cy="12" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="5" cy="9.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="10.5" y="12.1">1</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="7" x2="11.5" y1="10.5" y2="10.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="11.5" x2="11.5" y1="10.5" y2="12"/>
-<circle cx="11.5" cy="10.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="11.5" cy="10.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="11.5" cy="12" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="7" cy="10.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="11.5" y="12.1">1</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="9" x2="12.5" y1="11.5" y2="11.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="12.5" x2="12.5" y1="11.5" y2="12"/>
-<circle cx="12.5" cy="11.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="12.5" cy="11.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="12.5" cy="12" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="9" cy="11.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="12.5" y="12.1">1</text>
@@ -69,13 +69,13 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2" y="8.58333333333333">e1</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="1.5" y1="0.5" y2="0.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="1.5" x2="1.5" y1="0.5" y2="8"/>
-<circle cx="1.5" cy="0.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="1.5" cy="0.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="1.5" cy="8" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="8.1">1</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="2.5" y1="4.5" y2="4.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="2.5" x2="2.5" y1="4.5" y2="8"/>
-<circle cx="2.5" cy="4.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="2.5" cy="4.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="2.5" cy="8" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="4.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="8.1">1</text>
@@ -85,13 +85,13 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4" y="9.58333333333333">e2</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="3.5" y1="1.5" y2="1.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="3.5" x2="3.5" y1="1.5" y2="9"/>
-<circle cx="3.5" cy="1.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="3.5" cy="1.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="3.5" cy="9" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="1.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="9.1">0</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="4.5" y1="5.5" y2="5.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="4.5" x2="4.5" y1="5.5" y2="9"/>
-<circle cx="4.5" cy="5.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="4.5" cy="5.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="4.5" cy="9" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="5.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="9.1">0</text>
@@ -101,13 +101,13 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="6" y="10.5833333333333">e3</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="5.5" y1="2.5" y2="2.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="5.5" x2="5.5" y1="2.5" y2="10"/>
-<circle cx="5.5" cy="2.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="5.5" cy="2.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="5.5" cy="10" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="2.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="10.1">1</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="6.5" y1="6.5" y2="6.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="6.5" x2="6.5" y1="6.5" y2="10"/>
-<circle cx="6.5" cy="6.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="6.5" cy="6.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="6.5" cy="10" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="6.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="6.5" y="10.1">1</text>
@@ -117,13 +117,13 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="8" y="11.5833333333333">e4</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="7.5" y1="3.5" y2="3.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="7.5" x2="7.5" y1="3.5" y2="11"/>
-<circle cx="7.5" cy="3.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="7.5" cy="3.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="7.5" cy="11" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="3.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="7.5" y="11.1">0</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="8.5" y1="7.5" y2="7.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="8.5" x2="8.5" y1="7.5" y2="11"/>
-<circle cx="8.5" cy="7.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="8.5" cy="7.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <circle cx="8.5" cy="11" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="7.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="8.5" y="11.1">0</text>
