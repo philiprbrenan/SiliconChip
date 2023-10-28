@@ -188,7 +188,7 @@ Compare two unsigned binary integers **a**, **b** of a specified width for **a**
 
 ## pointToInteger($bits, %options)
 
-Convert a mask known to have at most a single bit on - also known as a **point** - to an output number representing the location in the mask of the bit set to **1**. If no such bit exists in the point then output is **0**.
+Convert a mask known to have at most a single bit on - also known as a **point mask** - to an output number representing the location in the mask of the bit set to **1**. If no such bit exists in the point mask then output is **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -234,6 +234,39 @@ Convert a monotone mask to an output number representing the location in the mas
       is_deeply($s->values->{o02}, 1);
       is_deeply($s->values->{o03}, 1);
       is_deeply($s->values->{o04}, 0);
+     }
+
+## chooseWordUnderMask($words, $bits, %options)
+
+Choose one of a specified number of words each of a specified width using a point mask.
+
+       Parameter  Description
+    1  $words     Number of words
+    2  $bits      Bits in each word
+    3  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $B = 2; my $W = 2;
+
+      my $c = chooseWordUnderMask($W, $B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+      my %i;
+      for   my $w(1..$W)
+       {my $s = sprintf "%0${B}b", $w;
+        for my $b(1..$B)
+         {my $c = sprintf "w%1d_%1d", $w, $b;
+          $i{$c} = substr($s, -$b, 1);
+         }
+       }
+      my %m = map{("m$_"=>0)} 1..$W;
+
+      my $s = $c->simulate({%i, %m, "m1"=>1}, svg=>"svg/choose_${W}_$B");
+
+      is_deeply($s->steps, 3);
+      is_deeply($s->values->{o1}, 1);
+      is_deeply($s->values->{o2}, 0);
      }
 
 # Simulate
@@ -315,19 +348,21 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 1 [AUTOLOAD](#autoload) - Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provide a more readable way to specify the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-2 [compareGt](#comparegt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**.
+2 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words each of a specified width using a point mask.
 
-3 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+3 [compareGt](#comparegt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**.
 
-4 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+4 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-5 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask to an output number representing the location in the mask of the bit set to **1**.
+5 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-6 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+6 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask to an output number representing the location in the mask of the bit set to **1**.
 
-7 [pointToInteger](#pointtointeger) - Convert a mask known to have at most a single bit on - also known as a **point** - to an output number representing the location in the mask of the bit set to **1**.
+7 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-8 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
+8 [pointToInteger](#pointtointeger) - Convert a mask known to have at most a single bit on - also known as a **point mask** - to an output number representing the location in the mask of the bit set to **1**.
+
+9 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
 
 # Installation
 
