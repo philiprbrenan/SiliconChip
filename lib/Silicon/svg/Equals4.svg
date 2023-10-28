@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg height="100%" viewBox="0 0 15 15" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="middle" x="6" y="1.5">4 Bit Equals</text>
-<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="12" y="1.5">3 steps</text>
+<svg height="100%" viewBox="0 0 14 14" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="14" y="0.5">4 Bit Equals</text>
+<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="14" y="1.5">3 steps</text>
 <circle cx="0.5" cy="0.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="0">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
@@ -127,14 +127,11 @@
 <circle cx="8.5" cy="11" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1" cy="7.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="8.5" y="11.1">0</text>
-<circle cx="13.5" cy="13.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="13" y="13">1</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="13.5" y="13.4166666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="13.5" y="13.5833333333333">out</text>
-<line font-size="0.2" stroke="black" stroke-width="0.02" x1="13" x2="13.5" y1="12.5" y2="12.5"/>
-<line font-size="0.2" stroke="purple" stroke-width="0.02" x1="13.5" x2="13.5" y1="12.5" y2="13"/>
-<circle cx="13.5" cy="12.5" fill="black" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="13.5" cy="13" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="13.5" cy="12.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="14" y="12">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="13.5" y="12.4166666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="13.5" y="12.5833333333333">out</text>
+<line font-size="0.2" stroke="black" stroke-width="0.02" x1="13" x2="13" y1="12.5" y2="12.5"/>
+<circle cx="13" cy="12.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="13" cy="12.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="13.5" y="13.1">1</text>
 </svg>
