@@ -496,7 +496,7 @@ my sub svgGates($%)                                                             
 
 #D1 Basic Circuits                                                              # Some well known basic circuits.
 
-sub compareGt($%)                                                               # Comparator to compare two unsigned binary integers of a specified width.
+sub compareGt($%)                                                               # Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
   my $C = Silicon::Chip::newChip(title=>"$B Bit Compare");
@@ -605,7 +605,7 @@ Create and simulate a 4 bit comparator by running this code:
 
 To obtain:
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Comparator4.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare4.svg">
 
 =head1 Description
 
@@ -744,7 +744,7 @@ Some well known basic circuits.
 
 =head2 compareGt($bits, %options)
 
-Comparator to compare two unsigned binary integers of a specified width.
+Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
 
      Parameter  Description
   1  $bits      Bits
@@ -863,7 +863,7 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 1 L<AUTOLOAD|/AUTOLOAD> - Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provide a more readable way to specify the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-2 L<compareGt|/compareGt> - Comparator to compare two unsigned binary integers of a specified width.
+2 L<compareGt|/compareGt> - Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
 
 3 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
@@ -1025,7 +1025,7 @@ if (1)                                                                          
   my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1});                             # Two equal numbers
   is_deeply($s->values->{out}, 0);
 
-  my $t = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/Comparator$B");             # Svg drawing of layout
+  my $t = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/Compare$B");                # Svg drawing of layout
   is_deeply($t->values->{out}, 1);
  }
 
