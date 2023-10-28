@@ -581,7 +581,7 @@ sub monotoneMaskToInteger($%)                                                   
      }
    }
 
-  my $C = Silicon::Chip::newChip(title=>"$bits bits point to integer");
+  my $C = Silicon::Chip::newChip(title=>"$bits monotone mask to integer");
 
   $C->input   (n('i', $_))             for 1..$B;                               # Input gates
   $C->not     (n('n', $_), n('i', $_)) for 1..$B-1;                             # Not of each input
