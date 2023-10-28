@@ -8,25 +8,28 @@ Silicon::Chip - Design a [silicon](https://en.wikipedia.org/wiki/Silicon) [chip]
 
 # Synopsis
 
-Create and simulate a 4 bit comparator by running this code:
+Create and simulate the operation of a 4-bit comparator. Given two 4-bit
+unsigned integers, the comparator indicates whether the first integer is
+greater than the second:
 
     my $B = 4;
     my $c = Silicon::Chip::newChip(title=>"$B Bit Compare");
 
-    $c->input( "a$_") for 1..$B;                                          # First number
-    $c->input( "b$_") for 1..$B;                                          # Second number
-    $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;                  # Test each bit for equality
-    $c->gate("gt",     "g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit pair for greater
+    $c->input( "a$_") for 1..$B;                                    # First number
+    $c->input( "b$_") for 1..$B;                                    # Second number
+    $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;    # Test each bit for equality
+    $c->gate("gt",     "g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;      # Test each bit pair for greater
 
     for my $b(2..$B)
-     {$c->and(  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});            # Greater on one bit and all preceding bits are equal
+     {$c->and(  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});     # Greater on one bit and all preceding bits are equal
      }
-    $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
-    $c->output( "out", "or");                                              # Output 1 if a > b else 0
+
+    $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)}); # Any set bit indicates that 'a' is greater than 'b'
+    $c->output( "out", "or");                                       # Output 1 if a > b else 0
 
     my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                           b1=>1, b2=>0, b3=>1, b4=>0},
-                          svg=>"svg/Compare$B");                                  # Svg drawing of layout
+                          svg=>"svg/Compare$B");                    # Svg drawing of layout
     is_deeply($t->values->{out}, 1);
 
 To obtain:
@@ -149,9 +152,39 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
 
 Some well known basic circuits.
 
+## compareEq($bits, %options)
+
+Compare two unsigned binary integers **a**, **b** of a specified width for **a** equal to **b**. Output **1** if **a** is equal to **b** else **0**
+
+       Parameter  Description
+    1  $bits      Bits
+    2  %options   Options
+
+**Example:**
+
+    if (1)                                                                           # Compare 8 bit unsigned integers 'a' == 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+     {my $B = 4;
+    
+      my $c = Silicon::Chip::compareEq($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    
+      my %a = map {("a0$_"=>0)} 1..$B;
+      my %b = map {("b0$_"=>0)} 1..$B;
+    
+      my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1}, svg=>"svg/CompareEq$B");   # Svg drawing of layout
+    # my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1});                           # Equal: a == b
+      is_deeply($s->values->{out}, 1);                                              # Equal
+      is_deeply($s->steps,         3);                                              # Which goes to show that the comparator operates in O(4) time
+    
+      my $t = $c->simulate({%a, %b, "b02"=>1});                                     # Less: a < b
+      is_deeply($t->values->{out}, 0);                                              # Not equal
+      is_deeply($t->steps,         3);                                              # Which goes to show that the comparator operates in O(4) time
+     }
+    
+
 ## compareGt($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**. Output **1** if **a** > **b** else **0**
+Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**. Output **1** if **a** is greater than **b** else **0**
 
        Parameter  Description
     1  $bits      Bits
@@ -165,13 +198,47 @@ Compare two unsigned binary integers **a**, **b** of a specified width for **a**
       my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     
-      my %a = map {("a$_"=>0)} 1..$B;
-      my %b = map {("b$_"=>0)} 1..$B;
+      my %a = map {("a00$_"=>0)} 1..$B;
+      my %b = map {("b00$_"=>0)} 1..$B;
     
-    # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
-      my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
+    # my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareGt$B");            # Svg drawing of layout
+      my $s = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
       is_deeply($s->values->{out}, 1);
       is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+    
+      my $t = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+      is_deeply($t->values->{out}, 0);
+      is_deeply($t->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+     }
+    
+
+## compareLt($bits, %options)
+
+Compare two unsigned binary integers **a**, **b** of a specified width for **a** less than **b**. Output **1** if **a** is less than **b** else **0**
+
+       Parameter  Description
+    1  $bits      Bits
+    2  %options   Options
+
+**Example:**
+
+    if (1)                                                                           # Compare 8 bit unsigned integers 'a' < 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+     {my $B = 8;
+    
+      my $c = Silicon::Chip::compareLt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    
+      my %a = map {("a00$_"=>0)} 1..$B;
+      my %b = map {("b00$_"=>0)} 1..$B;
+    
+    # my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareLt$B");            # Svg drawing of layout
+      my $s = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+      is_deeply($s->values->{out}, 1);
+      is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+    
+      my $t = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+      is_deeply($t->values->{out}, 0);
+      is_deeply($t->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
      }
     
 
@@ -263,6 +330,16 @@ Choose one of a specified number of words each of a specified width using a poin
      }
     
 
+## findWord($key, $words, $bits, %options)
+
+Choose one of a specified number of words each of a specified width using a ket.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+
+       Parameter  Description
+    1  $key       Key
+    2  $words     Number of words
+    3  $bits      Bits in each word and key
+    4  %options   Options
+
 # Simulate
 
 Simulate the behavior of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
@@ -346,19 +423,25 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 2 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words each of a specified width using a point mask.
 
-3 [compareGt](#comparegt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**.
+3 [compareEq](#compareeq) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** equal to **b**.
 
-4 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+4 [compareGt](#comparegt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**.
 
-5 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+5 [compareLt](#comparelt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** less than **b**.
 
-6 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask to an output number representing the location in the mask of the bit set to **1**.
+6 [findWord](#findword) - Choose one of a specified number of words each of a specified width using a ket.
 
-7 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+7 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-8 [pointToInteger](#pointtointeger) - Convert a mask known to have at most a single bit on - also known as a **point mask** - to an output number representing the location in the mask of the bit set to **1**.
+8 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-9 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
+9 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask to an output number representing the location in the mask of the bit set to **1**.
+
+10 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+
+11 [pointToInteger](#pointtointeger) - Convert a mask known to have at most a single bit on - also known as a **point mask** - to an output number representing the location in the mask of the bit set to **1**.
+
+12 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
 
 # Installation
 
