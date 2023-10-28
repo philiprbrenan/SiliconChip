@@ -509,8 +509,8 @@ my sub svgGates($%)                                                             
          }
        }
      }
-    owf(fpe($options{svg}, q(svg)), $s->print);
    }
+  owf(fpe($options{svg}, q(svg)), $s->print);
  }
 
 #D1 Basic Circuits                                                              # Some well known basic circuits.
@@ -534,7 +534,7 @@ sub compareGt($%)                                                               
   $C
  }
 
-sub pointToInteger($%)                                                          # Convert a mask known to have at most a single bit on - also known as a B<point> - to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output is B<0>.
+sub pointToInteger($%)                                                          # Convert a mask known to have at most a single bit on - also known as a B<point mask> - to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point mask then output is B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = 2**$bits-1;
   my $D = 1 + int($bits / 3);
@@ -596,7 +596,7 @@ sub monotoneMaskToInteger($%)                                                   
   $C
  }
 
-sub chooseWord($$%)                                                             # Choose one of a specified number of words each of a specified width.
+sub chooseWordUnderMask($$%)                                                    # Choose one of a specified number of words each of a specified width using a point mask.
  {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word, options
   my $D = 1 + int($bits / 3);
 
@@ -662,6 +662,7 @@ my sub simulationResults($%)                                                    
     changed => $options{changed},                                               # Last time this gate changed
     steps   => $options{steps},                                                 # Number of steps to reach stability
     values  => $options{values},                                                # Values of every output at point of stability
+    svg     => $options{svg},                                                   # Name of file containing svg drawing if requested
    );
  }
 
@@ -693,11 +694,13 @@ sub simulate($$%)                                                               
    {my %changes = simulationStep $c, \%values;                                  # Changes made
 
     if (!keys %changes)                                                         # Keep going until nothing changes
-     {if ($options{svg})                                                        # Draw the gates using svg with the final values attached
-       {svgGates $c, values=>\%values, changed=>\%changed, steps=>$t, %options;
+     {my $svg;
+      if ($options{svg})                                                        # Draw the gates using svg with the final values attached
+       {$svg = svgGates $c, values=>\%values, changed=>\%changed,
+                        steps=>$t, %options;
        }
       return simulationResults $chip, values=>\%values, changed=>\%changed,     # Keep going until nothing changes
-               steps=>$t;
+               steps=>$t, svg=>$svg;
      }
 
     for my $c(keys %changes)                                                    # Update state of circuit
@@ -912,7 +915,7 @@ B<Example:>
 
 =head2 pointToInteger($bits, %options)
 
-Convert a mask known to have at most a single bit on - also known as a B<point> - to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output is B<0>.
+Convert a mask known to have at most a single bit on - also known as a B<point mask> - to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point mask then output is B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -961,6 +964,41 @@ B<Example:>
     is_deeply($s->values->{o02}, 1);
     is_deeply($s->values->{o03}, 1);
     is_deeply($s->values->{o04}, 0);
+   }
+
+
+=head2 chooseWordUnderMask($words, $bits, %options)
+
+Choose one of a specified number of words each of a specified width using a point mask.
+
+     Parameter  Description
+  1  $words     Number of words
+  2  $bits      Bits in each word
+  3  %options   Options
+
+B<Example:>
+
+
+  if (1)
+   {my $B = 2; my $W = 2;
+
+    my $c = chooseWordUnderMask($W, $B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    my %i;
+    for   my $w(1..$W)
+     {my $s = sprintf "%0${B}b", $w;
+      for my $b(1..$B)
+       {my $c = sprintf "w%1d_%1d", $w, $b;
+        $i{$c} = substr($s, -$b, 1);
+       }
+     }
+    my %m = map{("m$_"=>0)} 1..$W;
+
+    my $s = $c->simulate({%i, %m, "m1"=>1}, svg=>"svg/choose_${W}_$B");
+
+    is_deeply($s->steps, 3);
+    is_deeply($s->values->{o1}, 1);
+    is_deeply($s->values->{o2}, 0);
    }
 
 
@@ -1058,19 +1096,21 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 1 L<AUTOLOAD|/AUTOLOAD> - Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provide a more readable way to specify the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-2 L<compareGt|/compareGt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>.
+2 L<chooseWordUnderMask|/chooseWordUnderMask> - Choose one of a specified number of words each of a specified width using a point mask.
 
-3 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+3 L<compareGt|/compareGt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>.
 
-4 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+4 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-5 L<monotoneMaskToInteger|/monotoneMaskToInteger> - Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>.
+5 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-6 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+6 L<monotoneMaskToInteger|/monotoneMaskToInteger> - Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>.
 
-7 L<pointToInteger|/pointToInteger> - Convert a mask known to have at most a single bit on - also known as a B<point> - to an output number representing the location in the mask of the bit set to B<1>.
+7 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-8 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
+8 L<pointToInteger|/pointToInteger> - Convert a mask known to have at most a single bit on - also known as a B<point mask> - to an output number representing the location in the mask of the bit set to B<1>.
+
+9 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
 
 =head1 Installation
 
@@ -1312,7 +1352,8 @@ if (1)                                                                          
 
   is_deeply($s, {steps  => 2,
     changed => { "(inner 1 In)" => 0,             "Oo" => 1 },
-    values  => { "(inner 1 In)" => 0, "Oi1" => 1, "Oo" => 0 }});
+    values  => { "(inner 1 In)" => 0, "Oi1" => 1, "Oo" => 0 },
+    svg     => "svg/not1.svg"});
  }
 
 #latest:;
@@ -1369,9 +1410,9 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          #Tchoose
+if (1)                                                                          #TchooseWordUnderMask
  {my $B = 2; my $W = 2;
-  my $c = chooseWord($W, $B);
+  my $c = chooseWordUnderMask($W, $B);
   my %i;
   for   my $w(1..$W)
    {my $s = sprintf "%0${B}b", $w;
