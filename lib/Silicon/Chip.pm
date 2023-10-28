@@ -489,7 +489,7 @@ my sub svgGates($%)                                                             
 
         if ($g->io != gateOuterOutput)                                          # Incoming value along vertical line - not needed for outer output gates
          {$s->line(x1=>$cx,   x2=>$cx, y1=>$cy, y2=>$y+$dy, stroke=>$yc);
-          $s->circle(cx=>$cx, cy=>$cy,    r=>0.04, fill=>"black");              # Line corner
+          $s->circle(cx=>$cx, cy=>$cy,    r=>0.06, fill=>"red");                # Line corner
           $s->circle(cx=>$x2, cy=>$y+$dy, r=>0.04, fill=>"blue");               # Line entering gate
          }
         else                                                                    # External output gate
@@ -596,6 +596,49 @@ sub monotoneMaskToInteger($%)                                                   
   $C
  }
 
+sub chooseWord($$%)                                                             # Choose one of a specified number of words each of a specified width.
+ {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word, options
+  my $D = 1 + int($bits / 3);
+
+  my sub n($$)                                                                  # Gate name from single index
+   {my ($c, $i) = @_;                                                           # Gate letter, gate number
+    sprintf "$c%0${D}d", $i
+   }
+
+  my sub nn($$$)                                                                # Gate name from double index
+   {my ($c, $i, $j) = @_;                                                       # Gate letter, gate number
+    sprintf "$c%0${D}d_%0${D}d", $i, $j;
+   }
+
+  my $C = Silicon::Chip::newChip(title=>"Choose a word from $words words of $bits bits");
+
+  for   my $w(1..$words)                                                        # Input words
+   {for my $b(1..$bits)                                                         # Bits in each word
+     {$C->input(nn('w', $w, $b));
+     }
+   }
+
+  for   my $w(1..$words)                                                        # Mask
+   {$C->input(n('m', $w));
+   }
+
+  for   my $w(1..$words)                                                        # And each bit of each word with the mask
+   {for my $b(1..$bits)                                                         # Bits in each word
+     {$C->and(nn('a', $w, $b), {1=>n('m', $w), 2=>nn('w', $w, $b), });
+     }
+   }
+
+  for   my $b(1..$bits)                                                         # Bits in each word
+   {$C->or(n('p', $b), {map {($_=>nn('a', $_, $b))} 1..$words});
+   }
+
+  for my $b(1..$bits)                                                           # Output selected word
+   {$C->output(n('o', $b), n('p', $b));
+   }
+
+  $C
+ }
+
 #D1 Simulate                                                                    # Simulate the behavior of the L<chip>.
 
 my sub merge($%)                                                                # Merge a L<chip> and all its sub L<chips> to make a single L<chip>.
@@ -622,10 +665,25 @@ my sub simulationResults($%)                                                    
    );
  }
 
+my sub checkInputs($$%)                                                         # Check that an input value has been provided for every input pin on the chip.
+ {my ($chip, $inputs, %options) = @_;                                           # Chip, inputs, hash of final values for each gate, options
+
+  for my $g(values $chip->gates->%*)                                            # Each gate on chip
+   {if   ($g->io == gateOuterInput)                                             # Outer input gate
+     {my ($i) = values $g->inputs->%*;                                          # Inputs
+      if (!defined($$inputs{$i}))                                               # Check we have a corresponding input
+       {my $n = $g->output;
+        confess "No input value for input gate: $n\n";
+       }
+     }
+   }
+ }
+
 sub simulate($$%)                                                               # Simulate the action of the L<lgs> on a L<chip> for a given set of inputs until the output values of each L<lg> stabilize.
  {my ($chip, $inputs, %options) = @_;                                           # Chip, Hash of input names to values, options
 
   my $c = merge($chip, %options);                                               # Merge all the sub chips to make one chip with no sub chips
+  checkInputs($c, $inputs);                                                     # Conform that there is an input value for every input to the chip
 
   my %values = %$inputs;                                                        # The current set of values contains just the inputs at the start of the simulation
   my %changed;                                                                  # Last step on which this gate changed.  We use this to order the gates on layout
@@ -718,7 +776,7 @@ B<Example:>
 
 
   if (1)                                                                           # Single AND gate
-  
+
    {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->input ("i1");
@@ -729,7 +787,7 @@ B<Example:>
     ok($s->steps          == 2);
     ok($s->values->{and1} == 1);
    }
-  
+
 
 =head2 gate($chip, $type, $output, $inputs)
 
@@ -744,32 +802,32 @@ A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be adde
 B<Example:>
 
 
-  
+
   if (1)                                                                           # Two AND gates driving an OR gate a tree  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
    {my $c = newChip;
-  
+
     $c->gate("input",  "i11");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("input",  "i12");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("and",    "and1", {1=>q(i11),  2=>q(i12)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("input",  "i21");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("input",  "i22");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("and",    "and2", {1=>q(i21),  2=>q(i22)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("or",     "or",   {1=>q(and1), 2=>q(and2)});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     $c->gate("output", "o", "or");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $s = $c->simulate({i11=>1, i12=>1, i21=>1, i22=>1});
@@ -782,7 +840,7 @@ B<Example:>
     ok($s->steps         == 3);
     ok($s->values->{o}   == 0);
    }
-  
+
 
 =head2 install($chip, $subChip, $inputs, $outputs, %options)
 
@@ -803,23 +861,23 @@ B<Example:>
        $i->gate("input", "Ii");
        $i->gate("not",   "In", "Ii");
        $i->gate("output","Io", "In");
-  
+
     my $o = newChip(name=>"outer");
        $o->gate("input",    "Oi1");
        $o->gate("output",   "Oo1", "Oi1");
        $o->gate("input",    "Oi2");
        $o->gate("output",    "Oo", "Oi2");
-  
-  
+
+
     $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
-  
+
     is_deeply($s, {steps  => 2,
       changed => { "(inner 1 In)" => 0,             "Oo" => 1 },
       values  => { "(inner 1 In)" => 0, "Oi1" => 1, "Oo" => 0 }});
    }
-  
+
 
 =head1 Basic Circuits
 
@@ -838,19 +896,19 @@ B<Example:>
 
   if (1)                                                                           # Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
    {my $B = 8;
-  
+
     my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my %a = map {("a$_"=>0)} 1..$B;
     my %b = map {("b$_"=>0)} 1..$B;
-  
+
   # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
     my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
     is_deeply($s->values->{out}, 1);
     is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
    }
-  
+
 
 =head2 pointToInteger($bits, %options)
 
@@ -863,9 +921,9 @@ Convert a mask known to have at most a single bit on - also known as a B<point> 
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 4;
-  
+
     my $c = pointToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my %i = map {(sprintf("i%02d", $_)=>0)} 1..2**$B-1;
@@ -877,7 +935,7 @@ B<Example:>
     is_deeply($s->values->{o03}, 1);
     is_deeply($s->values->{o04}, 0);
    }
-  
+
 
 =head2 monotoneMaskToInteger($bits, %options)
 
@@ -890,9 +948,9 @@ Convert a monotone mask to an output number representing the location in the mas
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 4;
-  
+
     my $c = monotoneMaskToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my %i = map {(sprintf("i%02d", $_)=>1)} 1..2**$B-1;
@@ -904,7 +962,7 @@ B<Example:>
     is_deeply($s->values->{o03}, 1);
     is_deeply($s->values->{o04}, 0);
    }
-  
+
 
 =head1 Simulate
 
@@ -922,12 +980,12 @@ Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gat
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $i = newChip(name=>"inner");
        $i->gate("input", "Ii");
        $i->gate("not",   "In", "Ii");
        $i->gate("output","Io", "In");
-  
+
     my $o = newChip(name=>"outer");
        $o->gate("input",    "Oi1");
        $o->gate("output",   "Oo1", "Oi1");
@@ -937,17 +995,17 @@ B<Example:>
        $o->gate("output",   "Oo3", "Oi3");
        $o->gate("input",    "Oi4");
        $o->gate("output",    "Oo", "Oi4");
-  
+
     $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});
     $o->install($i, {Ii=>"Oo2"}, {Io=>"Oi3"});
     $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
-  
+
     my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->values->{Oo}, 0);
     is_deeply($s->steps,        4);
    }
-  
+
 
 
 =head1 Hash Definitions
@@ -1059,7 +1117,18 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          # Check all inputs
+if (1)                                                                          # Check all inputs have values
+ {my $c = Silicon::Chip::newChip;
+  $c->input ("i1");
+  $c->input ("i2");
+  $c->and   ("and", {1=>q(i1), 2=>q(i2)});
+  $c->output("o",   q(and));
+  eval {$c->simulate({i1=>1, i22=>1})};
+  ok($@ =~ m(No input value for input gate: i2)i);
+ }
+
+#latest:;
+if (1)                                                                          # Check each input to each gate receives output from another gate
  {my $c = Silicon::Chip::newChip;
   $c->gate("input",  "i1");
   $c->gate("input",  "i2");
@@ -1297,6 +1366,27 @@ if (1)                                                                          
   is_deeply($s->values->{o02}, 1);
   is_deeply($s->values->{o03}, 1);
   is_deeply($s->values->{o04}, 0);
+ }
+
+#latest:;
+if (1)                                                                          #Tchoose
+ {my $B = 2; my $W = 2;
+  my $c = chooseWord($W, $B);
+  my %i;
+  for   my $w(1..$W)
+   {my $s = sprintf "%0${B}b", $w;
+    for my $b(1..$B)
+     {my $c = sprintf "w%1d_%1d", $w, $b;
+      $i{$c} = substr($s, -$b, 1);
+     }
+   }
+  my %m = map{("m$_"=>0)} 1..$W;
+
+  my $s = $c->simulate({%i, %m, "m1"=>1}, svg=>"svg/choose_${W}_$B");
+
+  is_deeply($s->steps, 3);
+  is_deeply($s->values->{o1}, 1);
+  is_deeply($s->values->{o2}, 0);
  }
 
 #latest:;
