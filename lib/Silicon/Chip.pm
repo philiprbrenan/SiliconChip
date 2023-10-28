@@ -24,7 +24,7 @@ my sub gateExternalOutput {4}                                                   
 my sub gateOuterInput     {5}                                                   # Input gate on the external chip connecting to the outer world
 my sub gateOuterOutput    {6}                                                   # Output gate on the external chip connecting to the outer world
 
-my $possibleTypes = q(and|input|nand|nor|not|nxor|or|output|xor);               # Possible gate types
+my $possibleTypes = q(and|continue|input|nand|nor|not|nxor|or|output|xor);      # Possible gate types
 
 #D1 Construct                                                                   # Construct a L<silicon> L<chip> using standard L<lgs>.
 
@@ -66,7 +66,7 @@ sub gate($$$;$)                                                                 
       $inputs = {$output=>$inputs};                                             # Convert convenient scalar name to hash for consistency with gates in general
      }
    }
-  elsif ($type =~ m(\A(not)\Z)i)                                                # These gates have one input expressed as a name rather than a hash
+  elsif ($type =~ m(\A(continue|not)\Z)i)                                       # These gates have one input expressed as a name rather than a hash
    {!defined($inputs) and confess "Input name required for gate '$output'\n";
     $type =~ m(\Anot\Z)i and ref($inputs) =~ m(hash)i and confess "Scalar input name required for '$output'\n";
     $inputs = {$output=>$inputs};                                               # Convert convenient scalar name to hash for consistency with gates in general
@@ -288,12 +288,12 @@ my sub simulationStep($$%)                                                      
 
     if (!$u)                                                                    # All inputs defined
      {my $r;                                                                    # Result of gate operation
-      if ($t =~ m(\Aand|nand\Z)i)                                               # Elaborate and AND gate
-       {my $z = grep {!$_} @i;                                                  # Count zero inputs to AND gate
+      if ($t =~ m(\Aand|nand\Z)i)                                               # Elaborate and B<and> and B<nand> gates
+       {my $z = grep {!$_} @i;                                                  # Count zero inputs
         $r = $z ? 0 : 1;
         $r = !$r if $t =~ m(\Anand\Z)i;
        }
-      elsif ($t =~ m(\A(input)\Z)i)                                             # An input gate takes its value from the list of inputs or from an output gate in an inner chip
+      elsif ($t =~ m(\A(input)\Z)i)                                             # An B<input> gate takes its value from the list of inputs or from an output gate in an inner chip
        {if (my @i = values $g->inputs->%*)                                      # Get the value of the input gate from the current values
          {my $n = $i[0];
              $r = $$values{$n};
@@ -302,22 +302,22 @@ my sub simulationStep($$%)                                                      
          {confess "No driver for input gate $n";
          }
        }
-      elsif ($t =~ m(\A(continue|nor|not|or|output)\Z)i)                        # Elaborate NOT, OR or OUTPUT gate. A CONTINUE gate places its single input unchanged on its output
+      elsif ($t =~ m(\A(continue|nor|not|or|output)\Z)i)                        # Elaborate B<not>, B<or> or B<output> gate. A B<continue> gate places its single input unchanged on its output
        {my $o = grep {$_} @i;                                                   # Count one inputs
         $r = $o ? 1 : 0;
         $r = $r ? 0 : 1 if $t =~ m(\Anor|not\Z)i;
        }
-      elsif ($t =~ m(\A(nxor|xor)\Z)i)                                          # Elaborate XOR
+      elsif ($t =~ m(\A(nxor|xor)\Z)i)                                          # Elaborate B<xor>
        {@i == 2 or confess;
         $r = $i[0] ^ $i[1] ? 1 : 0;
         $r = $r ? 0 : 1 if $t =~ m(\Anxor\Z)i;
        }
-      elsif ($t =~ m(\A(gt|ngt)\Z)i)                                            # Elaborate A GT B - the input pins are assumed to be sorted by name with the first pin as A and the second as B
+      elsif ($t =~ m(\A(gt|ngt)\Z)i)                                            # Elaborate B<a> greater than B<b> - the input pins are assumed to be sorted by name with the first pin as B<a> and the second as B<b>
        {@i == 2 or confess;
         $r = $i[0] > $i[1] ? 1 : 0;
         $r = $r ? 0 : 1 if $t =~ m(\Angt\Z)i;
        }
-      elsif ($t =~ m(\A(lt|nlt)\Z)i)                                            # Elaborate A LT B - the input pins are assumed to be sorted by name with the first pin as A and the second as B
+      elsif ($t =~ m(\A(lt|nlt)\Z)i)                                            # Elaborate B<a> less than B<b> - the input pins are assumed to be sorted by name with the first pin as B<a> and the second as B<b>
        {@i == 2 or confess;
         $r = $i[0] < $i[1] ? 1 : 0;
         $r = $r ? 0 : 1 if $t =~ m(\Anlt\Z)i;
@@ -397,36 +397,41 @@ my sub svgGates($%)                                                             
   my %p;                                                                        # Dimensions and drawing positions of gates
   my ($iG, $nG, $oG) = orderGates $chip, %options;                              # Gates by type
 
-  for my $GI(keys @$iG)                                                         # Index of each input gate
-   {my $G = $$iG[$GI];                                                          # Gate name
+  for my $i(keys @$iG)                                                          # Index of each input gate
+   {my $G = $$iG[$i];                                                           # Gate name
     my $g = $$gates{$G};                                                        # Gate
-    $p{$G} = newGatePosition(gate=>$g, x=>0, y=>$GI, width=>1);                 # Position gate
+    $p{$G} = newGatePosition(gate=>$g, x=>0, y=>$i, width=>1);                  # Position input gate
    }
 
   my $W = 0;                                                                    # Number of inputs to all the non IO gates
-  for my $GI(keys @$nG)                                                         # Index of each non IO gate
-   {my $G = $$nG[$GI];                                                          # Gate name
+  for my $i(keys @$nG)                                                          # Index of each non IO gate
+   {my $G = $$nG[$i];                                                           # Gate name
     my $g = $$gates{$G};                                                        # Gate
     my %i = $g->inputs ? $g->inputs->%* : ();                                   # Inputs to gate
     my $w = keys %i;                                                            # Number of inputs
-    $p{$G} = newGatePosition(gate=>$g, x=>$W+1, y=>@$iG+$GI, width=>$w);        # Position gate
+    $p{$G} = newGatePosition(gate=>$g, x=>$W+1, y=>@$iG+$i, width=>$w);         # Position non io gate
     $W   += $w;                                                                 # Width of area needed for non io gates
    }
 
-  for my $GI(keys @$oG)                                                         # Index of each output gate
-   {my $G = $$oG[$GI];                                                          # Gate name
+  for my $i(keys @$oG)                                                          # Index of each output gate
+   {my $G = $$oG[$i];                                                           # Gate name
     my $g = $$gates{$G};                                                        # Gate
-    $p{$G} = newGatePosition(gate=>$g, x=>1+$W, y=>@$iG+@$nG+$GI, width=>1);    # Position gate
+    my %i = $g->inputs ? $g->inputs->%* : ();                                   # Inputs to gate
+    my ($d) = values %i;                                                        # The one driver for this gate
+    my $y = $p{$d}->y;
+    $p{$G} = newGatePosition(gate=>$g, x=>1+$W, y=>$y, width=>1);               # Position output gate
    }
 
+  my $pageWidth = $W + 2;                                                       # Width of input, output and non io gates as laid out.
+
   if (defined($title))                                                          # Title if known
-   {$s->text(x=>$W/2, y=>1.5, fill=>"darkGreen", text_anchor=>"middle",
+   {$s->text(x=>$pageWidth, y=>0.5, fill=>"darkGreen", text_anchor=>"end",
       stroke_width=>$Fw, font_size=>$Fs,
       cdata=>$title);
    }
 
   if (defined($steps))                                                          # Number of steps taken if known
-   {$s->text(x=>$W, y=>1.5, fill=>"darkGreen", text_anchor=>"end",
+   {$s->text(x=>$pageWidth, y=>1.5, fill=>"darkGreen", text_anchor=>"end",
       stroke_width=>$Fw, font_size=>$Fs,
       cdata=>"$steps steps");
    }
@@ -449,9 +454,14 @@ my sub svgGates($%)                                                             
      }
 
     if (defined(my $v = $$values{$g->output}))                                  # Value of gate if known
-     {$s->text(x=>$x, y=>$y, fill=>"black", stroke_width=>$Fw, font_size=>$Fs,
-        text_anchor=>"start", dominant_baseline=>"hanging",
-        cdata=>$v ? "1" : "0");
+     {$s->text(
+       x                 => $g->io != gateOuterOutput ? $x : $x + 1,
+       y                 => $y,
+       fill              =>"black",
+       stroke_width      =>$Fw, font_size=>$Fs,
+       text_anchor       => $g->io != gateOuterOutput ? "start": "end",
+       dominant_baseline => "hanging",
+       cdata             => $v ? "1" : "0");
      }
 
     $s->text(x=>$x+$w/2, y=>$y+5/12, fill=>"red",      text_anchor=>"middle", dominant_baseline=>"auto",    cdata=>$g->type);
@@ -460,6 +470,7 @@ my sub svgGates($%)                                                             
     if ($g->io != gateOuterInput)                                               # Not an input pin
      {my %i = $g->inputs ? $g->inputs->%* : ();
       my @i = sort values %i;                                                   # Connections to each gate
+
       for my $i(keys @i)                                                        # Connections to each gate
        {my $P = $p{$i[$i]};                                                     # Source gate
         my $X = $P->x; my $Y = $P->y; my $W = $P->width; my $G = $P->gate;      # Position of gate
@@ -471,15 +482,23 @@ my sub svgGates($%)                                                             
         my $cy = $Y+$dY+1/2;                                                    # Horizontal line corner y
 
         my $xc = $X < $x ? q(black) : q(darkBlue);                              # Horizontal line color
-        $s->line(x1=>$X+$dX, x2=>$cx, y1=>$cy, y2=>$cy,    stroke=>$xc);        # Outgoing value along horizontal lines
+        my $x2 = $g->io == gateOuterOutput ? $cx - 1/2 : $cx;
+        $s->line(x1=>$X+$dX, x2=>$x2, y1=>$cy, y2=>$cy,    stroke=>$xc);        # Outgoing value along horizontal lines
 
         my $yc = $Y < $y ? q(purple) : q(darkRed);                              # Vertical lines
-        $s->line(x1=>$cx,   x2=>$cx, y1=>$cy, y2=>$y+$dy, stroke=>$yc);         # Incoming value along vertical line
-        $s->circle(cx=>$cx, cy=>$cy,    r=>0.04, fill=>"black");                # Line corner
-        $s->circle(cx=>$cx, cy=>$y+$dy, r=>0.04, fill=>"blue");                 # Line entering chip
-        $s->circle(cx=>$X+$W,  cy=>$cy, r=>0.04, fill=>"red");                  # Line exiting chip
 
-        if (defined(my $v = $$values{$G->output}))                              # Value of gate if known
+        if ($g->io != gateOuterOutput)                                          # Incoming value along vertical line - not needed for outer output gates
+         {$s->line(x1=>$cx,   x2=>$cx, y1=>$cy, y2=>$y+$dy, stroke=>$yc);
+          $s->circle(cx=>$cx, cy=>$cy,    r=>0.04, fill=>"black");              # Line corner
+          $s->circle(cx=>$x2, cy=>$y+$dy, r=>0.04, fill=>"blue");               # Line entering gate
+         }
+        else                                                                    # External output gate
+         {$s->circle(cx=>$x2,   cy=>$y+$dy-1/2, r=>0.04, fill=>"blue");         # Line entering output
+         }
+
+        $s->circle(cx=>$X+$W, cy=>$cy,    r=>0.04, fill=>"red");                # Line exiting gate
+
+        if (defined(my $v = $$values{$G->output}) and $g->io != gateOuterOutput)# Value of gate if known except for output gates written else where
          {$s->text(
             x           => $cx,
             y           => $y+$dy+($X < $x ? 0.1 : -0.1),
@@ -496,7 +515,7 @@ my sub svgGates($%)                                                             
 
 #D1 Basic Circuits                                                              # Some well known basic circuits.
 
-sub compareGt($%)                                                               # Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
+sub compareGt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>. Output B<1> if B<a> > B<b> else B<0>
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
   my $C = Silicon::Chip::newChip(title=>"$B Bit Compare");
@@ -509,8 +528,70 @@ sub compareGt($%)                                                               
   for my $b(2..$B)
    {$C->gate("and",  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});            # Greater on one bit and all preceding bits are equal
    }
-  $C->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
-  $C->gate("output", "out", "or");                                              # Output 1 if a > b else 0
+  $C->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that B<a> is greater than B<b>
+  $C->gate("output", "out", "or");                                              # Output B<1> if B<a> > B<b> else B<0>
+
+  $C
+ }
+
+sub pointToInteger($%)                                                          # Convert a mask known to have at most a single bit on - also known as a B<point> - to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output is B<0>.
+ {my ($bits, %options) = @_;                                                    # Bits, options
+  my $B = 2**$bits-1;
+  my $D = 1 + int($bits / 3);
+
+  my sub n($$)                                                                  # Gate name
+   {my ($c, $i) = @_;                                                           # Gate letter, gate number
+    sprintf "$c%0${D}d", $i
+   }
+
+  my %b;
+  for my $b(1..$B)
+   {my $s = sprintf "%b", $b;
+    for my $p(1..length($s))
+     {$b{$p}{$b}++ if substr($s, -$p, 1);
+     }
+   }
+
+  my $C = Silicon::Chip::newChip(title=>"$bits bits point to integer");
+
+  $C->input(n('i', $_)) for 1..$B;                                              # Mask with no more than one bit on
+  for my $b(sort keys %b)
+   {$C->or    (n('o', $b), {map {$_=>n('i', $_)} sort keys $b{$b}->%*});        # Bits needed to drive a bit in the resulting number
+    $C->output(n('a', $b), n('o', $b));                                         # Output number
+   }
+
+  $C
+ }
+
+sub monotoneMaskToInteger($%)                                                   # Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output is B<0>.
+ {my ($bits, %options) = @_;                                                    # Bits, options
+  my $B = 2**$bits-1;
+  my $D = 1 + int($bits / 3);
+
+  my sub n($$)                                                                  # Gate name
+   {my ($c, $i) = @_;                                                           # Gate letter, gate number
+    sprintf "$c%0${D}d", $i
+   }
+
+  my %b;
+  for my $b(1..$B)
+   {my $s = sprintf "%b", $b;
+    for my $p(1..length($s))
+     {$b{$p}{$b}++ if substr($s, -$p, 1);
+     }
+   }
+
+  my $C = Silicon::Chip::newChip(title=>"$bits bits point to integer");
+
+  $C->input   (n('i', $_))             for 1..$B;                               # Input gates
+  $C->not     (n('n', $_), n('i', $_)) for 1..$B-1;                             # Not of each input
+  $C->continue(n('a', 1),  n('i', 1));
+  $C->and     (n('a', $_), {1=>n('n', $_-1), 2=>n('i', $_)}) for 2..$B;         # Look for trailing edge
+
+  for my $b(sort keys %b)
+   {$C->or    (n('o', $b), {map {$_=>n('a', $_)} sort keys $b{$b}->%*});        # Bits needed to drive a bit in the resulting number
+    $C->output(n('r', $b),  n('o', $b));                                        # Output number
+   }
 
   $C
  }
@@ -634,7 +715,7 @@ Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 B<Example:>
 
 
-  if (1)                                                                           Single AND gate
+  if (1)                                                                           # Single AND gate
 
    {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
@@ -662,7 +743,7 @@ B<Example:>
 
 
 
-  if (1)                                                                           Two AND gates driving an OR gate a tree  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+  if (1)                                                                           # Two AND gates driving an OR gate a tree  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
    {my $c = newChip;
 
@@ -715,7 +796,7 @@ Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within anothe
 B<Example:>
 
 
-  if (1)                                                                           Install one inside another chip, specifically one chip that performs NOT is installed three times sequentially to flip a value
+  if (1)                                                                           # Install one inside another chip, specifically one chip that performs NOT is installed three times sequentially to flip a value
    {my $i = newChip(name=>"inner");
        $i->gate("input", "Ii");
        $i->gate("not",   "In", "Ii");
@@ -744,7 +825,7 @@ Some well known basic circuits.
 
 =head2 compareGt($bits, %options)
 
-Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
+Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>. Output B<1> if B<a> > B<b> else B<0>
 
      Parameter  Description
   1  $bits      Bits
@@ -753,7 +834,7 @@ Compare two unsigned binary integers "a", "b" of a specified width for "a" great
 B<Example:>
 
 
-  if (1)                                                                           Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+  if (1)                                                                           # Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
    {my $B = 8;
 
     my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
@@ -766,6 +847,33 @@ B<Example:>
     my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
     is_deeply($s->values->{out}, 1);
     is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+   }
+
+
+=head2 pointToInteger($bits, %options)
+
+Convert a mask known to have at most a single bit on - also known as a B<point> - to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output is B<0>.
+
+     Parameter  Description
+  1  $bits      Bits
+  2  %options   Options
+
+B<Example:>
+
+
+  if (1)
+   {my $B = 4;
+
+    my $c = pointToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    my %i = map {(sprintf("i%02d", $_)=>0)} 1..2**$B-1;
+       $i{i05} = 1;
+    my $s = $c->simulate(\%i, svg=>"svg/point2");
+    is_deeply($s->steps, 2);
+    is_deeply($s->values->{o01}, 1);
+    is_deeply($s->values->{o02}, 0);
+    is_deeply($s->values->{o03}, 1);
+    is_deeply($s->values->{o04}, 0);
    }
 
 
@@ -863,7 +971,7 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 1 L<AUTOLOAD|/AUTOLOAD> - Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provide a more readable way to specify the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-2 L<compareGt|/compareGt> - Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
+2 L<compareGt|/compareGt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>.
 
 3 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
@@ -871,7 +979,9 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 5 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-6 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
+6 L<pointToInteger|/pointToInteger> - Convert a mask known to have at most a single bit on - also known as a B<point> - to an output number representing the location in the mask of the bit set to B<1>.
+
+7 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
 
 =head1 Installation
 
@@ -929,7 +1039,7 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          #TnewChip Single AND gate
+if (1)                                                                          #TnewChip # Single AND gate
  {my $c = Silicon::Chip::newChip;
   $c->input ("i1");
   $c->input ("i2");
@@ -960,7 +1070,7 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          #Tgate Two AND gates driving an OR gate a tree
+if (1)                                                                          #Tgate # Two AND gates driving an OR gate a tree
  {my $c = newChip;
   $c->gate("input",  "i11");
   $c->gate("input",  "i12");
@@ -980,7 +1090,6 @@ if (1)                                                                          
   ok($s->steps         == 3);
   ok($s->values->{o}   == 0);
  }
-
 
 #latest:;
 if (1)                                                                          # 4 bit equal
@@ -1030,7 +1139,7 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          #TcompareGt Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+if (1)                                                                          #TcompareGt # Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
  {my $B = 8;
   my $c = Silicon::Chip::compareGt($B);
 
@@ -1086,7 +1195,7 @@ if (1)                                                                          
 #latest:;
 # Oi1 -> Oo1-> Ii->In->Io -> Oi2 -> Oo
 
-if (1)                                                                          #Tinstall Install one inside another chip, specifically one chip that performs NOT is installed three times sequentially to flip a value
+if (1)                                                                          #Tinstall # Install one inside another chip, specifically one chip that performs NOT is installed three times sequentially to flip a value
  {my $i = newChip(name=>"inner");
      $i->gate("input", "Ii");
      $i->gate("not",   "In", "Ii");
@@ -1129,6 +1238,34 @@ if (1)                                                                          
   my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not3", svg=>"svg/not3");
   is_deeply($s->values->{Oo}, 0);
   is_deeply($s->steps,        4);
+ }
+
+#latest:;
+if (1)                                                                          #TpointToInteger
+ {my $B = 4;
+  my $c = pointToInteger($B);
+  my %i = map {(sprintf("i%02d", $_)=>0)} 1..2**$B-1;
+     $i{i05} = 1;
+  my $s = $c->simulate(\%i, svg=>"svg/point$B");
+  is_deeply($s->steps, 2);
+  is_deeply($s->values->{o01}, 1);
+  is_deeply($s->values->{o02}, 0);
+  is_deeply($s->values->{o03}, 1);
+  is_deeply($s->values->{o04}, 0);
+ }
+
+#latest:;
+if (1)                                                                          #TmonotoneMaskToInteger
+ {my $B = 4;
+  my $c = monotoneMaskToInteger($B);
+  my %i = map {(sprintf("i%02d", $_)=>1)} 1..2**$B-1;
+     $i{"i0$_"} = 0 for 1..6;
+  my $s = $c->simulate(\%i, svg=>"svg/monotoneMask$B");
+  is_deeply($s->steps, 4);
+  is_deeply($s->values->{o01}, 1);
+  is_deeply($s->values->{o02}, 1);
+  is_deeply($s->values->{o03}, 1);
+  is_deeply($s->values->{o04}, 0);
  }
 
 #latest:;
