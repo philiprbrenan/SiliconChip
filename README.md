@@ -32,7 +32,7 @@ Create and simulate a 4 bit comparator by running this code:
 To obtain:
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Comparator4.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare4.svg">
 </div>
 
 # Description
@@ -164,7 +164,7 @@ Some well known basic circuits.
 
 ## compareGt($bits, %options)
 
-Comparator to compare two unsigned binary integers of a specified width.
+Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
 
        Parameter  Description
     1  $bits      Bits
@@ -268,7 +268,7 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 1 [AUTOLOAD](#autoload) - Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provide a more readable way to specify the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-2 [compareGt](#comparegt) - Comparator to compare two unsigned binary integers of a specified width.
+2 [compareGt](#comparegt) - Compare two unsigned binary integers "a", "b" of a specified width for "a" greater than "b".
 
 3 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
