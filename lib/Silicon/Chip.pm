@@ -515,20 +515,65 @@ my sub svgGates($%)                                                             
 
 #D1 Basic Circuits                                                              # Some well known basic circuits.
 
-sub compareGt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>. Output B<1> if B<a> > B<b> else B<0>
+sub compareEq($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> equal to B<b>. Output B<1> if B<a> is equal to B<b> else B<0>
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
-  my $C = Silicon::Chip::newChip(title=>"$B Bit Compare");
+  my $D = 1 + int($bits / 3);
 
-  $C->input("a$_")                       for 1..$B;                             # First number
-  $C->input("b$_")                       for 1..$B;                             # Second number
-  $C->nxor ("e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;                           # Test each bit for equality
-  $C->gt   ("g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                             # Test each bit pair for greater
+  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
+
+  my $C = Silicon::Chip::newChip(title=>"$B Bit Compare Equal");
+
+  $C->input(n("a", $_))                                 for 1..$B;              # First number
+  $C->input(n("b", $_))                                 for 1..$B;              # Second number
+  $C->nxor (n("e", $_), {1=>n("a", $_), 2=>n("b", $_)}) for 1..$B;              # Test each bit pair for equality
+  $C->and  ("and", {map {($_=>n("e", $_))}                  1..$B});            # All bits must be equal
+  $C->output("out", "and");                                                     # Output B<1> if B<a> > B<b> else B<0>
+
+  $C
+ }
+
+sub compareGt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>. Output B<1> if B<a> is greater than B<b> else B<0>
+ {my ($bits, %options) = @_;                                                    # Bits, options
+  my $B = $bits;
+  my $D = 1 + int($bits / 3);
+
+  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
+
+  my $C = Silicon::Chip::newChip(title=>"$B Bit Compare Greater Than");
+
+  $C->input(n("a", $_))                                 for 1..$B;              # First number
+  $C->input(n("b", $_))                                 for 1..$B;              # Second number
+  $C->nxor (n("e", $_), {1=>n("a", $_), 2=>n("b", $_)}) for 1..$B-1;            # Test each bit pair for equality
+  $C->gt   (n("g", $_), {1=>n("a", $_), 2=>n("b", $_)}) for 1..$B;              # Test each bit pair for greater
 
   for my $b(2..$B)
-   {$C->and("c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});                     # Greater on one bit and all preceding bits are equal
+   {$C->and(n("c", $b), {(map {$_=>n("e", $_)} 1..$b-1), $b=>n("g", $b)});      # Greater than on one bit and all preceding bits are equal
    }
-  $C->or    ("or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});                       # Any set bit indicates that B<a> is greater than B<b>
+  $C->or    ("or",  {1=>n("g", 1),  (map {$_=>n("c", $_)} 2..$B)});             # Any set bit indicates that B<a> is greater than B<b>
+  $C->output("out", "or");                                                      # Output B<1> if B<a> > B<b> else B<0>
+
+  $C
+ }
+
+sub compareLt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> less than B<b>. Output B<1> if B<a> is less than B<b> else B<0>
+ {my ($bits, %options) = @_;                                                    # Bits, options
+  my $B = $bits;
+  my $D = 1 + int($bits / 3);
+
+  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
+
+  my $C = Silicon::Chip::newChip(title=>"$B Bit Compare Less Than");
+
+  $C->input(n("a", $_))                                 for 1..$B;              # First number
+  $C->input(n("b", $_))                                 for 1..$B;              # Second number
+  $C->nxor (n("e", $_), {1=>n("a", $_), 2=>n("b", $_)}) for 1..$B-1;            # Test each bit pair for equality
+  $C->lt   (n("l", $_), {1=>n("a", $_), 2=>n("b", $_)}) for 1..$B;              # Test each bit pair for less than
+
+  for my $b(2..$B)
+   {$C->and(n("c", $b), {(map {$_=>n("e", $_)} 1..$b-1), $b=>n("l", $b)});      # Less than on one bit and all preceding bits are equal
+   }
+  $C->or    ("or",  {1=>n("l", 1),  (map {$_=>n("c", $_)} 2..$B)});             # Any set bit indicates that B<a> is greater than B<b>
   $C->output("out", "or");                                                      # Output B<1> if B<a> > B<b> else B<0>
 
   $C
@@ -539,10 +584,7 @@ sub pointToInteger($%)                                                          
   my $B = 2**$bits-1;
   my $D = 1 + int($bits / 3);
 
-  my sub n($$)                                                                  # Gate name
-   {my ($c, $i) = @_;                                                           # Gate letter, gate number
-    sprintf "$c%0${D}d", $i
-   }
+  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from gate letter, gate number
 
   my %b;
   for my $b(1..$B)
@@ -568,10 +610,7 @@ sub monotoneMaskToInteger($%)                                                   
   my $B = 2**$bits-1;
   my $D = 1 + int($bits / 3);
 
-  my sub n($$)                                                                  # Gate name
-   {my ($c, $i) = @_;                                                           # Gate letter, gate number
-    sprintf "$c%0${D}d", $i
-   }
+  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from gate letter, gate number
 
   my %b;
   for my $b(1..$B)
@@ -600,15 +639,8 @@ sub chooseWordUnderMask($$%)                                                    
  {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word, options
   my $D = 1 + int($bits / 3);
 
-  my sub n($$)                                                                  # Gate name from single index
-   {my ($c, $i) = @_;                                                           # Gate letter, gate number
-    sprintf "$c%0${D}d", $i
-   }
-
-  my sub nn($$$)                                                                # Gate name from double index
-   {my ($c, $i, $j) = @_;                                                       # Gate letter, gate number
-    sprintf "$c%0${D}d_%0${D}d", $i, $j;
-   }
+  my sub n ($$)  {my ($c, $i)     = @_; sprintf "$c%0${D}d",         $i    }    # Gate name from single index
+  my sub nn($$$) {my ($c, $i, $j) = @_; sprintf "$c%0${D}d_%0${D}d", $i, $j}    # Gate name from double index
 
   my $C = Silicon::Chip::newChip(title=>"Choose a word from $words words of $bits bits");
 
@@ -634,6 +666,35 @@ sub chooseWordUnderMask($$%)                                                    
 
   for my $b(1..$bits)                                                           # Output selected word
    {$C->output(n('o', $b), n('p', $b));
+   }
+
+  $C
+ }
+
+sub findWord($$$%)                                                              # Choose one of a specified number of words each of a specified width using a ket.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+ {my ($key, $words, $bits, %options) = @_;                                      # Key, number of words, bits in each word and key, options
+  my $D = 1 + int($bits / 3);
+
+  my sub n($$)                                                                  # Gate name from single index
+   {my ($c, $i) = @_;                                                           # Gate letter, gate number
+    sprintf "$c%0${D}d", $i
+   }
+
+  my sub nn($$$)                                                                # Gate name from double index
+   {my ($c, $i, $j) = @_;                                                       # Gate letter, gate number
+    sprintf "$c%0${D}d_%0${D}d", $i, $j;
+   }
+
+  my $C = Silicon::Chip::newChip(title=>"Find a word in $words words of $bits bits");
+
+  for my $b(1..$bits)                                                           # Key
+   {$C->input(n('k', $b));
+   }
+
+  for   my $w(1..$words)                                                        # Input words
+   {for my $b(1..$bits)                                                         # Bits in each word
+     {$C->input(nn('w', $w, $b));
+     }
    }
 
   $C
@@ -724,25 +785,28 @@ Silicon::Chip - Design a L<silicon|https://en.wikipedia.org/wiki/Silicon> L<chip
 
 =head1 Synopsis
 
-Create and simulate a 4 bit comparator by running this code:
+Create and simulate the operation of a 4-bit comparator. Given two 4-bit
+unsigned integers, the comparator indicates whether the first integer is
+greater than the second:
 
   my $B = 4;
   my $c = Silicon::Chip::newChip(title=>"$B Bit Compare");
 
-  $c->input( "a$_") for 1..$B;                                          # First number
-  $c->input( "b$_") for 1..$B;                                          # Second number
-  $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;                  # Test each bit for equality
-  $c->gate("gt",     "g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                    # Test each bit pair for greater
+  $c->input( "a$_") for 1..$B;                                    # First number
+  $c->input( "b$_") for 1..$B;                                    # Second number
+  $c->gate("nxor",   "e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B-1;    # Test each bit for equality
+  $c->gate("gt",     "g$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;      # Test each bit pair for greater
 
   for my $b(2..$B)
-   {$c->and(  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});            # Greater on one bit and all preceding bits are equal
+   {$c->and(  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});     # Greater on one bit and all preceding bits are equal
    }
-  $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
-  $c->output( "out", "or");                                              # Output 1 if a > b else 0
+
+  $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)}); # Any set bit indicates that 'a' is greater than 'b'
+  $c->output( "out", "or");                                       # Output 1 if a > b else 0
 
   my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                         b1=>1, b2=>0, b3=>1, b4=>0},
-                        svg=>"svg/Compare$B");                                  # Svg drawing of layout
+                        svg=>"svg/Compare$B");                    # Svg drawing of layout
   is_deeply($t->values->{out}, 1);
 
 To obtain:
@@ -871,9 +935,40 @@ B<Example:>
 
 Some well known basic circuits.
 
+=head2 compareEq($bits, %options)
+
+Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> equal to B<b>. Output B<1> if B<a> is equal to B<b> else B<0>
+
+     Parameter  Description
+  1  $bits      Bits
+  2  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                           # Compare 8 bit unsigned integers 'a' == 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+   {my $B = 4;
+  
+    my $c = Silicon::Chip::compareEq($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+  
+    my %a = map {("a0$_"=>0)} 1..$B;
+    my %b = map {("b0$_"=>0)} 1..$B;
+  
+    my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1}, svg=>"svg/CompareEq$B");   # Svg drawing of layout
+  # my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1});                           # Equal: a == b
+    is_deeply($s->values->{out}, 1);                                              # Equal
+    is_deeply($s->steps,         3);                                              # Which goes to show that the comparator operates in O(4) time
+  
+    my $t = $c->simulate({%a, %b, "b02"=>1});                                     # Less: a < b
+    is_deeply($t->values->{out}, 0);                                              # Not equal
+    is_deeply($t->steps,         3);                                              # Which goes to show that the comparator operates in O(4) time
+   }
+  
+
 =head2 compareGt($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>. Output B<1> if B<a> > B<b> else B<0>
+Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>. Output B<1> if B<a> is greater than B<b> else B<0>
 
      Parameter  Description
   1  $bits      Bits
@@ -888,13 +983,48 @@ B<Example:>
     my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
   
-    my %a = map {("a$_"=>0)} 1..$B;
-    my %b = map {("b$_"=>0)} 1..$B;
+    my %a = map {("a00$_"=>0)} 1..$B;
+    my %b = map {("b00$_"=>0)} 1..$B;
   
-  # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
-    my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
+  # my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareGt$B");            # Svg drawing of layout
+    my $s = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
     is_deeply($s->values->{out}, 1);
     is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+  
+    my $t = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+    is_deeply($t->values->{out}, 0);
+    is_deeply($t->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+   }
+  
+
+=head2 compareLt($bits, %options)
+
+Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> less than B<b>. Output B<1> if B<a> is less than B<b> else B<0>
+
+     Parameter  Description
+  1  $bits      Bits
+  2  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                           # Compare 8 bit unsigned integers 'a' < 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+   {my $B = 8;
+  
+    my $c = Silicon::Chip::compareLt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+  
+    my %a = map {("a00$_"=>0)} 1..$B;
+    my %b = map {("b00$_"=>0)} 1..$B;
+  
+  # my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareLt$B");            # Svg drawing of layout
+    my $s = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+    is_deeply($s->values->{out}, 1);
+    is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+  
+    my $t = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+    is_deeply($t->values->{out}, 0);
+    is_deeply($t->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
    }
   
 
@@ -988,6 +1118,16 @@ B<Example:>
     is_deeply($s->values->{o2}, 0);
    }
   
+
+=head2 findWord($key, $words, $bits, %options)
+
+Choose one of a specified number of words each of a specified width using a ket.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+
+     Parameter  Description
+  1  $key       Key
+  2  $words     Number of words
+  3  $bits      Bits in each word and key
+  4  %options   Options
 
 =head1 Simulate
 
@@ -1086,19 +1226,25 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 2 L<chooseWordUnderMask|/chooseWordUnderMask> - Choose one of a specified number of words each of a specified width using a point mask.
 
-3 L<compareGt|/compareGt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>.
+3 L<compareEq|/compareEq> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> equal to B<b>.
 
-4 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+4 L<compareGt|/compareGt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>.
 
-5 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+5 L<compareLt|/compareLt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> less than B<b>.
 
-6 L<monotoneMaskToInteger|/monotoneMaskToInteger> - Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>.
+6 L<findWord|/findWord> - Choose one of a specified number of words each of a specified width using a ket.
 
-7 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+7 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-8 L<pointToInteger|/pointToInteger> - Convert a mask known to have at most a single bit on - also known as a B<point mask> - to an output number representing the location in the mask of the bit set to B<1>.
+8 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-9 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
+9 L<monotoneMaskToInteger|/monotoneMaskToInteger> - Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>.
+
+10 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+
+11 L<pointToInteger|/pointToInteger> - Convert a mask known to have at most a single bit on - also known as a B<point mask> - to an output number representing the location in the mask of the bit set to B<1>.
+
+12 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
 
 =head1 Installation
 
@@ -1129,6 +1275,8 @@ goto finish if caller;                                                          
 eval "use Test::More qw(no_plan);";
 eval "Test::More->builder->output('/dev/null');" if -e q(/home/phil/);
 eval {goto latest};
+
+clearFolder(q(svg), 12);                                                        # Clear the output svg folder
 
 if (1)                                                                          # Unused output
  {my $c = Silicon::Chip::newChip;
@@ -1267,17 +1415,57 @@ if (1)                                                                          
  }
 
 #latest:;
+if (1)                                                                          #TcompareEq # Compare 8 bit unsigned integers 'a' == 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+ {my $B = 4;
+  my $c = Silicon::Chip::compareEq($B);
+
+  my %a = map {("a0$_"=>0)} 1..$B;
+  my %b = map {("b0$_"=>0)} 1..$B;
+
+  my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1}, svg=>"svg/CompareEq$B");   # Svg drawing of layout
+# my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1});                           # Equal: a == b
+  is_deeply($s->values->{out}, 1);                                              # Equal
+  is_deeply($s->steps,         3);                                              # Which goes to show that the comparator operates in O(4) time
+
+  my $t = $c->simulate({%a, %b, "b02"=>1});                                     # Less: a < b
+  is_deeply($t->values->{out}, 0);                                              # Not equal
+  is_deeply($t->steps,         3);                                              # Which goes to show that the comparator operates in O(4) time
+ }
+
+#latest:;
 if (1)                                                                          #TcompareGt # Compare 8 bit unsigned integers 'a' > 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
  {my $B = 8;
   my $c = Silicon::Chip::compareGt($B);
 
-  my %a = map {("a$_"=>0)} 1..$B;
-  my %b = map {("b$_"=>0)} 1..$B;
+  my %a = map {("a00$_"=>0)} 1..$B;
+  my %b = map {("b00$_"=>0)} 1..$B;
 
-# my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
-  my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
+# my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareGt$B");            # Svg drawing of layout
+  my $s = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
   is_deeply($s->values->{out}, 1);
   is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+
+  my $t = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+  is_deeply($t->values->{out}, 0);
+  is_deeply($t->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+ }
+
+#latest:;
+if (1)                                                                          #TcompareLt # Compare 8 bit unsigned integers 'a' < 'b' - the pins used to input 'a' must be alphabetically less than those used for 'b'
+ {my $B = 8;
+  my $c = Silicon::Chip::compareLt($B);
+
+  my %a = map {("a00$_"=>0)} 1..$B;
+  my %b = map {("b00$_"=>0)} 1..$B;
+
+# my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareLt$B");            # Svg drawing of layout
+  my $s = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+  is_deeply($s->values->{out}, 1);
+  is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
+
+  my $t = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+  is_deeply($t->values->{out}, 0);
+  is_deeply($t->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
  }
 
 #latest:;
@@ -1285,7 +1473,7 @@ if (1)                                                                          
  {my $B = 4; my $W = 4;
   my $c = newChip;
   for my $w(1..$W)                                                              # Input words
-   {$c->input("s$w");                                                   # Selection mask
+   {$c->input("s$w");                                                           # Selection mask
     for my $b(1..$B)                                                            # Bits of input word
      {$c->input("i$w$b");
       $c->and(   "s$w$b", {1=>"i$w$b", 2=>"s$w"});
@@ -1293,7 +1481,7 @@ if (1)                                                                          
    }
   for my $b(1..$B)                                                              # Or selected bits together to make output
    {$c->gate("or",     "c$b", {map {$_=>"s$b$_"} 1..$W});                       # Combine the selected bits to make a word
-    $c->output( "o$b", "c$b");                                           # Output the word selected
+    $c->output( "o$b", "c$b");                                                  # Output the word selected
    }
   my $s = $c->simulate(
    {s1 =>0, s2 =>0, s3 =>1, s4 =>0,
