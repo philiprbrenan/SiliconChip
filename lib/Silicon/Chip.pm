@@ -30,10 +30,14 @@ my $possibleTypes = q(and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor);
 
 sub newChip(%)                                                                  # Create a new L<chip>.
  {my (%options) = @_;                                                           # Options
+#if ($options{installs})
+# {lll "BBBB", dump(\%options);
+#  confess "CCCC";
+# }
   genHash(__PACKAGE__,                                                          # Chip description
-    name    => $options{name}  // "Unnamed chip: ".timeStamp,                   # Name of chip
+    name    => $options{name} // $options{title}  // "Unnamed chip: ".timeStamp,# Name of chip
     gates   => $options{gates} // {},                                           # Gates in chip
-    installs=> $options{chips} // [],                                           # Chips installed within the chip
+    installs=> $options{installs} // [],                                        # Chips installed within the chip
     title   => $options{title},                                                 # Title if known
    );
  }
@@ -53,11 +57,11 @@ sub gate($$$;$)                                                                 
  {my ($chip, $type, $output, $inputs) = @_;                                     # Chip, gate type, output name, input names to output from another gate
   my $gates = $chip->gates;                                                     # Gates implementing the chip
 
-  $output =~ m(\A[a-z][a-z0-9_.:]*\Z)i or confess "Invalid gate name '$output'\n";
-  $$gates{$output} and confess "Gate $output has already been specified\n";
+  $output =~ m(\A[a-z][a-z0-9_.:]*\Z)i or confess "Invalid gate name: '$output'\n";
+  $$gates{$output} and confess "Gate: '$output' has already been specified\n";
 
   if ($type =~ m(\A(input)\Z)i)                                                 # Input gates input to themselves unless they have been connected to an output gate during sub chip expansion
-   {defined($inputs) and confess "No input hash allowed for input gate '$output'\n";
+   {defined($inputs) and confess "No input hash allowed for input gate: '$output'\n";
     $inputs = {$output=>$output};                                               # Convert convenient scalar name to hash for consistency with gates in general
    }
   elsif ($type =~ m(\A(output)\Z)i)                                             # Output has one optional scalar value naming its input if known at this point
@@ -67,22 +71,22 @@ sub gate($$$;$)                                                                 
      }
    }
   elsif ($type =~ m(\A(continue|not)\Z)i)                                       # These gates have one input expressed as a name rather than a hash
-   {!defined($inputs) and confess "Input name required for gate '$output'\n";
-    $type =~ m(\Anot\Z)i and ref($inputs) =~ m(hash)i and confess "Scalar input name required for '$output'\n";
+   {!defined($inputs) and confess "Input name required for gate: '$output'\n";
+    $type =~ m(\Anot\Z)i and ref($inputs) =~ m(hash)i and confess "Scalar input name required for: '$output'\n";
     $inputs = {$output=>$inputs};                                               # Convert convenient scalar name to hash for consistency with gates in general
    }
   elsif ($type =~ m(\A(nxor|xor|gt|ngt|lt|nlt)\Z)i)                             # These gates must have exactly two inputs expressed as a hash mapping input pin name to connection to a named gate.  These operations are associative.
-   {!defined($inputs) and confess "Input hash required for gate '$output'\n";
-    ref($inputs) =~ m(hash)i or confess "Inputs must be a hash of input names to outputs for '$output' to show the output accepted by each input. Input gates have no inputs, they are supplied instead during simulation\n";
+   {!defined($inputs) and confess "Input hash required for gate: '$output'\n";
+    ref($inputs) =~ m(hash)i or confess "Inputs must be a hash of input names to outputs for gate: '$output' to show the output accepted by each input. Input gates have no inputs, they are supplied instead during simulation\n";
     keys(%$inputs) == 2 or confess "Two inputs required for gate: '$output'\n";
    }
   elsif ($type =~ m(\A(and|nand|nor|or)\Z)i)                                    # These gates must have two or more inputs expressed as a hash mapping input pin name to connection to a named gate.  These operations are associative.
-   {!defined($inputs) and confess "Input hash required for gate '$output'\n";
-    ref($inputs) =~ m(hash)i or confess "Inputs must be a hash of input names to outputs for '$output' to show the output accepted by each input. Input gates have no inputs, they are supplied instead during simulation\n";
+   {!defined($inputs) and confess "Input hash required for gate: '$output'\n";
+    ref($inputs) =~ m(hash)i or confess "Inputs must be a hash of input gate names to output gate names for: '$output' to show the output accepted by each input. Input gates have no inputs, they are supplied instead during simulation\n";
     keys(%$inputs) < 2 and confess "Two or more inputs required for gate: '$output'\n";
    }
   else                                                                          # Unknown gate type
-   {confess "Unknown gate type '$type' for gate '$output', possible types are: $possibleTypes\n";
+   {confess "Unknown gate type: '$type' for gate: '$output', possible types are: '$possibleTypes'\n";
    }
 
   $chip->gates->{$output} = newGate($chip, $type, $output, $inputs);            # Construct gate, save it and return it
@@ -93,13 +97,14 @@ our $AUTOLOAD;                                                                  
 sub AUTOLOAD($@)                                                                #P Autoload by L<lg> name to provide a more readable way to specify the L<lgs> on a L<chip>.
  {my ($chip, @options) = @_;                                                    # Chip, options
   my $type = $AUTOLOAD =~ s(\A.*::) ()r;
-  confess "Unknown method: $type" unless $type =~ m(\A($possibleTypes|DESTROY)\Z);
+  confess "Unknown method: '$type'\n" unless $type =~ m(\A($possibleTypes|DESTROY)\Z);
   &gate($chip, $type, @options) if $type =~ m(\A($possibleTypes)\Z);
  }
 
 my sub cloneGate($$)                                                            # Clone a L<lg> on a L<chip>.
  {my ($chip, $gate) = @_;                                                       # Chip, gate
-  newGate($chip, $gate->type, $gate->output, $gate->inputs)
+  my %i = $gate->inputs ? $gate->inputs->%* : ();                               # Copy inputs
+  newGate($chip, $gate->type, $gate->output, {%i})
  }
 
 my sub renameGateInputs($$$)                                                    # Rename the inputs of a L<lg> on a L<chip>.
@@ -158,12 +163,12 @@ my sub getGates($%)                                                             
       if ($copy->type =~ m(\Ainput\Z)i)                                         # Input gate on inner chip - connect to corresponding output gate on containing chip
        {my $in = $copy->output;                                                 # Name of input gate on inner chip
         my $o  = $s->inputs->{$in};
-           $o or confess "No connection specified to inner input gate '$in' on sub chip '$n'";
+           $o or confess "No connection specified to inner input gate: '$in' on sub chip: '$n'\n";
         my $O  = $outerGates{$o};
-           $O or confess "No outer output gate '$o' to connect to inner input gate '$in' on sub chip '$n'";
+           $O or confess "No outer output gate '$o' to connect to inner input gate: '$in' on sub chip: '$n'\n";
         my $ot = $O->type;
         my $on = $O->output;
-           $ot =~ m(\Aoutput\Z)i or confess "Output gate required for connection to $in on sub chip $n, not gate $on of type $ot";
+           $ot =~ m(\Aoutput\Z)i or confess "Output gate required for connection to: '$in' on sub chip $n, not: '$ot' gate: '$on'\n";
         $copy->inputs = {1 => $o};                                              # Connect inner input gate to outer output gate
         renameGate $chip, $copy, $newGateName;                                  # Add chip name to gate to disambiguate it from any other gates
         $copy->io = gateInternalInput;                                          # Mark this as an internal input gate
@@ -172,12 +177,12 @@ my sub getGates($%)                                                             
       elsif ($copy->type =~ m(\Aoutput\Z)i)                                     # Output gate on inner chip - connect to corresponding input gate on containing chip
        {my $on = $copy->output;                                                 # Name of output gate on outer chip
         my $i  = $s->outputs->{$on};
-           $i or confess "No connection specified to inner output gate '$on' on sub chip '$n'";
+           $i or confess "No connection specified to inner output gate: '$on' on sub chip: '$n'\n";
         my $I  = $outerGates{$i};
-           $I or confess "No outer input gate '$i' to connect to inner output gate $on on sub chip '$n'";
+           $I or confess "No outer input gate: '$i' to connect to inner output gate: $on on sub chip: '$n'\n";
         my $it = $I->type;
         my $in = $I->output;
-           $it =~ m(\Ainput\Z)i or confess "Input gate required for connection to '$in' on sub chip '$n', not gate '$in' of type '$it'";
+           $it =~ m(\Ainput\Z)i or confess "Input gate required for connection to '$in' on sub chip '$n', not gate '$in' of type '$it'\n";
         renameGateInputs $chip, $copy, $newGateName;
         renameGate       $chip, $copy, $newGateName;
         $I->inputs = {11 => $copy->output};                                     # Connect inner output gate to outer input gate
@@ -205,11 +210,18 @@ my sub checkIO($%)                                                              
     my %i = $g->inputs->%*;                                                     # Inputs for gate
     for my $i(sort keys %i)                                                     # Each input
      {my $o = $i{$i};                                                           # Output driving input
-      if (!exists $$gates{$o})                                                  # No driving output
-       {confess "No output driving input '$o' on gate '$G'\n";
-       }
-      elsif ($g->type !~ m(\Ainput\Z)i or ($i{$g->output}//'') ne $g->output)   # Input gate at highest level driving itself so we ignore it so that if nothing else uses this gate it gets flagged as non driving
-       {$o{$o}++                                                                # Show that this output has been used
+      my $O = $$gates{$o};
+      defined($O) or  confess "No output driving input '$o' on gate '$G'\n";    # No driving output
+
+      if ($g->io != gateOuterInput)                                             # The gate must inputs driven by the outputs of other gates
+       {$o{$o}++;                                                               # Show that this output has been used
+        my $T = $O->type;
+        if ($g->type =~ m(\Ainput\Z)i)
+         {$O->type =~ m(\Aoutput\Z)i or confess "Input gate: '$G' must connect to an output gate on pin: '$i' not to '$T' gate: '$o'\n";
+         }
+        elsif (!$g->io)                                                         # Not an io gate so it cannot have an input from an output gate
+         {$O->type =~ m(\Aoutput\Z) and confess "Cannot drive a non io gate: '$G' using output gate: '$o'\n";
+         }
        }
      }
    }
@@ -248,24 +260,34 @@ my sub setOuterGates($$%)                                                       
 my sub removeExcessIO($$%)                                                      # Remove unneeded IO L<lgs> .
  {my ($chip, $gates, %options) = @_;                                            # Chip, gates in chip plus all sub chips as supplied by L<getGates>.
 
-  gate: for my $G(sort keys %$gates)                                            # Find all inputs and outputs
-   {my $g = $$gates{$G};                                                        # Address gate
-    next unless $g->io;                                                         # Skip non IO gates
-    next if     $g->io == gateOuterInput or $g->io == gateOuterOutput;          # Cannot be collapsed
-    my ($n) = values $g->inputs->%*;                                            # Name of the gate driving this gate
+  my %d;                                                                        # Names of gates to delete
+  for(;;)                                                                       # Multiple passes until no more gates can be replaced
+   {my $changes = 0;
 
-    for my $H(sort keys %$gates)                                                # Gates driven by this gate
-     {next if $G eq $H;
-      my $h = $$gates{$H};                                                      # Address gate
-      my %i = $h->inputs->%*;                                                   # Inputs
-      for my $i(sort keys %i)                                                   # Each input
-       {if ($i{$i} eq $G)                                                       # Found a gate that accepts input from this gate
-         {$h->inputs->{$i} = $n;                                                # Bypass io gate
-          delete $$gates{$G};
-          next gate;
+    gate: for my $G(sort keys %$gates)                                          # Find all inputs and outputs
+     {my $g = $$gates{$G};                                                      # Address gate
+      next unless $g->io;                                                       # Skip non IO gates
+      next if     $g->io == gateOuterInput or $g->io == gateOuterOutput;        # Cannot be collapsed
+      my ($n) = values $g->inputs->%*;                                          # Name of the gate driving this gate
+
+      for my $H(sort keys %$gates)                                              # Gates driven by this gate
+       {next if $G eq $H;
+        my $h = $$gates{$H};                                                    # Address gate
+        my %i = $h->inputs->%*;                                                 # Inputs
+        for my $i(sort keys %i)                                                 # Each input
+         {if ($i{$i} eq $G)                                                     # Found a gate that accepts input from this gate
+           {my $replace = $h->inputs->{$i};
+            $h->inputs->{$i} = $n;                                              # Bypass io gate
+            $d{$G}++;                                                           # Delete this gate
+            ++$changes;                                                         # Count changes in this pass
+           }
          }
        }
      }
+    last unless $changes;
+   }
+  for my $d(sort keys %d)                                                       # Gates to delete
+   {delete $$gates{$d};
    }
  }
 
@@ -299,7 +321,7 @@ my sub simulationStep($$%)                                                      
              $r = $$values{$n};
          }
         else
-         {confess "No driver for input gate $n";
+         {confess "No driver for input gate: $n\n";
          }
        }
       elsif ($t =~ m(\A(continue|nor|not|or|output)\Z)i)                        # Elaborate B<not>, B<or> or B<output> gate. A B<continue> gate places its single input unchanged on its output
@@ -308,17 +330,17 @@ my sub simulationStep($$%)                                                      
         $r = $r ? 0 : 1 if $t =~ m(\Anor|not\Z)i;
        }
       elsif ($t =~ m(\A(nxor|xor)\Z)i)                                          # Elaborate B<xor>
-       {@i == 2 or confess;
+       {@i == 2 or confess "$t gate: '$n' must have exactly two inputs\n";
         $r = $i[0] ^ $i[1] ? 1 : 0;
         $r = $r ? 0 : 1 if $t =~ m(\Anxor\Z)i;
        }
       elsif ($t =~ m(\A(gt|ngt)\Z)i)                                            # Elaborate B<a> greater than B<b> - the input pins are assumed to be sorted by name with the first pin as B<a> and the second as B<b>
-       {@i == 2 or confess;
+       {@i == 2 or confess "$t gate: '$n' must have exactly two inputs\n";
         $r = $i[0] > $i[1] ? 1 : 0;
         $r = $r ? 0 : 1 if $t =~ m(\Angt\Z)i;
        }
       elsif ($t =~ m(\A(lt|nlt)\Z)i)                                            # Elaborate B<a> less than B<b> - the input pins are assumed to be sorted by name with the first pin as B<a> and the second as B<b>
-       {@i == 2 or confess;
+       {@i == 2 or confess "$t gate: '$n' must have exactly two inputs\n";
         $r = $i[0] < $i[1] ? 1 : 0;
         $r = $r ? 0 : 1 if $t =~ m(\Anlt\Z)i;
        }
@@ -473,6 +495,7 @@ my sub svgGates($%)                                                             
 
       for my $i(keys @i)                                                        # Connections to each gate
        {my $P = $p{$i[$i]};                                                     # Source gate
+        defined($P) or confess "No such gate as: '$i[$i]'\n";
         my $X = $P->x; my $Y = $P->y; my $W = $P->width; my $G = $P->gate;      # Position of gate
         my $dx = $i + 1/2;
         my $dy = $Y < $y ?  0 : 1;
@@ -522,7 +545,7 @@ sub compareEq($%)                                                               
 
   my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
 
-  my $C = Silicon::Chip::newChip(title=>"$B Bit Compare Equal");
+  my $C = Silicon::Chip::newChip(name=>"eq", title=>"$B Bit Compare Equal");
 
   $C->input(n("a", $_))                                 for 1..$B;              # First number
   $C->input(n("b", $_))                                 for 1..$B;              # Second number
@@ -540,7 +563,7 @@ sub compareGt($%)                                                               
 
   my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
 
-  my $C = Silicon::Chip::newChip(title=>"$B Bit Compare Greater Than");
+  my $C = Silicon::Chip::newChip(name=>"gt", title=>"$B Bit Compare Greater Than");
 
   $C->input(n("a", $_))                                 for 1..$B;              # First number
   $C->input(n("b", $_))                                 for 1..$B;              # Second number
@@ -563,7 +586,7 @@ sub compareLt($%)                                                               
 
   my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
 
-  my $C = Silicon::Chip::newChip(title=>"$B Bit Compare Less Than");
+  my $C = Silicon::Chip::newChip(name=>"lt", title=>"$B Bit Compare Less Than");
 
   $C->input(n("a", $_))                                 for 1..$B;              # First number
   $C->input(n("b", $_))                                 for 1..$B;              # Second number
@@ -671,30 +694,31 @@ sub chooseWordUnderMask($$%)                                                    
   $C
  }
 
-sub findWord($$$%)                                                              # Choose one of a specified number of words each of a specified width using a ket.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
- {my ($key, $words, $bits, %options) = @_;                                      # Key, number of words, bits in each word and key, options
+sub findWord($$%)                                                               # Choose one of a specified number of words each of a specified width using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+ {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word and key, options
   my $D = 1 + int($bits / 3);
 
-  my sub n($$)                                                                  # Gate name from single index
-   {my ($c, $i) = @_;                                                           # Gate letter, gate number
-    sprintf "$c%0${D}d", $i
-   }
-
-  my sub nn($$$)                                                                # Gate name from double index
-   {my ($c, $i, $j) = @_;                                                       # Gate letter, gate number
-    sprintf "$c%0${D}d_%0${D}d", $i, $j;
-   }
+  my sub n ($$)  {my ($c, $i)     = @_; sprintf "$c%0${D}d",         $i    }    # Gate name from single index
+  my sub nn($$$) {my ($c, $i, $j) = @_; sprintf "$c%0${D}d_%0${D}d", $i, $j}    # Gate name from double index
 
   my $C = Silicon::Chip::newChip(title=>"Find a word in $words words of $bits bits");
+  my $c = compareEq($bits, %options);                                           # Compare equals
 
+  my %k;
   for my $b(1..$bits)                                                           # Key
-   {$C->input(n('k', $b));
+   {                 $C->input (n('k', $b));
+    $k{n("b", $b)} = $C->output(n('K', $b), n('k', $b))->output;
    }
 
   for   my $w(1..$words)                                                        # Input words
-   {for my $b(1..$bits)                                                         # Bits in each word
-     {$C->input(nn('w', $w, $b));
+   {my %i;
+    for my $b(1..$bits)                                                         # Bits in each word
+     {                 $C->input (nn('w', $w, $b));                             # Each input is sent to compare equals
+      $i{n('a', $b)} = $C->output(nn('W', $w, $b), nn('w', $w, $b))->output;    # The input words are immediately input into the comparators for comparison against the key
      }
+    $C->input  (            n('c', $w));                                        # The result from the comparator will reenter the chip here
+    $C->install($c, {%i, %k}, {out => n('c', $w)});
+    $C->output (n('o', $w), n('c', $w));                                        # The results from the comparators are output as a point mask
    }
 
   $C
@@ -704,11 +728,12 @@ sub findWord($$$%)                                                              
 
 my sub merge($%)                                                                # Merge a L<chip> and all its sub L<chips> to make a single L<chip>.
  {my ($chip, %options) = @_;                                                    # Chip, options
+
   my $gates = getGates $chip;                                                   # Gates implementing the chip and all of its sub chips
   setOuterGates ($chip, $gates);                                                # Set the outer gates which are to be connected to in the real word
   removeExcessIO($chip, $gates);                                                # By pass and then remove all interior IO gates as they are no longer needed
-  my $c = newChip %$chip, %options, gates=>$gates;                              # Create the new chip
 
+  my $c = newChip %$chip, %options, gates=>$gates, installs=>[];                # Create the new chip with all installs expanded
   dumpGates($c, %options) if $options{dumpGates};                               # Print the gates
   svgGates ($c, %options) if $options{svg};                                     # Draw the gates using svg
   checkIO $c;                                                                   # Check all inputs are connected to valid gates and that all outputs are used
@@ -743,9 +768,8 @@ my sub checkInputs($$%)                                                         
 
 sub simulate($$%)                                                               # Simulate the action of the L<lgs> on a L<chip> for a given set of inputs until the output values of each L<lg> stabilize.
  {my ($chip, $inputs, %options) = @_;                                           # Chip, Hash of input names to values, options
-
   my $c = merge($chip, %options);                                               # Merge all the sub chips to make one chip with no sub chips
-  checkInputs($c, $inputs);                                                     # Conform that there is an input value for every input to the chip
+  checkInputs($c, $inputs);                                                     # Confirm that there is an input value for every input to the chip
 
   my %values = %$inputs;                                                        # The current set of values contains just the inputs at the start of the simulation
   my %changed;                                                                  # Last step on which this gate changed.  We use this to order the gates on layout
@@ -1119,15 +1143,41 @@ B<Example:>
    }
 
 
-=head2 findWord($key, $words, $bits, %options)
+=head2 findWord($words, $bits, %options)
 
-Choose one of a specified number of words each of a specified width using a ket.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+Choose one of a specified number of words each of a specified width using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
 
      Parameter  Description
-  1  $key       Key
-  2  $words     Number of words
-  3  $bits      Bits in each word and key
-  4  %options   Options
+  1  $words     Number of words
+  2  $bits      Bits in each word and key
+  3  %options   Options
+
+B<Example:>
+
+
+  if (1)
+   {my $B = 2; my $W = 2;
+
+    my $c = findWord($W, $B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+    my %i;
+    for my $w(1..$W)
+     {my $s = sprintf "%0${B}b", $w;
+      for my $b(1..$B)
+       {my $c = sprintf "w%1d_%1d", $w, $b;
+        $i{$c} = substr($s, -$b, 1);
+       }
+     }
+    my %m = map{("m$_"=>0)} 1..$W;
+
+    my $s = $c->simulate({%i, %m, "k2"=>1, "k1"=>0}, svg=>"svg/findWord_${W}_$B");
+
+    is_deeply($s->steps, 3);
+    is_deeply($s->values->{o1}, 0);
+    is_deeply($s->values->{o2}, 1);
+   }
+
 
 =head1 Simulate
 
@@ -1232,7 +1282,7 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 5 L<compareLt|/compareLt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> less than B<b>.
 
-6 L<findWord|/findWord> - Choose one of a specified number of words each of a specified width using a ket.
+6 L<findWord|/findWord> - Choose one of a specified number of words each of a specified width using a key.
 
 7 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
@@ -1273,7 +1323,7 @@ under the same terms as Perl itself.
 #D0 Tests                                                                       # Tests and examples
 goto finish if caller;                                                          # Skip testing if we are being called as a module
 eval "use Test::More qw(no_plan);";
-eval "Test::More->builder->output('/dev/null');" if -e q(/home/phil/);
+eval "Test::More->builder->output('/dev/null');" if -e q(/home/phil2/);
 eval {goto latest};
 
 clearFolder(q(svg), 99);                                                        # Clear the output svg folder
@@ -1289,7 +1339,7 @@ if (1)                                                                          
  {my $c = Silicon::Chip::newChip;
         $c->input("i1");
   eval {$c->input("i1")};
-  ok($@ =~ m(Gate i1 has already been specified));
+  ok($@ =~ m(Gate: 'i1' has already been specified));
  }
 
 #latest:;
@@ -1610,33 +1660,48 @@ if (1)                                                                          
  }
 
 #latest:;
-#if (1)                                                                         # Find smallest key bigger than the specified key
-# {my $B = 4; my $W = 4;
-#  start;
-#  for my $w(1..$W)                                                             # Input words
-#   {$c->input("s$w");                                                  # Selection mask
-#    for my $b(1..$B)                                                           # Bits of input word
-#     {$c->input("i$w$b");
-#      $c->and(   "s$w$b", {1=>"i$w$b", 2=>"s$w"});
-#     }
-#   }
-#  for my $b(1..$B)                                                             # Or selected bits together to make output
-#   {$c->gate("or",     "c$b", {map {$_=>"s$b$_"} 1..$W});                      # Combine the selected bits to make a word
-#    $c->output( "o$b", "c$b");                                          # Output the word selected
-#   }
-#  my $s = simulate(
-#   {s1 =>0, s2 =>0, s3 =>1, s4=>0,
-#    i11=>0, i12=>0, i13=>0, i14=>1,
-#    i21=>0, i22=>0, i23=>1, i24=>0,
-#    i31=>0, i32=>1, i33=>0, i34=>0,
-#    i41=>1, i42=>0, i43=>0, i44=>0});
-#  is_deeply($s->values->{o1}, 0);
-#  is_deeply($s->values->{o2}, 0);
-#  is_deeply($s->values->{o3}, 1);
-#  is_deeply($s->values->{o4}, 0);
-#
-#  is_deeply($s->steps, 3);
-# }
-#
+if (1)                                                                          #TfindWord
+ {my $B = 2; my $W = 2;
+  my $c = findWord($W, $B);
+
+  my %i;
+  for my $w(1..$W)
+   {my $s = sprintf "%0${B}b", $w;
+    for my $b(1..$B)
+     {my $c = sprintf "w%1d_%1d", $w, $b;
+      $i{$c} = substr($s, -$b, 1);
+     }
+   }
+  my %m = map{("m$_"=>0)} 1..$W;
+
+  if (1)                                                                        # Find key 2 at position 2
+   {my $s = $c->simulate({%i, %m, "k2"=>1, "k1"=>0}, svg=>"svg/findWord_${W}_$B");
+    is_deeply($s->steps, 3);
+    is_deeply($s->values->{o1}, 0);
+    is_deeply($s->values->{o2}, 1);
+   }
+
+  if (1)                                                                        # Find key 1 at position 1
+   {my $s = $c->simulate({%i, %m, "k2"=>0, "k1"=>1});
+    is_deeply($s->steps, 3);
+    is_deeply($s->values->{o1}, 1);
+    is_deeply($s->values->{o2}, 0);
+   }
+
+  if (1)                                                                        # Find key 0 - does not exist
+   {my $s = $c->simulate({%i, %m, "k2"=>0, "k1"=>0});
+    is_deeply($s->steps, 3);
+    is_deeply($s->values->{o1}, 0);
+    is_deeply($s->values->{o2}, 0);
+   }
+
+  if (1)                                                                        # Find key 3 - does not exist
+   {my $s = $c->simulate({%i, %m, "k2"=>1, "k1"=>1});
+    is_deeply($s->steps, 3);
+    is_deeply($s->values->{o1}, 0);
+    is_deeply($s->values->{o2}, 0);
+   }
+ }
+
 done_testing();
 finish: 1;
