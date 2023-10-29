@@ -321,15 +321,39 @@ Choose one of a specified number of words each of a specified width using a poin
       is_deeply($s->values->{o2}, 0);
      }
 
-## findWord($key, $words, $bits, %options)
+## findWord($words, $bits, %options)
 
-Choose one of a specified number of words each of a specified width using a ket.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+Choose one of a specified number of words each of a specified width using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
 
        Parameter  Description
-    1  $key       Key
-    2  $words     Number of words
-    3  $bits      Bits in each word and key
-    4  %options   Options
+    1  $words     Number of words
+    2  $bits      Bits in each word and key
+    3  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $B = 2; my $W = 2;
+
+      my $c = findWord($W, $B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+      my %i;
+      for my $w(1..$W)
+       {my $s = sprintf "%0${B}b", $w;
+        for my $b(1..$B)
+         {my $c = sprintf "w%1d_%1d", $w, $b;
+          $i{$c} = substr($s, -$b, 1);
+         }
+       }
+      my %m = map{("m$_"=>0)} 1..$W;
+
+      my $s = $c->simulate({%i, %m, "k2"=>1, "k1"=>0}, svg=>"svg/findWord_${W}_$B");
+
+      is_deeply($s->steps, 3);
+      is_deeply($s->values->{o1}, 0);
+      is_deeply($s->values->{o2}, 1);
+     }
 
 # Simulate
 
@@ -419,7 +443,7 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 5 [compareLt](#comparelt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** less than **b**.
 
-6 [findWord](#findword) - Choose one of a specified number of words each of a specified width using a ket.
+6 [findWord](#findword) - Choose one of a specified number of words each of a specified width using a key.
 
 7 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
