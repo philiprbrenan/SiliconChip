@@ -44,7 +44,7 @@ Other circuit diagrams can be seen in folder: [lib/Silicon/svg](https://github.c
 
 Design a [silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and sub [chips](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-Version 20231027.
+Version 20231029.
 
 The following sections describe the methods in each functional area of this
 module.  For an alphabetic listing of all methods by name see [Index](#index).
@@ -154,7 +154,7 @@ Some well known basic circuits.
 
 ## compareEq($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is equal to **b** else **0**
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is equal to **b** else **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -184,7 +184,7 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
 
 ## compareGt($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is greater than **b** else **0**
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is greater than **b** else **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -214,7 +214,7 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
 
 ## compareLt($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is less than **b** else **0**
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is less than **b** else **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -298,7 +298,7 @@ Convert a monotone mask to an output number representing the location in the mas
 
 ## chooseWordUnderMask($words, $bits, %options)
 
-Choose one of a specified number of words each of a specified width using a point mask.
+Choose one of a specified number of words, each of a specified width, using a point mask.
 
        Parameter  Description
     1  $words     Number of words
@@ -332,7 +332,7 @@ Choose one of a specified number of words each of a specified width using a poin
 
 ## findWord($words, $bits, %options)
 
-Choose one of a specified number of words each of a specified width using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+Choose one of a specified number of words, each of a specified width, using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
 
        Parameter  Description
     1  $words     Number of words
@@ -468,7 +468,7 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 1 [AUTOLOAD](#autoload) - Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provide a more readable way to specify the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-2 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words each of a specified width using a point mask.
+2 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words, each of a specified width, using a point mask.
 
 3 [compareEq](#compareeq) - Compare two unsigned binary integers **a**, **b** of a specified width.
 
@@ -476,7 +476,7 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 5 [compareLt](#comparelt) - Compare two unsigned binary integers **a**, **b** of a specified width.
 
-6 [findWord](#findword) - Choose one of a specified number of words each of a specified width using a key.
+6 [findWord](#findword) - Choose one of a specified number of words, each of a specified width, using a key.
 
 7 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
