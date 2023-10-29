@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------
 use v5.34;
 package Silicon::Chip;
-our $VERSION = 20231027;                                                        # Version
+our $VERSION = 20231029;                                                        # Version
 use warnings FATAL => qw(all);
 use strict;
 use Carp;
@@ -538,7 +538,7 @@ my sub svgGates($%)                                                             
 
 #D1 Basic Circuits                                                              # Some well known basic circuits.
 
-sub compareEq($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is equal to B<b> else B<0>
+sub compareEq($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is equal to B<b> else B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
   my $D = 1 + int($bits / 3);
@@ -556,7 +556,7 @@ sub compareEq($%)                                                               
   $C
  }
 
-sub compareGt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is greater than B<b> else B<0>
+sub compareGt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is greater than B<b> else B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
   my $D = 1 + int($bits / 3);
@@ -579,7 +579,7 @@ sub compareGt($%)                                                               
   $C
  }
 
-sub compareLt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is less than B<b> else B<0>
+sub compareLt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is less than B<b> else B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
   my $D = 1 + int($bits / 3);
@@ -658,7 +658,7 @@ sub monotoneMaskToInteger($%)                                                   
   $C
  }
 
-sub chooseWordUnderMask($$%)                                                    # Choose one of a specified number of words each of a specified width using a point mask.
+sub chooseWordUnderMask($$%)                                                    # Choose one of a specified number of words, each of a specified width, using a point mask.
  {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word, options
   my $D = 1 + int($bits / 3);
 
@@ -694,7 +694,7 @@ sub chooseWordUnderMask($$%)                                                    
   $C
  }
 
-sub findWord($$%)                                                               # Choose one of a specified number of words each of a specified width using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+sub findWord($$%)                                                               # Choose one of a specified number of words, each of a specified width, using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
  {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word and key, options
   my $D = 1 + int($bits / 3);
 
@@ -844,7 +844,7 @@ Other circuit diagrams can be seen in folder: L<lib/Silicon/svg|https://github.c
 Design a L<silicon|https://en.wikipedia.org/wiki/Silicon> L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> by combining L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> and sub L<chips|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
 
-Version 20231027.
+Version 20231029.
 
 
 The following sections describe the methods in each functional area of this
@@ -961,7 +961,7 @@ Some well known basic circuits.
 
 =head2 compareEq($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is equal to B<b> else B<0>
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is equal to B<b> else B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -992,7 +992,7 @@ B<Example:>
 
 =head2 compareGt($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is greater than B<b> else B<0>
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is greater than B<b> else B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -1023,7 +1023,7 @@ B<Example:>
 
 =head2 compareLt($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is less than B<b> else B<0>
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is less than B<b> else B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -1110,7 +1110,7 @@ B<Example:>
 
 =head2 chooseWordUnderMask($words, $bits, %options)
 
-Choose one of a specified number of words each of a specified width using a point mask.
+Choose one of a specified number of words, each of a specified width, using a point mask.
 
      Parameter  Description
   1  $words     Number of words
@@ -1145,7 +1145,7 @@ B<Example:>
 
 =head2 findWord($words, $bits, %options)
 
-Choose one of a specified number of words each of a specified width using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+Choose one of a specified number of words, each of a specified width, using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
 
      Parameter  Description
   1  $words     Number of words
@@ -1296,7 +1296,7 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 1 L<AUTOLOAD|/AUTOLOAD> - Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provide a more readable way to specify the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-2 L<chooseWordUnderMask|/chooseWordUnderMask> - Choose one of a specified number of words each of a specified width using a point mask.
+2 L<chooseWordUnderMask|/chooseWordUnderMask> - Choose one of a specified number of words, each of a specified width, using a point mask.
 
 3 L<compareEq|/compareEq> - Compare two unsigned binary integers B<a>, B<b> of a specified width.
 
@@ -1304,7 +1304,7 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 5 L<compareLt|/compareLt> - Compare two unsigned binary integers B<a>, B<b> of a specified width.
 
-6 L<findWord|/findWord> - Choose one of a specified number of words each of a specified width using a key.
+6 L<findWord|/findWord> - Choose one of a specified number of words, each of a specified width, using a key.
 
 7 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
