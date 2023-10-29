@@ -538,7 +538,7 @@ my sub svgGates($%)                                                             
 
 #D1 Basic Circuits                                                              # Some well known basic circuits.
 
-sub compareEq($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> equal to B<b>. Output B<1> if B<a> is equal to B<b> else B<0>
+sub compareEq($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is equal to B<b> else B<0>
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
   my $D = 1 + int($bits / 3);
@@ -556,7 +556,7 @@ sub compareEq($%)                                                               
   $C
  }
 
-sub compareGt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>. Output B<1> if B<a> is greater than B<b> else B<0>
+sub compareGt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is greater than B<b> else B<0>
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
   my $D = 1 + int($bits / 3);
@@ -579,7 +579,7 @@ sub compareGt($%)                                                               
   $C
  }
 
-sub compareLt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> less than B<b>. Output B<1> if B<a> is less than B<b> else B<0>
+sub compareLt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is less than B<b> else B<0>
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
   my $D = 1 + int($bits / 3);
@@ -961,7 +961,7 @@ Some well known basic circuits.
 
 =head2 compareEq($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> equal to B<b>. Output B<1> if B<a> is equal to B<b> else B<0>
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is equal to B<b> else B<0>
 
      Parameter  Description
   1  $bits      Bits
@@ -992,7 +992,7 @@ B<Example:>
 
 =head2 compareGt($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>. Output B<1> if B<a> is greater than B<b> else B<0>
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is greater than B<b> else B<0>
 
      Parameter  Description
   1  $bits      Bits
@@ -1023,7 +1023,7 @@ B<Example:>
 
 =head2 compareLt($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> less than B<b>. Output B<1> if B<a> is less than B<b> else B<0>
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is less than B<b> else B<0>
 
      Parameter  Description
   1  $bits      Bits
@@ -1298,11 +1298,11 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 2 L<chooseWordUnderMask|/chooseWordUnderMask> - Choose one of a specified number of words each of a specified width using a point mask.
 
-3 L<compareEq|/compareEq> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> equal to B<b>.
+3 L<compareEq|/compareEq> - Compare two unsigned binary integers B<a>, B<b> of a specified width.
 
-4 L<compareGt|/compareGt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> greater than B<b>.
+4 L<compareGt|/compareGt> - Compare two unsigned binary integers B<a>, B<b> of a specified width.
 
-5 L<compareLt|/compareLt> - Compare two unsigned binary integers B<a>, B<b> of a specified width for B<a> less than B<b>.
+5 L<compareLt|/compareLt> - Compare two unsigned binary integers B<a>, B<b> of a specified width.
 
 6 L<findWord|/findWord> - Choose one of a specified number of words each of a specified width using a key.
 
