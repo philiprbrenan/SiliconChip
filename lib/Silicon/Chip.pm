@@ -30,15 +30,12 @@ my $possibleTypes = q(and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor);
 
 sub newChip(%)                                                                  # Create a new L<chip>.
  {my (%options) = @_;                                                           # Options
-#if ($options{installs})
-# {lll "BBBB", dump(\%options);
-#  confess "CCCC";
-# }
   genHash(__PACKAGE__,                                                          # Chip description
     name    => $options{name} // $options{title}  // "Unnamed chip: ".timeStamp,# Name of chip
     gates   => $options{gates} // {},                                           # Gates in chip
     installs=> $options{installs} // [],                                        # Chips installed within the chip
     title   => $options{title},                                                 # Title if known
+    gateSeq => 0,                                                               # GAte squqnce number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
    );
  }
 
@@ -50,6 +47,7 @@ my sub newGate($$$$)                                                            
    output   => $output,                                                         # Output name which is used as the name of the gate as well
    inputs   => $inputs,                                                         # Input names to driving outputs
    io       => gateNotIO,                                                       # Whether an input/output gate or not
+   seq      => ++$chip->gateSeq,                                                # Sequence number for this gate
   );
  }
 
@@ -141,7 +139,7 @@ my sub getGates($%)                                                             
  {my ($chip, %options) = @_;                                                    # Chip, options
 
   my %outerGates;
-  for my $g(values $chip->gates->%*)                                            # Copy gates from outer chip
+  for my $g(sort {$a->seq <=> $b->seq} values $chip->gates->%*)                 # Copy gates from outer chip
    {my $G = $outerGates{$g->output} = cloneGate($chip, $g);
     if    ($G->type =~ m(\Ainput\Z)i)  {$G->io = gateExternalInput}             # Input gate on outer chip
     elsif ($G->type =~ m(\Aoutput\Z)i) {$G->io = gateExternalOutput}            # Output gate on outer chip
@@ -154,7 +152,8 @@ my sub getGates($%)                                                             
     my $n = $s->chip->name;                                                     # Name of sub chip
     my $innerGates = __SUB__->($s->chip);                                       # Gates in sub chip
 
-    for my $G(sort keys %$innerGates)                                           # Each gate in sub chip
+    for my $G(sort {$$innerGates{$a}->seq <=> $$innerGates{$b}->seq}
+              keys  %$innerGates)                                               # Each gate in sub chip on definition order
      {my $g = $$innerGates{$G};                                                 # Gate in sub chip
       my $o = $g->output;                                                       # Name of gate
       my $copy = cloneGate $chip, $g;                                           # Clone gate from chip description
@@ -296,7 +295,7 @@ my sub simulationStep($$%)                                                      
   my $gates = $chip->gates;                                                     # Gates on chip
   my %changes;                                                                  # Changes made
 
-  for my $G(keys %$gates)                                                       # Output for each gate
+  for my $G(sort {$$gates{$a}->seq <=> $$gates{$b}->seq} keys %$gates)          # Each gate in sub chip on definition order to get a repeatable order
    {my $g = $$gates{$G};                                                        # Address gate
     my $t = $g->type;                                                           # Gate type
     my $n = $g->output;                                                         # Gate name
@@ -360,7 +359,8 @@ my sub orderGates($%)                                                           
 
   my $gates = $chip->gates;                                                     # Gates on chip
   my @i; my @n; my @o;
-  for my $G(sort keys %$gates)                                                  # Dump each gate one per line
+
+  for my $G(sort {$$gates{$a}->seq <=> $$gates{$b}->seq} keys %$gates)          # Dump each gate one per line in definition order
    {my $g = $$gates{$G};
     push @i, $G if $g->type =~ m(\Ainput\Z)i;
     push @n, $G if $g->type !~ m(\A(in|out)put\Z)i;
@@ -533,17 +533,24 @@ my sub svgGates($%)                                                             
        }
      }
    }
-  owf(fpe($options{svg}, q(svg)), $s->print);
+  my $f = owf(fpe($options{svg}, q(svg)), $s->print);
  }
 
 #D1 Basic Circuits                                                              # Some well known basic circuits.
 
+my sub n($$)                                                                    # Gate name from single index
+ {my ($c, $i) = @_;
+  "$c$i"
+ }
+
+my sub nn($$$)                                                                  # Gate name from double index
+ {my ($c, $i, $j) = @_;
+ "$c${i}_$j"
+ }
+
 sub compareEq($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is equal to B<b> else B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
-  my $D = 1 + int($bits / 3);
-
-  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
 
   my $C = Silicon::Chip::newChip(name=>"eq", title=>"$B Bit Compare Equal");
 
@@ -552,16 +559,12 @@ sub compareEq($%)                                                               
   $C->nxor (n("e", $_), {1=>n("a", $_), 2=>n("b", $_)}) for 1..$B;              # Test each bit pair for equality
   $C->and  ("and", {map {($_=>n("e", $_))}                  1..$B});            # All bits must be equal
   $C->output("out", "and");                                                     # Output B<1> if B<a> > B<b> else B<0>
-
   $C
  }
 
 sub compareGt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is greater than B<b> else B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
-  my $D = 1 + int($bits / 3);
-
-  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
 
   my $C = Silicon::Chip::newChip(name=>"gt", title=>"$B Bit Compare Greater Than");
 
@@ -573,6 +576,7 @@ sub compareGt($%)                                                               
   for my $b(2..$B)
    {$C->and(n("c", $b), {(map {$_=>n("e", $_)} 1..$b-1), $b=>n("g", $b)});      # Greater than on one bit and all preceding bits are equal
    }
+
   $C->or    ("or",  {1=>n("g", 1),  (map {$_=>n("c", $_)} 2..$B)});             # Any set bit indicates that B<a> is greater than B<b>
   $C->output("out", "or");                                                      # Output B<1> if B<a> > B<b> else B<0>
 
@@ -582,9 +586,6 @@ sub compareGt($%)                                                               
 sub compareLt($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is less than B<b> else B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
-  my $D = 1 + int($bits / 3);
-
-  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from single index
 
   my $C = Silicon::Chip::newChip(name=>"lt", title=>"$B Bit Compare Less Than");
 
@@ -605,9 +606,6 @@ sub compareLt($%)                                                               
 sub pointToInteger($%)                                                          # Convert a mask known to have at most a single bit on - also known as a B<point mask> - to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point mask then output is B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = 2**$bits-1;
-  my $D = 1 + int($bits / 3);
-
-  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from gate letter, gate number
 
   my %b;
   for my $b(1..$B)
@@ -631,9 +629,6 @@ sub pointToInteger($%)                                                          
 sub monotoneMaskToInteger($%)                                                   # Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output is B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = 2**$bits-1;
-  my $D = 1 + int($bits / 3);
-
-  my sub n($$) {my ($c, $i) = @_; sprintf "$c%0${D}d", $i}                      # Gate name from gate letter, gate number
 
   my %b;
   for my $b(1..$B)
@@ -660,10 +655,6 @@ sub monotoneMaskToInteger($%)                                                   
 
 sub chooseWordUnderMask($$%)                                                    # Choose one of a specified number of words, each of a specified width, using a point mask.
  {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word, options
-  my $D = 1 + int($bits / 3);
-
-  my sub n ($$)  {my ($c, $i)     = @_; sprintf "$c%0${D}d",         $i    }    # Gate name from single index
-  my sub nn($$$) {my ($c, $i, $j) = @_; sprintf "$c%0${D}d_%0${D}d", $i, $j}    # Gate name from double index
 
   my $C = Silicon::Chip::newChip(title=>"Choose a word from $words words of $bits bits");
 
@@ -696,10 +687,6 @@ sub chooseWordUnderMask($$%)                                                    
 
 sub findWord($$%)                                                               # Choose one of a specified number of words, each of a specified width, using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
  {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word and key, options
-  my $D = 1 + int($bits / 3);
-
-  my sub n ($$)  {my ($c, $i)     = @_; sprintf "$c%0${D}d",         $i    }    # Gate name from single index
-  my sub nn($$$) {my ($c, $i, $j) = @_; sprintf "$c%0${D}d_%0${D}d", $i, $j}    # Gate name from double index
 
   my $C = Silicon::Chip::newChip(title=>"Find a word in $words words of $bits bits");
   my $c = compareEq($bits, %options);                                           # Compare equals
@@ -976,15 +963,15 @@ B<Example:>
     my $c = Silicon::Chip::compareEq($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
   
-    my %a = map {("a0$_"=>0)} 1..$B;
-    my %b = map {("b0$_"=>0)} 1..$B;
+    my %a = map {("a$_"=>0)} 1..$B;
+    my %b = map {("b$_"=>0)} 1..$B;
   
-    my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1}, svg=>"svg/CompareEq$B");   # Svg drawing of layout
-  # my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1});                           # Equal: a == b
+    my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1}, svg=>"svg/CompareEq$B");     # Svg drawing of layout
+  # my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1});                             # Equal: a == b
     is_deeply($s->values->{out}, 1);                                              # Equal
     is_deeply($s->steps,         3);                                              # Number of steps to stability
   
-    my $t = $c->simulate({%a, %b, "b02"=>1});                                     # Less: a < b
+    my $t = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
     is_deeply($t->values->{out}, 0);                                              # Not equal
     is_deeply($s->steps,         3);                                              # Number of steps to stability
    }
@@ -1007,15 +994,15 @@ B<Example:>
     my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
   
-    my %a = map {("a00$_"=>0)} 1..$B;
-    my %b = map {("b00$_"=>0)} 1..$B;
+    my %a = map {("a$_"=>0)} 1..$B;
+    my %b = map {("b$_"=>0)} 1..$B;
   
-  # my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareGt$B");            # Svg drawing of layout
-    my $s = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+  # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
+    my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
     is_deeply($s->values->{out}, 1);
     is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
   
-    my $t = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+    my $t = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
     is_deeply($t->values->{out}, 0);
     is_deeply($s->steps,         4);                                              # Number of steps to stability
    }
@@ -1038,15 +1025,15 @@ B<Example:>
     my $c = Silicon::Chip::compareLt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
   
-    my %a = map {("a00$_"=>0)} 1..$B;
-    my %b = map {("b00$_"=>0)} 1..$B;
+    my %a = map {("a$_"=>0)} 1..$B;
+    my %b = map {("b$_"=>0)} 1..$B;
   
-  # my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareLt$B");            # Svg drawing of layout
-    my $s = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+  # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareLt$B");              # Svg drawing of layout
+    my $s = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
     is_deeply($s->values->{out}, 1);
     is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
   
-    my $t = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+    my $t = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
     is_deeply($t->values->{out}, 0);
     is_deeply($s->steps,         4);                                              # Number of steps to stability
    }
@@ -1068,14 +1055,14 @@ B<Example:>
   
     my $c = pointToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-    my %i = map {(sprintf("i%02d", $_)=>0)} 1..2**$B-1;
-       $i{i05} = 1;
+    my %i = map {("i$_"=>0)} 1..2**$B-1;
+       $i{i5} = 1;
     my $s = $c->simulate(\%i, svg=>"svg/point$B");
     is_deeply($s->steps, 2);
-    is_deeply($s->values->{o01}, 1);
-    is_deeply($s->values->{o02}, 0);
-    is_deeply($s->values->{o03}, 1);
-    is_deeply($s->values->{o04}, 0);
+    is_deeply($s->values->{o1}, 1);
+    is_deeply($s->values->{o2}, 0);
+    is_deeply($s->values->{o3}, 1);
+    is_deeply($s->values->{o4}, 0);
    }
   
 
@@ -1095,16 +1082,16 @@ B<Example:>
   
     my $c = monotoneMaskToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-    my %i = map {(sprintf("i%02d", $_)=>1)} 1..2**$B-1;
-       $i{"i0$_"} = 0 for 1..6;
+    my %i = map {("i$_"=>1)} 1..2**$B-1;
+       $i{"i$_"} = 0 for 1..6;
   
     my $s = $c->simulate(\%i, svg=>"svg/monotoneMask$B");
   
     is_deeply($s->steps, 4);
-    is_deeply($s->values->{o01}, 1);
-    is_deeply($s->values->{o02}, 1);
-    is_deeply($s->values->{o03}, 1);
-    is_deeply($s->values->{o04}, 0);
+    is_deeply($s->values->{o1}, 1);
+    is_deeply($s->values->{o2}, 1);
+    is_deeply($s->values->{o3}, 1);
+    is_deeply($s->values->{o4}, 0);
    }
   
 
@@ -1261,6 +1248,10 @@ Chip description
 
 =head3 Output fields
 
+
+=head4 gateSeq
+
+GAte squqnce number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
 
 =head4 gates
 
@@ -1491,15 +1482,15 @@ if (1)                                                                          
  {my $B = 4;
   my $c = Silicon::Chip::compareEq($B);
 
-  my %a = map {("a0$_"=>0)} 1..$B;
-  my %b = map {("b0$_"=>0)} 1..$B;
+  my %a = map {("a$_"=>0)} 1..$B;
+  my %b = map {("b$_"=>0)} 1..$B;
 
-  my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1}, svg=>"svg/CompareEq$B");   # Svg drawing of layout
-# my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1});                           # Equal: a == b
+  my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1}, svg=>"svg/CompareEq$B");     # Svg drawing of layout
+# my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1});                             # Equal: a == b
   is_deeply($s->values->{out}, 1);                                              # Equal
   is_deeply($s->steps,         3);                                              # Number of steps to stability
 
-  my $t = $c->simulate({%a, %b, "b02"=>1});                                     # Less: a < b
+  my $t = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
   is_deeply($t->values->{out}, 0);                                              # Not equal
   is_deeply($s->steps,         3);                                              # Number of steps to stability
  }
@@ -1509,15 +1500,15 @@ if (1)                                                                          
  {my $B = 8;
   my $c = Silicon::Chip::compareGt($B);
 
-  my %a = map {("a00$_"=>0)} 1..$B;
-  my %b = map {("b00$_"=>0)} 1..$B;
+  my %a = map {("a$_"=>0)} 1..$B;
+  my %b = map {("b$_"=>0)} 1..$B;
 
-# my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareGt$B");            # Svg drawing of layout
-  my $s = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+# my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
+  my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
   is_deeply($s->values->{out}, 1);
   is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
 
-  my $t = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+  my $t = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
   is_deeply($t->values->{out}, 0);
   is_deeply($s->steps,         4);                                              # Number of steps to stability
  }
@@ -1527,15 +1518,15 @@ if (1)                                                                          
  {my $B = 8;
   my $c = Silicon::Chip::compareLt($B);
 
-  my %a = map {("a00$_"=>0)} 1..$B;
-  my %b = map {("b00$_"=>0)} 1..$B;
+  my %a = map {("a$_"=>0)} 1..$B;
+  my %b = map {("b$_"=>0)} 1..$B;
 
-# my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareLt$B");            # Svg drawing of layout
-  my $s = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+# my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareLt$B");              # Svg drawing of layout
+  my $s = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
   is_deeply($s->values->{out}, 1);
   is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
 
-  my $t = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+  my $t = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
   is_deeply($t->values->{out}, 0);
   is_deeply($s->steps,         4);                                              # Number of steps to stability
  }
@@ -1634,30 +1625,30 @@ if (1)                                                                          
 if (1)                                                                          #TpointToInteger
  {my $B = 4;
   my $c = pointToInteger($B);
-  my %i = map {(sprintf("i%02d", $_)=>0)} 1..2**$B-1;
-     $i{i05} = 1;
+  my %i = map {("i$_"=>0)} 1..2**$B-1;
+     $i{i5} = 1;
   my $s = $c->simulate(\%i, svg=>"svg/point$B");
   is_deeply($s->steps, 2);
-  is_deeply($s->values->{o01}, 1);
-  is_deeply($s->values->{o02}, 0);
-  is_deeply($s->values->{o03}, 1);
-  is_deeply($s->values->{o04}, 0);
+  is_deeply($s->values->{o1}, 1);
+  is_deeply($s->values->{o2}, 0);
+  is_deeply($s->values->{o3}, 1);
+  is_deeply($s->values->{o4}, 0);
  }
 
 #latest:;
 if (1)                                                                          #TmonotoneMaskToInteger
  {my $B = 4;
   my $c = monotoneMaskToInteger($B);
-  my %i = map {(sprintf("i%02d", $_)=>1)} 1..2**$B-1;
-     $i{"i0$_"} = 0 for 1..6;
+  my %i = map {("i$_"=>1)} 1..2**$B-1;
+     $i{"i$_"} = 0 for 1..6;
 
   my $s = $c->simulate(\%i, svg=>"svg/monotoneMask$B");
 
   is_deeply($s->steps, 4);
-  is_deeply($s->values->{o01}, 1);
-  is_deeply($s->values->{o02}, 1);
-  is_deeply($s->values->{o03}, 1);
-  is_deeply($s->values->{o04}, 0);
+  is_deeply($s->values->{o1}, 1);
+  is_deeply($s->values->{o2}, 1);
+  is_deeply($s->values->{o3}, 1);
+  is_deeply($s->values->{o4}, 0);
  }
 
 #latest:;
