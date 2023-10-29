@@ -1464,8 +1464,8 @@ if (1)                                                                          
   for my $b(2..$B)
    {$c->and(  "c$b", {(map {$_=>"e$_"} 1..$b-1), $b=>"g$b"});                   # Greater on one bit and all preceding bits are equal
    }
-  $c->gate("or",     "or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});               # Any set bit indicates that 'a' is greater than 'b'
-  $c->output( "out", "or");                                                     # Output 1 if a > b else 0
+  $c->or    ("or",  {1=>"g1",  (map {$_=>"c$_"} 2..$B)});                       # Any set bit indicates that 'a' is greater than 'b'
+  $c->output("out", "or");                                                      # Output 1 if a > b else 0
 
   my %a = map {("a$_"=>0)} 1..$B;                                               # Number a
   my %b = map {("b$_"=>0)} 1..$B;                                               # Number b
@@ -1543,8 +1543,8 @@ if (1)                                                                          
      }
    }
   for my $b(1..$B)                                                              # Or selected bits together to make output
-   {$c->gate("or",     "c$b", {map {$_=>"s$b$_"} 1..$W});                       # Combine the selected bits to make a word
-    $c->output( "o$b", "c$b");                                                  # Output the word selected
+   {$c->or    ("c$b", {map {$_=>"s$b$_"} 1..$W});                               # Combine the selected bits to make a word
+    $c->output("o$b", "c$b");                                                   # Output the word selected
    }
   my $s = $c->simulate(
    {s1 =>0, s2 =>0, s3 =>1, s4 =>0,
@@ -1560,9 +1560,9 @@ if (1)                                                                          
 #latest:;
 if (1)                                                                          # Rename a gate
  {my $i = newChip(name=>"inner");
-          $i->input("i");
-  my $n = $i->not(   "n",  "i");
-          $i->output( "io", "n");
+          $i->input ("i");
+  my $n = $i->not   ("n",  "i");
+          $i->output("io", "n");
 
   my $ci = cloneGate $i, $n;
   renameGate $i, $ci, "aaa";
