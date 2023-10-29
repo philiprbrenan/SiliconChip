@@ -154,7 +154,7 @@ Some well known basic circuits.
 
 ## compareEq($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width for **a** equal to **b**. Output **1** if **a** is equal to **b** else **0**
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is equal to **b** else **0**
 
        Parameter  Description
     1  $bits      Bits
@@ -184,7 +184,7 @@ Compare two unsigned binary integers **a**, **b** of a specified width for **a**
 
 ## compareGt($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**. Output **1** if **a** is greater than **b** else **0**
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is greater than **b** else **0**
 
        Parameter  Description
     1  $bits      Bits
@@ -214,7 +214,7 @@ Compare two unsigned binary integers **a**, **b** of a specified width for **a**
 
 ## compareLt($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width for **a** less than **b**. Output **1** if **a** is less than **b** else **0**
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is less than **b** else **0**
 
        Parameter  Description
     1  $bits      Bits
@@ -470,11 +470,11 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 2 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words each of a specified width using a point mask.
 
-3 [compareEq](#compareeq) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** equal to **b**.
+3 [compareEq](#compareeq) - Compare two unsigned binary integers **a**, **b** of a specified width.
 
-4 [compareGt](#comparegt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** greater than **b**.
+4 [compareGt](#comparegt) - Compare two unsigned binary integers **a**, **b** of a specified width.
 
-5 [compareLt](#comparelt) - Compare two unsigned binary integers **a**, **b** of a specified width for **a** less than **b**.
+5 [compareLt](#comparelt) - Compare two unsigned binary integers **a**, **b** of a specified width.
 
 6 [findWord](#findword) - Choose one of a specified number of words each of a specified width using a key.
 
