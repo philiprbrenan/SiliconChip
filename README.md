@@ -168,15 +168,15 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
       my $c = Silicon::Chip::compareEq($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     
-      my %a = map {("a0$_"=>0)} 1..$B;
-      my %b = map {("b0$_"=>0)} 1..$B;
+      my %a = map {("a$_"=>0)} 1..$B;
+      my %b = map {("b$_"=>0)} 1..$B;
     
-      my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1}, svg=>"svg/CompareEq$B");   # Svg drawing of layout
-    # my $s = $c->simulate({%a, %b, "a02"=>1, "b02"=>1});                           # Equal: a == b
+      my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1}, svg=>"svg/CompareEq$B");     # Svg drawing of layout
+    # my $s = $c->simulate({%a, %b, "a2"=>1, "b2"=>1});                             # Equal: a == b
       is_deeply($s->values->{out}, 1);                                              # Equal
       is_deeply($s->steps,         3);                                              # Number of steps to stability
     
-      my $t = $c->simulate({%a, %b, "b02"=>1});                                     # Less: a < b
+      my $t = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
       is_deeply($t->values->{out}, 0);                                              # Not equal
       is_deeply($s->steps,         3);                                              # Number of steps to stability
      }
@@ -198,15 +198,15 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
       my $c = Silicon::Chip::compareGt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     
-      my %a = map {("a00$_"=>0)} 1..$B;
-      my %b = map {("b00$_"=>0)} 1..$B;
+      my %a = map {("a$_"=>0)} 1..$B;
+      my %b = map {("b$_"=>0)} 1..$B;
     
-    # my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareGt$B");            # Svg drawing of layout
-      my $s = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+    # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareGt$B");              # Svg drawing of layout
+      my $s = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
       is_deeply($s->values->{out}, 1);
       is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
     
-      my $t = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+      my $t = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
       is_deeply($t->values->{out}, 0);
       is_deeply($s->steps,         4);                                              # Number of steps to stability
      }
@@ -228,15 +228,15 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
       my $c = Silicon::Chip::compareLt($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     
-      my %a = map {("a00$_"=>0)} 1..$B;
-      my %b = map {("b00$_"=>0)} 1..$B;
+      my %a = map {("a$_"=>0)} 1..$B;
+      my %b = map {("b$_"=>0)} 1..$B;
     
-    # my $s = $c->simulate({%a, %b, "a002"=>1}, svg=>"svg/CompareLt$B");            # Svg drawing of layout
-      my $s = $c->simulate({%a, %b, "b002"=>1});                                    # Less: a < b
+    # my $s = $c->simulate({%a, %b, "a2"=>1}, svg=>"svg/CompareLt$B");              # Svg drawing of layout
+      my $s = $c->simulate({%a, %b, "b2"=>1});                                      # Less: a < b
       is_deeply($s->values->{out}, 1);
       is_deeply($s->steps,         4);                                              # Which goes to show that the comparator operates in O(4) time
     
-      my $t = $c->simulate({%a, %b, "a002"=>1});                                    # Greater: a > b
+      my $t = $c->simulate({%a, %b, "a2"=>1});                                      # Greater: a > b
       is_deeply($t->values->{out}, 0);
       is_deeply($s->steps,         4);                                              # Number of steps to stability
      }
@@ -257,14 +257,14 @@ Convert a mask known to have at most a single bit on - also known as a **point m
     
       my $c = pointToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-      my %i = map {(sprintf("i%02d", $_)=>0)} 1..2**$B-1;
-         $i{i05} = 1;
+      my %i = map {("i$_"=>0)} 1..2**$B-1;
+         $i{i5} = 1;
       my $s = $c->simulate(\%i, svg=>"svg/point$B");
       is_deeply($s->steps, 2);
-      is_deeply($s->values->{o01}, 1);
-      is_deeply($s->values->{o02}, 0);
-      is_deeply($s->values->{o03}, 1);
-      is_deeply($s->values->{o04}, 0);
+      is_deeply($s->values->{o1}, 1);
+      is_deeply($s->values->{o2}, 0);
+      is_deeply($s->values->{o3}, 1);
+      is_deeply($s->values->{o4}, 0);
      }
     
 
@@ -283,16 +283,16 @@ Convert a monotone mask to an output number representing the location in the mas
     
       my $c = monotoneMaskToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-      my %i = map {(sprintf("i%02d", $_)=>1)} 1..2**$B-1;
-         $i{"i0$_"} = 0 for 1..6;
+      my %i = map {("i$_"=>1)} 1..2**$B-1;
+         $i{"i$_"} = 0 for 1..6;
     
       my $s = $c->simulate(\%i, svg=>"svg/monotoneMask$B");
     
       is_deeply($s->steps, 4);
-      is_deeply($s->values->{o01}, 1);
-      is_deeply($s->values->{o02}, 1);
-      is_deeply($s->values->{o03}, 1);
-      is_deeply($s->values->{o04}, 0);
+      is_deeply($s->values->{o1}, 1);
+      is_deeply($s->values->{o2}, 1);
+      is_deeply($s->values->{o3}, 1);
+      is_deeply($s->values->{o4}, 0);
      }
     
 
@@ -437,6 +437,10 @@ Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gat
 Chip description
 
 ### Output fields
+
+#### gateSeq
+
+GAte squqnce number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
 
 #### gates
 
