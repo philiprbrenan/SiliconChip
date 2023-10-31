@@ -44,7 +44,7 @@ Other circuit diagrams can be seen in folder: [lib/Silicon/svg](https://github.c
 
 Design a [silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and sub [chips](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-Version 20231030.
+Version 20231031.
 
 The following sections describe the methods in each functional area of this
 module.  For an alphabetic listing of all methods by name see [Index](#index).
@@ -149,9 +149,13 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
 
 Some well known basic circuits.
 
-## compareEq($bits, %options)
+## Comparisons
 
-Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is equal to **b** else **0**.
+Compare unsigned binary integers of specified bit widths.
+
+### compareEq($bits, %options)
+
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **out** is **1** if **a** is equal to **b** else **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -178,9 +182,9 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
       is_deeply($s->steps,         3);                                              # Number of steps to stability
      }
 
-## compareGt($bits, %options)
+### compareGt($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is greater than **b** else **0**.
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **out** is  **1** if **a** is greater than **b** else **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -207,9 +211,9 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
       is_deeply($s->steps,         4);                                              # Number of steps to stability
      }
 
-## compareLt($bits, %options)
+### compareLt($bits, %options)
 
-Compare two unsigned binary integers **a**, **b** of a specified width. Output **1** if **a** is less than **b** else **0**.
+Compare two unsigned binary integers **a**, **b** of a specified width. Output **out** is **1** if **a** is less than **b** else **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -236,9 +240,13 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
       is_deeply($s->steps,         4);                                              # Number of steps to stability
      }
 
-## pointToInteger($bits, %options)
+## Masks
 
-Convert a mask known to have at most a single bit on - also known as a **point mask** - to an output number representing the location in the mask of the bit set to **1**. If no such bit exists in the point mask then output is **0**.
+Point masks and monotone masks. A point mask has a single **1** in a sea of **0**s as in **00100**.  A monotone mask has zero or more **0**s followed by all **1**s as in: "00111".
+
+### pointMaskToInteger($bits, %options)
+
+Convert a mask **i** known to have at most a single bit on - also known as a **point mask** - to an output number **a** representing the location in the mask of the bit set to **1**. If no such bit exists in the point mask then output number **a** is **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -248,22 +256,50 @@ Convert a mask known to have at most a single bit on - also known as a **point m
 
     if (1)
      {my $B = 4;
+      my $N = 2**$B-1;
 
-      my $c = pointToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+      my $c = pointMaskToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-      my %i = map {("i$_"=>0)} 1..2**$B-1;
-         $i{i5} = 1;
-      my $s = $c->simulate(\%i, svg=>"svg/point$B");
-      is_deeply($s->steps, 2);
-      is_deeply($s->values->{o1}, 1);
-      is_deeply($s->values->{o2}, 0);
-      is_deeply($s->values->{o3}, 1);
-      is_deeply($s->values->{o4}, 0);
+      for my $i(0..2**$B-1)                                                         # Each position of mask
+       {my %i = map {("i$_"=> ($_ == $i ? 1 : 0))} 0..$N;
+        my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/point$B") : ());
+        is_deeply($s->steps, 2);
+        my %o = $s->values->%*;                                                     # Output bits
+        my $n = eval join '', '0b', map {$o{"o$_"}} reverse 1..$B;                  # Output bits as number
+        is_deeply($n, $i);
+       }
      }
 
-## monotoneMaskToInteger($bits, %options)
+### integerToPointMask($bits, %options)
 
-Convert a monotone mask to an output number representing the location in the mask of the bit set to **1**. If no such bit exists in the point then output is **0**.
+Convert an integer **i** of specified width to a point mask **m**. If the input integer is **0** then the mask is all zeroes as well.
+
+       Parameter  Description
+    1  $bits      Bits
+    2  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $B = 3;
+
+      my $c = integerToPointMask($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+      for my $i(0..2**$B-1)                                                         # Each position of mask
+       {my @n = reverse split //, sprintf "%0${B}b", $i;
+        my %i = map {("i$_"=>$n[$_-1])} 1..@n;
+        my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
+        is_deeply($s->steps, 3);
+
+        my %v = $s->values->%*; delete $v{$_} for grep {!m/\Am/} keys %v;           # Mask values
+        is_deeply({%v}, {map {("m$_"=> ($_ == $i ? 1 : 0))} 1..2**$B-1});           # Expected mask
+       }
+     }
+
+### monotoneMaskToInteger($bits, %options)
+
+Convert a monotone mask **i** to an output number **r** representing the location in the mask of the bit set to **1**. If no such bit exists in the point then output in **r** is **0**.
 
        Parameter  Description
     1  $bits      Bits
@@ -273,24 +309,55 @@ Convert a monotone mask to an output number representing the location in the mas
 
     if (1)
      {my $B = 4;
+      my $N = 2**$B-1;
 
       my $c = monotoneMaskToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-      my %i = map {("i$_"=>1)} 1..2**$B-1;
-         $i{"i$_"} = 0 for 1..6;
 
-      my $s = $c->simulate(\%i, svg=>"svg/monotoneMask$B");
+      for my $i(0..$N-1)                                                            # Each monotone mask
+       {my %i = map {("i$_"=> $i > 0 && $_ >= $i ? 1 : 0)} 1..$N;
 
-      is_deeply($s->steps, 4);
-      is_deeply($s->values->{o1}, 1);
-      is_deeply($s->values->{o2}, 1);
-      is_deeply($s->values->{o3}, 1);
-      is_deeply($s->values->{o4}, 0);
+        my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/monotoneMaskToInteger$B") : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+        is_deeply($s->steps, 4);
+        my %o = $s->values->%*;                                                     # Output bits
+        my $n = eval join '', '0b', map {$o{"o$_"}} reverse 1..$B;                  # Output bits as number
+        is_deeply($n, $i);
+       }
      }
 
-## chooseWordUnderMask($words, $bits, %options)
+### integerToMonotoneMask($bits, %options)
 
-Choose one of a specified number of words, each of a specified width, using a point mask.
+Convert an integer **i** of specified width to a monotone mask **m**. If the input integer is **0** then the mask is all zeroes.  Otherwise the mask is all zeroes up to the point just before the one mentioned by **i** and **1**s thereafter.
+
+       Parameter  Description
+    1  $bits      Bits
+    2  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $B = 3;
+
+      my $c = integerToMonotoneMask($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+      for my $i(0..2**$B-1)                                                         # Each position of mask
+       {my @n = reverse split //, sprintf "%0${B}b", $i;
+        my %i = map {("i$_"=>$n[$_-1])} 1..@n;
+        my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
+        is_deeply($s->steps, 4);
+
+        my %v = $s->values->%*; delete $v{$_} for grep {!m/\Am/} keys %v;           # Mask values
+        my %m = map {("m$_"=> ($i > 0 && $_ >= $i ? 1 : 0))} 1..2**$B-1;            # Expected mask
+        is_deeply({%v}, {%m});                                                      # Expected mask
+       }
+     }
+
+### chooseWordUnderMask($words, $bits, %options)
+
+Choose one of a specified number of words **w**, each of a specified width, using a point mask **m** placing the selected word in **o**.  If no word is selected then **o** will be zero.
 
        Parameter  Description
     1  $words     Number of words
@@ -321,9 +388,9 @@ Choose one of a specified number of words, each of a specified width, using a po
       is_deeply($s->values->{o2}, 0);
      }
 
-## findWord($words, $bits, %options)
+### findWord($words, $bits, %options)
 
-Choose one of a specified number of words, each of a specified width, using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+Choose one of a specified number of words **w**, each of a specified width, using a key **k**.  Return a point mask **o** indicating the locations of the key if found or or a mask equal to all zeroes if the key is not present.
 
        Parameter  Description
     1  $words     Number of words
@@ -429,7 +496,7 @@ Chip description
 
 #### gateSeq
 
-GAte squqnce number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
+Gate sequence number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
 
 #### gates
 
@@ -461,7 +528,7 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 1 [AUTOLOAD](#autoload) - Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provide a more readable way to specify the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-2 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words, each of a specified width, using a point mask.
+2 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words **w**, each of a specified width, using a point mask **m** placing the selected word in **o**.
 
 3 [compareEq](#compareeq) - Compare two unsigned binary integers **a**, **b** of a specified width.
 
@@ -469,19 +536,23 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 5 [compareLt](#comparelt) - Compare two unsigned binary integers **a**, **b** of a specified width.
 
-6 [findWord](#findword) - Choose one of a specified number of words, each of a specified width, using a key.
+6 [findWord](#findword) - Choose one of a specified number of words **w**, each of a specified width, using a key **k**.
 
 7 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
 8 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-9 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask to an output number representing the location in the mask of the bit set to **1**.
+9 [integerToMonotoneMask](#integertomonotonemask) - Convert an integer **i** of specified width to a monotone mask **m**.
 
-10 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+10 [integerToPointMask](#integertopointmask) - Convert an integer **i** of specified width to a point mask **m**.
 
-11 [pointToInteger](#pointtointeger) - Convert a mask known to have at most a single bit on - also known as a **point mask** - to an output number representing the location in the mask of the bit set to **1**.
+11 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask **i** to an output number **r** representing the location in the mask of the bit set to **1**.
 
-12 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
+12 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+
+13 [pointMaskToInteger](#pointmasktointeger) - Convert a mask **i** known to have at most a single bit on - also known as a **point mask** - to an output number **a** representing the location in the mask of the bit set to **1**.
+
+14 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output values of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilize.
 
 # Installation
 
