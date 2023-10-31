@@ -5,7 +5,7 @@
 #-------------------------------------------------------------------------------
 use v5.34;
 package Silicon::Chip;
-our $VERSION = 20231030;                                                        # Version
+our $VERSION = 20231031;                                                        # Version
 use warnings FATAL => qw(all);
 use strict;
 use Carp;
@@ -25,7 +25,7 @@ my sub gateOuterInput     {5}                                                   
 my sub gateOuterOutput    {6}                                                   # Output gate on the external chip connecting to the outer world
 
 my $possibleTypes = q(and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor);# Possible gate types
-
+sub xx {confess "XXXX"}
 #D1 Construct                                                                   # Construct a L<silicon> L<chip> using standard L<lgs>.
 
 sub newChip(%)                                                                  # Create a new L<chip>.
@@ -35,7 +35,7 @@ sub newChip(%)                                                                  
     gates   => $options{gates} // {},                                           # Gates in chip
     installs=> $options{installs} // [],                                        # Chips installed within the chip
     title   => $options{title},                                                 # Title if known
-    gateSeq => 0,                                                               # GAte squqnce number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
+    gateSeq => 0,                                                               # Gate sequence number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
    );
  }
 
@@ -548,6 +548,8 @@ my sub nn($$$)                                                                  
  "$c${i}_$j"
  }
 
+#D2 Comparisons                                                                 # Compare unsigned binary integers of specified bit widths.
+
 sub compareEq($%)                                                               # Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<out> is B<1> if B<a> is equal to B<b> else B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = $bits;
@@ -603,7 +605,9 @@ sub compareLt($%)                                                               
   $C
  }
 
-sub pointToInteger($%)                                                          # Convert a mask B<i> known to have at most a single bit on - also known as a B<point mask> - to an output number B<a> representing the location in the mask of the bit set to B<1>. If no such bit exists in the point mask then output number B<a> is B<0>.
+#D2 Masks                                                                       # Point masks and monotone masks. A point mask has a single B<1> in a sea of B<0>s as in B<00100>.  A monotone mask has zero or more B<0>s followed by all B<1>s as in: "00111".
+
+sub pointMaskToInteger($%)                                                      # Convert a mask B<i> known to have at most a single bit on - also known as a B<point mask> - to an output number B<a> representing the location in the mask of the bit set to B<1>. If no such bit exists in the point mask then output number B<a> is B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = 2**$bits-1;
 
@@ -626,7 +630,29 @@ sub pointToInteger($%)                                                          
   $C
  }
 
-sub monotoneMaskToInteger($%)                                                   # Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output is B<0>.
+sub integerToPointMask($%)                                                      # Convert an integer B<i> of specified width to a point mask B<m>. If the input integer is B<0> then the mask is all zeroes as well.
+ {my ($bits, %options) = @_;                                                    # Bits, options
+  my $B = 2**$bits-1;
+
+  my $C = Silicon::Chip::newChip(title=>"$bits bit integer to $B bits monotone mask");
+
+  $C->input   (n('i', $_))             for 1..$bits;                            # Input gates
+  $C->not     (n('n', $_), n('i', $_)) for 1..$bits;                            # Not of each input
+
+  for my $b(1..$B)                                                              # Each bit of the mask
+   {my @s = reverse split //, sprintf "%0${bits}b", $b;                         # Bits for this point in the mask
+    my %a;
+    for my $i(1..@s)
+     {$a{$i} = n($s[$i-1] ? 'i' : 'n', $i);
+     }
+    $C->and   (n('a', $b), {%a});                                               # And to set this point in the mask
+    $C->output(n('m', $b), n('a', $b));                                         # Output mask
+   }
+
+  $C
+ }
+
+sub monotoneMaskToInteger($%)                                                   # Convert a monotone mask B<i> to an output number B<r> representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output in B<r> is B<0>.
  {my ($bits, %options) = @_;                                                    # Bits, options
   my $B = 2**$bits-1;
 
@@ -638,7 +664,7 @@ sub monotoneMaskToInteger($%)                                                   
      }
    }
 
-  my $C = Silicon::Chip::newChip(title=>"$bits monotone mask to integer");
+  my $C = Silicon::Chip::newChip(title=>"$B bits monotone mask to $bits integer");
 
   $C->input   (n('i', $_))             for 1..$B;                               # Input gates
   $C->not     (n('n', $_), n('i', $_)) for 1..$B-1;                             # Not of each input
@@ -653,7 +679,30 @@ sub monotoneMaskToInteger($%)                                                   
   $C
  }
 
-sub chooseWordUnderMask($$%)                                                    # Choose one of a specified number of words, each of a specified width, using a point mask.
+sub integerToMonotoneMask($%)                                                   # Convert an integer B<i> of specified width to a monotone mask B<m>. If the input integer is B<0> then the mask is all zeroes.  Otherwise the mask has B<i-1> leading zeroes followed by all ones thereafter.
+ {my ($bits, %options) = @_;                                                    # Bits, options
+  my $B = 2**$bits-1;
+
+  my $C = Silicon::Chip::newChip(title=>"$bits bit integer to $B bits monotone mask");
+
+  $C->input   (n('i', $_))             for 1..$bits;                            # Input gates
+  $C->not     (n('n', $_), n('i', $_)) for 1..$bits;                            # Not of each input
+
+  for my $b(1..$B)                                                              # Each bit of the mask
+   {my @s = reverse split //, sprintf "%0${bits}b", $b;                         # Bits for this point in the mask
+    my %a;
+    for my $i(1..@s)
+     {$a{$i} = n($s[$i-1] ? 'i' : 'n', $i);
+     }
+    $C->and   (n('a', $b), {%a});                                               # And to set this point in the mask
+    $C->or    (n('o', $b), {map {($_ => n('a', $_))} 1..$b}) if $b > 1;         # And all points above
+    $C->output(n('m', $b), n($b == 1 ? 'a' : 'o', $b));                         # Output mask
+   }
+
+  $C
+ }
+
+sub chooseWordUnderMask($$%)                                                    # Choose one of a specified number of words B<w>, each of a specified width, using a point mask B<m> placing the selected word in B<o>.  If no word is selected then B<o> will be zero.
  {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word, options
 
   my $C = Silicon::Chip::newChip(title=>"Choose a word from $words words of $bits bits");
@@ -685,7 +734,7 @@ sub chooseWordUnderMask($$%)                                                    
   $C
  }
 
-sub findWord($$%)                                                               # Choose one of a specified number of words, each of a specified width, using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+sub findWord($$%)                                                               # Choose one of a specified number of words B<w>, each of a specified width, using a key B<k>.  Return a point mask B<o> indicating the locations of the key if found or or a mask equal to all zeroes if the key is not present.
  {my ($words, $bits, %options) = @_;                                            # Number of words, bits in each word and key, options
 
   my $C = Silicon::Chip::newChip(title=>"Find a word in $words words of $bits bits");
@@ -831,7 +880,7 @@ Other circuit diagrams can be seen in folder: L<lib/Silicon/svg|https://github.c
 Design a L<silicon|https://en.wikipedia.org/wiki/Silicon> L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> by combining L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> and sub L<chips|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
 
-Version 20231030.
+Version 20231031.
 
 
 The following sections describe the methods in each functional area of this
@@ -946,9 +995,13 @@ B<Example:>
 
 Some well known basic circuits.
 
-=head2 compareEq($bits, %options)
+=head2 Comparisons
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is equal to B<b> else B<0>.
+Compare unsigned binary integers of specified bit widths.
+
+=head3 compareEq($bits, %options)
+
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<out> is B<1> if B<a> is equal to B<b> else B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -977,9 +1030,9 @@ B<Example:>
    }
 
 
-=head2 compareGt($bits, %options)
+=head3 compareGt($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is greater than B<b> else B<0>.
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<out> is  B<1> if B<a> is greater than B<b> else B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -1008,9 +1061,9 @@ B<Example:>
    }
 
 
-=head2 compareLt($bits, %options)
+=head3 compareLt($bits, %options)
 
-Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<1> if B<a> is less than B<b> else B<0>.
+Compare two unsigned binary integers B<a>, B<b> of a specified width. Output B<out> is B<1> if B<a> is less than B<b> else B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -1039,9 +1092,13 @@ B<Example:>
    }
 
 
-=head2 pointToInteger($bits, %options)
+=head2 Masks
 
-Convert a mask known to have at most a single bit on - also known as a B<point mask> - to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point mask then output is B<0>.
+Point masks and monotone masks. A point mask has a single B<1> in a sea of B<0>s as in B<00100>.  A monotone mask has zero or more B<0>s followed by all B<1>s as in: "00111".
+
+=head3 pointMaskToInteger($bits, %options)
+
+Convert a mask B<i> known to have at most a single bit on - also known as a B<point mask> - to an output number B<a> representing the location in the mask of the bit set to B<1>. If no such bit exists in the point mask then output number B<a> is B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -1052,23 +1109,53 @@ B<Example:>
 
   if (1)
    {my $B = 4;
+    my $N = 2**$B-1;
 
-    my $c = pointToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+    my $c = pointMaskToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-    my %i = map {("i$_"=>0)} 1..2**$B-1;
-       $i{i5} = 1;
-    my $s = $c->simulate(\%i, svg=>"svg/point$B");
-    is_deeply($s->steps, 2);
-    is_deeply($s->values->{o1}, 1);
-    is_deeply($s->values->{o2}, 0);
-    is_deeply($s->values->{o3}, 1);
-    is_deeply($s->values->{o4}, 0);
+    for my $i(0..2**$B-1)                                                         # Each position of mask
+     {my %i = map {("i$_"=> ($_ == $i ? 1 : 0))} 0..$N;
+      my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/point$B") : ());
+      is_deeply($s->steps, 2);
+      my %o = $s->values->%*;                                                     # Output bits
+      my $n = eval join '', '0b', map {$o{"o$_"}} reverse 1..$B;                  # Output bits as number
+      is_deeply($n, $i);
+     }
    }
 
 
-=head2 monotoneMaskToInteger($bits, %options)
+=head3 integerToPointMask($bits, %options)
 
-Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output is B<0>.
+Convert an integer B<i> of specified width to a point mask B<m>. If the input integer is B<0> then the mask is all zeroes as well.
+
+     Parameter  Description
+  1  $bits      Bits
+  2  %options   Options
+
+B<Example:>
+
+
+  if (1)
+   {my $B = 3;
+
+    my $c = integerToPointMask($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+    for my $i(0..2**$B-1)                                                         # Each position of mask
+     {my @n = reverse split //, sprintf "%0${B}b", $i;
+      my %i = map {("i$_"=>$n[$_-1])} 1..@n;
+      my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
+      is_deeply($s->steps, 3);
+
+      my %v = $s->values->%*; delete $v{$_} for grep {!m/\Am/} keys %v;           # Mask values
+      is_deeply({%v}, {map {("m$_"=> ($_ == $i ? 1 : 0))} 1..2**$B-1});           # Expected mask
+     }
+   }
+
+
+=head3 monotoneMaskToInteger($bits, %options)
+
+Convert a monotone mask B<i> to an output number B<r> representing the location in the mask of the bit set to B<1>. If no such bit exists in the point then output in B<r> is B<0>.
 
      Parameter  Description
   1  $bits      Bits
@@ -1079,25 +1166,58 @@ B<Example:>
 
   if (1)
    {my $B = 4;
+    my $N = 2**$B-1;
 
     my $c = monotoneMaskToInteger($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-    my %i = map {("i$_"=>1)} 1..2**$B-1;
-       $i{"i$_"} = 0 for 1..6;
 
-    my $s = $c->simulate(\%i, svg=>"svg/monotoneMask$B");
+    for my $i(0..$N-1)                                                            # Each monotone mask
+     {my %i = map {("i$_"=> $i > 0 && $_ >= $i ? 1 : 0)} 1..$N;
 
-    is_deeply($s->steps, 4);
-    is_deeply($s->values->{o1}, 1);
-    is_deeply($s->values->{o2}, 1);
-    is_deeply($s->values->{o3}, 1);
-    is_deeply($s->values->{o4}, 0);
+      my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/monotoneMaskToInteger$B") : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+      is_deeply($s->steps, 4);
+      my %o = $s->values->%*;                                                     # Output bits
+      my $n = eval join '', '0b', map {$o{"o$_"}} reverse 1..$B;                  # Output bits as number
+      is_deeply($n, $i);
+     }
    }
 
 
-=head2 chooseWordUnderMask($words, $bits, %options)
+=head3 integerToMonotoneMask($bits, %options)
 
-Choose one of a specified number of words, each of a specified width, using a point mask.
+Convert an integer B<i> of specified width to a monotone mask B<m>. If the input integer is B<0> then the mask is all zeroes.  Otherwise the mask is all zeroes up to the point just before the one mentioned by B<i> and B<1>s thereafter.
+
+     Parameter  Description
+  1  $bits      Bits
+  2  %options   Options
+
+B<Example:>
+
+
+  if (1)
+   {my $B = 3;
+
+    my $c = integerToMonotoneMask($B);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+    for my $i(0..2**$B-1)                                                         # Each position of mask
+     {my @n = reverse split //, sprintf "%0${B}b", $i;
+      my %i = map {("i$_"=>$n[$_-1])} 1..@n;
+      my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
+      is_deeply($s->steps, 4);
+
+      my %v = $s->values->%*; delete $v{$_} for grep {!m/\Am/} keys %v;           # Mask values
+      my %m = map {("m$_"=> ($i > 0 && $_ >= $i ? 1 : 0))} 1..2**$B-1;            # Expected mask
+      is_deeply({%v}, {%m});                                                      # Expected mask
+     }
+   }
+
+
+=head3 chooseWordUnderMask($words, $bits, %options)
+
+Choose one of a specified number of words B<w>, each of a specified width, using a point mask B<m> placing the selected word in B<o>.  If no word is selected then B<o> will be zero.
 
      Parameter  Description
   1  $words     Number of words
@@ -1130,9 +1250,9 @@ B<Example:>
    }
 
 
-=head2 findWord($words, $bits, %options)
+=head3 findWord($words, $bits, %options)
 
-Choose one of a specified number of words, each of a specified width, using a key.  Return a mask indicating the locations of the key or an empty mask if the key is not present.
+Choose one of a specified number of words B<w>, each of a specified width, using a key B<k>.  Return a point mask B<o> indicating the locations of the key if found or or a mask equal to all zeroes if the key is not present.
 
      Parameter  Description
   1  $words     Number of words
@@ -1251,7 +1371,7 @@ Chip description
 
 =head4 gateSeq
 
-GAte squqnce number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
+Gate sequence number - this allows us to display the gates in the order they were defined ti simplify the understanding of drawn layouts
 
 =head4 gates
 
@@ -1287,7 +1407,7 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 1 L<AUTOLOAD|/AUTOLOAD> - Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provide a more readable way to specify the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-2 L<chooseWordUnderMask|/chooseWordUnderMask> - Choose one of a specified number of words, each of a specified width, using a point mask.
+2 L<chooseWordUnderMask|/chooseWordUnderMask> - Choose one of a specified number of words B<w>, each of a specified width, using a point mask B<m> placing the selected word in B<o>.
 
 3 L<compareEq|/compareEq> - Compare two unsigned binary integers B<a>, B<b> of a specified width.
 
@@ -1295,19 +1415,23 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 5 L<compareLt|/compareLt> - Compare two unsigned binary integers B<a>, B<b> of a specified width.
 
-6 L<findWord|/findWord> - Choose one of a specified number of words, each of a specified width, using a key.
+6 L<findWord|/findWord> - Choose one of a specified number of words B<w>, each of a specified width, using a key B<k>.
 
 7 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
 8 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-9 L<monotoneMaskToInteger|/monotoneMaskToInteger> - Convert a monotone mask to an output number representing the location in the mask of the bit set to B<1>.
+9 L<integerToMonotoneMask|/integerToMonotoneMask> - Convert an integer B<i> of specified width to a monotone mask B<m>.
 
-10 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+10 L<integerToPointMask|/integerToPointMask> - Convert an integer B<i> of specified width to a point mask B<m>.
 
-11 L<pointToInteger|/pointToInteger> - Convert a mask known to have at most a single bit on - also known as a B<point mask> - to an output number representing the location in the mask of the bit set to B<1>.
+11 L<monotoneMaskToInteger|/monotoneMaskToInteger> - Convert a monotone mask B<i> to an output number B<r> representing the location in the mask of the bit set to B<1>.
 
-12 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
+12 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+
+13 L<pointMaskToInteger|/pointMaskToInteger> - Convert a mask B<i> known to have at most a single bit on - also known as a B<point mask> - to an output number B<a> representing the location in the mask of the bit set to B<1>.
+
+14 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output values of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilize.
 
 =head1 Installation
 
@@ -1622,33 +1746,68 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          #TpointToInteger
+if (1)                                                                          #TpointMaskToInteger
  {my $B = 4;
-  my $c = pointToInteger($B);
-  my %i = map {("i$_"=>0)} 1..2**$B-1;
-     $i{i5} = 1;
-  my $s = $c->simulate(\%i, svg=>"svg/point$B");
-  is_deeply($s->steps, 2);
-  is_deeply($s->values->{o1}, 1);
-  is_deeply($s->values->{o2}, 0);
-  is_deeply($s->values->{o3}, 1);
-  is_deeply($s->values->{o4}, 0);
+  my $N = 2**$B-1;
+  my $c = pointMaskToInteger($B);
+  for my $i(0..2**$B-1)                                                         # Each position of mask
+   {my %i = map {("i$_"=> ($_ == $i ? 1 : 0))} 0..$N;
+    my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/point$B") : ());
+    is_deeply($s->steps, 2);
+    my %o = $s->values->%*;                                                     # Output bits
+    my $n = eval join '', '0b', map {$o{"o$_"}} reverse 1..$B;                  # Output bits as number
+    is_deeply($n, $i);
+   }
+ }
+
+#latest:;
+if (1)                                                                          #TintegerToPointMask
+ {my $B = 3;
+  my $c = integerToPointMask($B);
+
+  for my $i(0..2**$B-1)                                                         # Each position of mask
+   {my @n = reverse split //, sprintf "%0${B}b", $i;
+    my %i = map {("i$_"=>$n[$_-1])} 1..@n;
+    my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
+    is_deeply($s->steps, 3);
+
+    my %v = $s->values->%*; delete $v{$_} for grep {!m/\Am/} keys %v;           # Mask values
+    is_deeply({%v}, {map {("m$_"=> ($_ == $i ? 1 : 0))} 1..2**$B-1});           # Expected mask
+   }
  }
 
 #latest:;
 if (1)                                                                          #TmonotoneMaskToInteger
  {my $B = 4;
+  my $N = 2**$B-1;
   my $c = monotoneMaskToInteger($B);
-  my %i = map {("i$_"=>1)} 1..2**$B-1;
-     $i{"i$_"} = 0 for 1..6;
 
-  my $s = $c->simulate(\%i, svg=>"svg/monotoneMask$B");
+  for my $i(0..$N-1)                                                            # Each monotone mask
+   {my %i = map {("i$_"=> $i > 0 && $_ >= $i ? 1 : 0)} 1..$N;
+    my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/monotoneMaskToInteger$B") : ());
 
-  is_deeply($s->steps, 4);
-  is_deeply($s->values->{o1}, 1);
-  is_deeply($s->values->{o2}, 1);
-  is_deeply($s->values->{o3}, 1);
-  is_deeply($s->values->{o4}, 0);
+    is_deeply($s->steps, 4);
+    my %o = $s->values->%*;                                                     # Output bits
+    my $n = eval join '', '0b', map {$o{"o$_"}} reverse 1..$B;                  # Output bits as number
+    is_deeply($n, $i);
+   }
+ }
+
+#latest:;
+if (1)                                                                          #TintegerToMonotoneMask
+ {my $B = 3;
+  my $c = integerToMonotoneMask($B);
+
+  for my $i(0..2**$B-1)                                                         # Each position of mask
+   {my @n = reverse split //, sprintf "%0${B}b", $i;
+    my %i = map {("i$_"=>$n[$_-1])} 1..@n;
+    my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
+    is_deeply($s->steps, 4);
+
+    my %v = $s->values->%*; delete $v{$_} for grep {!m/\Am/} keys %v;           # Mask values
+    my %m = map {("m$_"=> ($i > 0 && $_ >= $i ? 1 : 0))} 1..2**$B-1;            # Expected mask
+    is_deeply({%v}, {%m});                                                      # Expected mask
+   }
  }
 
 #latest:;
