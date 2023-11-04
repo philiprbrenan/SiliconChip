@@ -2921,9 +2921,9 @@ if (1)                                                                          
   my $N = 2**$B-1;
 
   my $c = Silicon::Chip::newChip(title=>"$N bits monotone mask to $B integer");
-     $c->inputBits            ('i',      $N);
-     $c->monotoneMaskToInteger('m', 'i', $B);
-     $c->outputBits           (qw(o m),  $B);
+     $c->inputBits            ('i',     $N);
+     $c->monotoneMaskToInteger(qw(m i), $B);
+     $c->outputBits           (qw(o m), $B);
 
   for my $i(0..$N-1)                                                            # Each monotone mask
    {my %i = setN('i', $N, $i > 0 ? 1<<$i-1 : 0);
@@ -2932,7 +2932,6 @@ if (1)                                                                          
     is_deeply($s->steps, 4);
     is_deeply($s->bitsToInteger('m', $B), $i);
    }
-exit;
  }
 
 #latest:;
