@@ -1269,7 +1269,7 @@ B<Example:>
    }
   
 
-=for html <img src="https:/raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
+=for html <img src="https://github.com/philiprbrenan/SiliconChip/blob/main/lib/Silicon/svg/Equals.svg">
   
 
 =head2 gate($chip, $type, $output, $inputs)
@@ -3097,7 +3097,7 @@ eval "use Test::More tests=>478;";
 eval "Test::More->builder->output('/dev/null');" if -e q(/home/phil/);
 eval {goto latest};
 
-#Svg https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/
+#Svg https://github.com/philiprbrenan/SiliconChip/blob/main/lib/Silicon/
 
 if (1)                                                                          #Tn #Tnn
  {is_deeply( n(a,1),   "a_1");
