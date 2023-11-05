@@ -105,12 +105,12 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
     
 
 <div>
-    <img src="https://github.com/philiprbrenan/SiliconChip/blob/main/lib/Silicon/svg/Equals.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
 </div>
 
 ## gate($chip, $type, $output, $inputs)
 
-A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) chosen from **and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor**.
 
        Parameter  Description
     1  $chip      Chip
@@ -1791,7 +1791,7 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 12 [findWord](#findword) - Choose one of a specified number of words **w**, each of a specified width, using a key **k**.
 
-13 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+13 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) chosen from **and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor**.
 
 14 [inputBits](#inputbits) - Create an **input** bus made of bits.
 
