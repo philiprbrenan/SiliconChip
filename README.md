@@ -105,7 +105,7 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
     
 
 <div>
-    <img src="https:/raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
+    <img src="https://github.com/philiprbrenan/SiliconChip/blob/main/lib/Silicon/svg/Equals.svg">
 </div>
 
 ## gate($chip, $type, $output, $inputs)
