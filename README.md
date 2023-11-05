@@ -76,6 +76,37 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
       ok($s->values->{and1} == 1);
      }
     
+    if (1)                                                                          # 4 bit equal 
+     {my $B = 4;                                                                    # Number of bits
+    
+    
+      my $c = Silicon::Chip::newChip(title=>"$B Bit Equals");                       # Create chip  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    
+      $c->input ("a$_")                       for 1..$B;                            # First number
+      $c->input ("b$_")                       for 1..$B;                            # Second number
+    
+      $c->nxor  ("e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                            # Test each bit for equality
+      $c->and   ("and", {map{$_=>"e$_"}           1..$B});                          # And tests together to get total equality
+    
+      $c->output("out", "and");                                                     # Output gate
+    
+      my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
+                            b1=>1, b2=>0, b3=>1, b4=>0},
+                            svg=>q(svg/Equals));                                    # Svg drawing of layout
+    
+      is_deeply($s->steps,         3);                                              # Three steps
+      is_deeply($s->values->{out}, 1);                                              # Out is 1 for equals
+    
+      my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
+                            b1=>1, b2=>0, b3=>1, b4=>0});
+      is_deeply($t->values->{out}, 0);                                              # Out is 0 for not equals
+     }
+    
+
+<div>
+    <img src="https:/raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
+</div>
 
 ## gate($chip, $type, $output, $inputs)
 
