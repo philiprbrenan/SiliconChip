@@ -44,7 +44,7 @@ Other circuit diagrams can be seen in folder: [lib/Silicon/svg](https://github.c
 
 Design a [silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and sub [chips](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-Version 20231031.
+Version 20231103.
 
 The following sections describe the methods in each functional area of this
 module.  For an alphabetic listing of all methods by name see [Index](#index).
@@ -53,7 +53,7 @@ module.  For an alphabetic listing of all methods by name see [Index](#index).
 
 Construct a [Silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) using standard [logic gates](https://en.wikipedia.org/wiki/Logic_gate), components and sub chips combined via buses.
 
-## newChip(%options)
+## newChip (%options)
 
 Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
@@ -117,7 +117,7 @@ A bus is an array of bits or an array of arrays of bits
 
 An array of bits that can be manipulated via one name.
 
-#### inputBits($chip, $name, $bits, %options)
+#### inputBits   ($chip, $name, $bits, %options)
 
 Create an **input** bus made of bits.
 
@@ -152,12 +152,12 @@ Create an **input** bus made of bits.
       my %o = connectBits($i, 'o', $o, 'b', $W);
       $o->install($i, {%i}, {%o});
 
-      my %d = setN('a', $W, 0b10110);
+      my %d = setBits('a', $W, 0b10110);
       my $s = $o->simulate({%d}, svg=>"svg/not$W");
       is_deeply($s->bitsToInteger('B', $W), 0b11101001);
      }
 
-#### outputBits($chip, $name, $input, $bits, %options)
+#### outputBits  ($chip, $name, $input, $bits, %options)
 
 Create an **output** bus made of bits.
 
@@ -193,7 +193,7 @@ Create an **output** bus made of bits.
       my %o = connectBits($i, 'o', $o, 'b', $W);
       $o->install($i, {%i}, {%o});
 
-      my %d = setN('a', $W, 0b10110);
+      my %d = setBits('a', $W, 0b10110);
       my $s = $o->simulate({%d}, svg=>"svg/not$W");
       is_deeply($s->bitsToInteger('B', $W), 0b11101001);
      }
@@ -222,7 +222,7 @@ Create an **output** bus made of bits.
 
          $c->outputWords(qw(N    n),    @B);
 
-      my %d = setNN('i', $W, $B, 0b00,
+      my %d = setWords('i', $W, $B, 0b00,
                                  0b01,
                                  0b10,
                                  0b11);
@@ -236,7 +236,7 @@ Create an **output** bus made of bits.
       is_deeply([$s->wordsToInteger('N',  @B)],  [3, 2, 1, 0]);
      }
 
-#### notBits($chip, $name, $input, $bits, %options)
+#### notBits ($chip, $name, $input, $bits, %options)
 
 Create a **not** bus made of bits.
 
@@ -268,12 +268,12 @@ Create a **not** bus made of bits.
       my %o = connectBits($i, 'o', $o, 'b', $W);
       $o->install($i, {%i}, {%o});
 
-      my %d = setN('a', $W, 0b10110);
+      my %d = setBits('a', $W, 0b10110);
       my $s = $o->simulate({%d}, svg=>"svg/not$W");
       is_deeply($s->bitsToInteger('B', $W), 0b11101001);
      }
 
-#### andBits($chip, $name, $input, $bits, %options)
+#### andBits ($chip, $name, $input, $bits, %options)
 
 **and** a bus made of bits.
 
@@ -298,14 +298,14 @@ Create a **not** bus made of bits.
          $c->output    (qw(And and));
          $c->output    (qw(Or  or));
 
-      my %d = setN('i', $W, 0b10110);
+      my %d = setBits('i', $W, 0b10110);
       my $s = $c->simulate({%d}, svg=>"svg/andOrBits$W");
 
       is_deeply($s->values->{and}, 0);
       is_deeply($s->values->{or},  1);
      }
 
-#### orBits($chip, $name, $input, $bits, %options)
+#### orBits  ($chip, $name, $input, $bits, %options)
 
 **or** a bus made of bits.
 
@@ -330,7 +330,7 @@ Create a **not** bus made of bits.
          $c->output    (qw(And and));
          $c->output    (qw(Or  or));
 
-      my %d = setN('i', $W, 0b10110);
+      my %d = setBits('i', $W, 0b10110);
       my $s = $c->simulate({%d}, svg=>"svg/andOrBits$W");
 
       is_deeply($s->values->{and}, 0);
@@ -341,7 +341,7 @@ Create a **not** bus made of bits.
 
 An array of arrays of bits that can be manipulated via one name.
 
-#### inputWords($chip, $name, $words, $bits, %options)
+#### inputWords  ($chip, $name, $words, $bits, %options)
 
 Create an **input** bus made of words.
 
@@ -354,7 +354,7 @@ Create an **input** bus made of words.
 
 **Example:**
 
-#### outputWords($chip, $name, $input, $words, $bits, %options)
+#### outputWords ($chip, $name, $input, $words, $bits, %options)
 
 Create an **output** bus made of words.
 
@@ -400,7 +400,7 @@ Create a **not** bus made of words.
          $c->outputBits (qw(OrX  orX),  $B);
          $c->outputWords(qw(N    n),    @B);
 
-      my %d = setNN('i', $W, $B, 0b00,
+      my %d = setWords('i', $W, $B, 0b00,
                                  0b01,
                                  0b10,
                                  0b11);
@@ -416,7 +416,7 @@ Create a **not** bus made of words.
 
 #### andWords($chip, $name, $input, $words, $bits, %options)
 
-**and** a bus made of words to produce a single word
+**and** a bus made of words to produce a single word.
 
        Parameter  Description
     1  $chip      Chip
@@ -446,7 +446,7 @@ Create a **not** bus made of words.
          $c->outputBits (qw(OrX  orX),  $B);
          $c->outputWords(qw(N    n),    @B);
 
-      my %d = setNN('i', $W, $B, 0b00,
+      my %d = setWords('i', $W, $B, 0b00,
                                  0b01,
                                  0b10,
                                  0b11);
@@ -468,19 +468,19 @@ Create a **not** bus made of words.
          $c->inputWords ('i',      @b);
          $c->outputWords(qw(o i),  @b);
 
-      my %d = setNN('i', $W, $B, 0b000,
-                                 0b001,
-                                 0b010,
-                                 0b011);
+      my %d = setWords('i', $W, $B, 0b000,
+                                    0b001,
+                                    0b010,
+                                    0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
       is_deeply([$s->wordsToInteger('o', @b)], [0..3]);
       is_deeply([$s->wordXToInteger('o', @b)], [10, 12, 0]);
      }
 
-#### andWordsX($chip, $name, $input, $words, $bits, %options)
+#### andWordsX   ($chip, $name, $input, $words, $bits, %options)
 
-**and** a bus made of words by anding the corresponding bits in each word to mak a single word.
+**and** a bus made of words by and-ing the corresponding bits in each word to make a single word.
 
        Parameter  Description
     1  $chip      Chip
@@ -510,7 +510,7 @@ Create a **not** bus made of words.
          $c->outputBits (qw(OrX  orX),  $B);
          $c->outputWords(qw(N    n),    @B);
 
-      my %d = setNN('i', $W, $B, 0b00,
+      my %d = setWords('i', $W, $B, 0b00,
                                  0b01,
                                  0b10,
                                  0b11);
@@ -524,7 +524,7 @@ Create a **not** bus made of words.
       is_deeply([$s->wordsToInteger('N',  @B)],  [3, 2, 1, 0]);
      }
 
-#### orWords($chip, $name, $input, $words, $bits, %options)
+#### orWords ($chip, $name, $input, $words, $bits, %options)
 
 **or** a bus made of words to produce a single word.
 
@@ -556,7 +556,7 @@ Create a **not** bus made of words.
          $c->outputBits (qw(OrX  orX),  $B);
          $c->outputWords(qw(N    n),    @B);
 
-      my %d = setNN('i', $W, $B, 0b00,
+      my %d = setWords('i', $W, $B, 0b00,
                                  0b01,
                                  0b10,
                                  0b11);
@@ -578,10 +578,10 @@ Create a **not** bus made of words.
          $c->inputWords ('i',      @b);
          $c->outputWords(qw(o i),  @b);
 
-      my %d = setNN('i', $W, $B, 0b000,
-                                 0b001,
-                                 0b010,
-                                 0b011);
+      my %d = setWords('i', $W, $B, 0b000,
+                                    0b001,
+                                    0b010,
+                                    0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
       is_deeply([$s->wordsToInteger('o', @b)], [0..3]);
@@ -590,7 +590,7 @@ Create a **not** bus made of words.
 
 #### orWordsX($chip, $name, $input, $words, $bits, %options)
 
-**or** a bus made of words by oring the corresponding bits in each word to make a single word.
+**or** a bus made of words by or-ing the corresponding bits in each word to make a single word.
 
        Parameter  Description
     1  $chip      Chip
@@ -620,7 +620,7 @@ Create a **not** bus made of words.
          $c->outputBits (qw(OrX  orX),  $B);
          $c->outputWords(qw(N    n),    @B);
 
-      my %d = setNN('i', $W, $B, 0b00,
+      my %d = setWords('i', $W, $B, 0b00,
                                  0b01,
                                  0b10,
                                  0b11);
@@ -638,7 +638,7 @@ Create a **not** bus made of words.
 
 Install a chip within a chip as a sub chip.
 
-### install($chip, $subChip, $inputs, $outputs, %options)
+### install ($chip, $subChip, $inputs, $outputs, %options)
 
 Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).  The same [chip](https://en.wikipedia.org/wiki/Integrated_circuit) can be installed multiple times as each [chip](https://en.wikipedia.org/wiki/Integrated_circuit) description is read only.
 
@@ -666,7 +666,7 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
 
       $o->install($i, {%i}, {%o});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-      my %d = setN('i', 1, 1);
+      my %d = setBits('i', 1, 1);
       my $s = $o->simulate({%d}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
 
       is_deeply($s->steps,  2);
@@ -677,9 +677,9 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
 
 Some well known basic circuits.
 
-## n($c, $i)
+## n   ($c, $i)
 
-Gate name from single index
+Gate name from single index.
 
        Parameter  Description
     1  $c         Gate name
@@ -694,9 +694,9 @@ Gate name from single index
       is_deeply(nn(a,1,2), "a_1_2");
      }
 
-## nn($c, $i, $j)
+## nn  ($c, $i, $j)
 
-Gate name from double index
+Gate name from double index.
 
        Parameter  Description
     1  $c         Gate name
@@ -716,7 +716,7 @@ Gate name from double index
 
 Compare unsigned binary integers of specified bit widths.
 
-### compareEq($chip, $output, $a, $b, $bits, %options)
+### compareEq   ($chip, $output, $a, $b, $bits, %options)
 
 Compare two unsigned binary integers of a specified width returning **1** if they are equal else **0**.
 
@@ -741,8 +741,8 @@ Compare two unsigned binary integers of a specified width returning **1** if the
       $c->compareEq(qw(out a b), $B);                                               # Compare equals  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
 
-      my %a = setN('a', $B, 2);                                                     # Number a
-      my %b = setN('b', $B, 2);                                                     # Number b
+      my %a = setBits('a', $B, 2);                                                     # Number a
+      my %b = setBits('b', $B, 2);                                                     # Number b
 
       my $s = $c->simulate({%a, %b}, svg=>"svg/CompareEq$B");                       # Svg drawing of layout
       is_deeply($s->values->{out}, 1);                                              # Equal
@@ -753,7 +753,7 @@ Compare two unsigned binary integers of a specified width returning **1** if the
       is_deeply($t->steps, 3);                                                      # Number of steps to stability
      }
 
-### compareGt($chip, $output, $a, $b, $bits, %options)
+### compareGt   ($chip, $output, $a, $b, $bits, %options)
 
 Compare two unsigned binary integers of specified width and return **1** if the first integer is more than **b** else **0**.
 
@@ -777,8 +777,8 @@ Compare two unsigned binary integers of specified width and return **1** if the 
       $c->compareGt(qw(out a b), $B);                                               # Compare more than  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
 
-      my %a = setN('a', $B, 3);                                                     # Number a
-      my %b = setN('b', $B, 2);                                                     # Number b
+      my %a = setBits('a', $B, 3);                                                     # Number a
+      my %b = setBits('b', $B, 2);                                                     # Number b
 
       my $s = $c->simulate({%a, %b}, svg=>"svg/CompareGt$B");                       # Svg drawing of layout
       is_deeply($s->values->{out}, 1);                                              # More than
@@ -789,7 +789,7 @@ Compare two unsigned binary integers of specified width and return **1** if the 
       is_deeply($t->steps, 4);                                                      # Number of steps to stability
      }
 
-### compareLt($chip, $output, $a, $b, $bits, %options)
+### compareLt   ($chip, $output, $a, $b, $bits, %options)
 
 Compare two unsigned binary integers **a**, **b** of a specified width. Output **out** is **1** if **a** is less than **b** else **0**.
 
@@ -813,11 +813,11 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
       $c->compareLt(qw(out a b), $B);                                               # Compare less than  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
 
-      my %a = setN('a', $B, 2);                                                     # Number a
-      my %b = setN('b', $B, 3);                                                     # Number b
+      my %a = setBits('a', $B, 2);                                                     # Number a
+      my %b = setBits('b', $B, 3);                                                     # Number b
 
       my $s = $c->simulate({%a, %b}, svg=>"svg/CompareLt$B");                       # Svg drawing of layout
-      is_deeply($s->values->{out}, 1);                                               # Less than
+      is_deeply($s->values->{out}, 1);                                              # Less than
       is_deeply($s->steps, 4);                                                      # Number of steps to stability
 
       my $t = $c->simulate({%a, %b, n(a,1)=>1});                                    # No longer less than
@@ -825,11 +825,52 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
       is_deeply($t->steps, 4);                                                      # Number of steps to stability
      }
 
+### chooseFromTwoWords  ($chip, $output, $a, $b, $choose, $bits, %options)
+
+Choose one of two words based on a bit.  The first word is chosen iof the bit isd **0** otherwise the second word is chose
+
+       Parameter  Description
+    1  $chip      Chip
+    2  $output    Name of component also the chosen word
+    3  $a         The first word
+    4  $b         The second word
+    5  $choose    The choosing bit
+    6  $bits      The width of the words in bits
+    7  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $B = 4;
+
+      my $c = newChip();
+         $c->inputBits('a', $B);                                                    # First word
+         $c->inputBits('b', $B);                                                    # Second word
+         $c->input    ('c');                                                        # Chooser
+
+         $c->chooseFromTwoWords(qw(o a b c), $B);                                   # Generate gates  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+         $c->outputBits('out', 'o',          $B);                                   # Result
+
+      my %a = setBits('a', $B, 0b0011);
+      my %b = setBits('b', $B, 0b1100);
+
+
+      my $s = $c->simulate({%a, %b, c=>1}, svg=>"svg/chooseFromTwoWords$B");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+      is_deeply($s->steps,                    4);
+      is_deeply($s->bitsToInteger('out', $B), 0b1100);
+
+      my $t = $c->simulate({%a, %b, c=>0});
+      is_deeply($t->steps,                    4);
+      is_deeply($t->bitsToInteger('out', $B), 0b0011);
+     }
+
 ## Masks
 
 Point masks and monotone masks. A point mask has a single **1** in a sea of **0**s as in **00100**.  A monotone mask has zero or more **0**s followed by all **1**s as in: **00111**.
 
-### pointMaskToInteger($chip, $output, $input, $bits, %options)
+### pointMaskToInteger  ($chip, $output, $input, $bits, %options)
 
 Convert a mask **i** known to have at most a single bit on - also known as a **point mask** - to an output number **a** representing the location in the mask of the bit set to **1**. If no such bit exists in the point mask then output number **a** is **0**.
 
@@ -855,7 +896,7 @@ Convert a mask **i** known to have at most a single bit on - also known as a **p
       $c->outputBits        (qw(out o), $B);                                        # Mask with no more than one bit on
 
       for my $i(0..$N)                                                              # Each position of mask
-       {my %i = setN('i', $N, $i ? 1<<($i-1) : 0);                                  # Point in each position with zero representing no position
+       {my %i = setBits('i', $N, $i ? 1<<($i-1) : 0);                                  # Point in each position with zero representing no position
         my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/point$B") : ());
         is_deeply($s->steps, 2);
         my %o = $s->values->%*;                                                     # Output bits
@@ -864,7 +905,7 @@ Convert a mask **i** known to have at most a single bit on - also known as a **p
        }
      }
 
-### integerToPointMask($chip, $output, $input, $bits, %options)
+### integerToPointMask  ($chip, $output, $input, $bits, %options)
 
 Convert an integer **i** of specified width to a point mask **m**. If the input integer is **0** then the mask is all zeroes as well.
 
@@ -889,7 +930,7 @@ Convert an integer **i** of specified width to a point mask **m**. If the input 
          $c->outputBits        (qw(o m), $N);
 
       for my $i(0..$N)                                                              # Each position of mask
-       {my %i = setN('i', $B, $i);
+       {my %i = setBits('i', $B, $i);
         my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
         is_deeply($s->steps, 3);
 
@@ -898,7 +939,7 @@ Convert an integer **i** of specified width to a point mask **m**. If the input 
        }
      }
 
-### monotoneMaskToInteger($chip, $output, $input, $bits, %options)
+### monotoneMaskToInteger   ($chip, $output, $input, $bits, %options)
 
 Convert a monotone mask **i** to an output number **r** representing the location in the mask of the bit set to **1**. If no such bit exists in the point then output in **r** is **0**.
 
@@ -923,7 +964,7 @@ Convert a monotone mask **i** to an output number **r** representing the locatio
          $c->outputBits           (qw(o m), $B);
 
       for my $i(0..$N-1)                                                            # Each monotone mask
-       {my %i = setN('i', $N, $i > 0 ? 1<<$i-1 : 0);
+       {my %i = setBits('i', $N, $i > 0 ? 1<<$i-1 : 0);
 
         my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/monotoneMaskToInteger$B") : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
@@ -933,7 +974,38 @@ Convert a monotone mask **i** to an output number **r** representing the locatio
        }
      }
 
-### integerToMonotoneMask($chip, $output, $input, $bits, %options)
+### monotoneMaskToPointMask ($chip, $output, $input, $bits, %options)
+
+Convert a monotone mask **i** to a point mask **o** representing the location in the mask of the first bit set to **1**. If the monotone mask is all **0**s then point mask is too.
+
+       Parameter  Description
+    1  $chip      Chip
+    2  $output    Output name
+    3  $input     Input mask
+    4  $bits      Number of bits in mask
+    5  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $B = 4;
+
+      my $c = newChip();
+         $c->inputBits('m', $B);                                                    # Monotone mask
+
+         $c->monotoneMaskToPointMask(qw(o m), $B);                                  # Generate gates  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+         $c->outputBits('out', 'o',           $B);                                  # Point mask
+
+      for my $i(0..$B)
+       {my %m = setBits('m', $B, eval '0b'.(1 x $i).('0' x ($B-$i)));
+        my $s = $c->simulate({%m});
+        is_deeply($s->steps,                    2);
+        is_deeply($s->bitsToInteger('out', $B), $i ? (1<<($B-1)) / (1<<($i-1)) : 0);
+       }
+     }
+
+### integerToMonotoneMask   ($chip, $output, $input, $bits, %options)
 
 Convert an integer **i** of specified width to a monotone mask **m**. If the input integer is **0** then the mask is all zeroes.  Otherwise the mask has **i-1** leading zeroes followed by all ones thereafter.
 
@@ -958,14 +1030,15 @@ Convert an integer **i** of specified width to a monotone mask **m**. If the inp
          $c->outputBits           (qw(o m), $N);                                    # Output gates
 
       for my $i(0..2**$B-1)                                                         # Each position of mask
-       {my %i = setN('i', $B, $i);
+       {my %i = setBits('i', $B, $i);
         my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
         is_deeply($s->steps, 4);
-        is_deeply($s->bitsToInteger('o', $N), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);# Expected mask
+        is_deeply($s->bitsToInteger('o', $N),                                       # Expected mask
+          $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);
        }
      }
 
-### chooseWordUnderMask($chip, $output, $input, $mask, $words, $bits, %options)
+### chooseWordUnderMask ($chip, $output, $input, $mask, $words, $bits, %options)
 
 Choose one of a specified number of words **w**, each of a specified width, using a point mask **m** placing the selected word in **o**.  If no word is selected then **o** will be zero.
 
@@ -991,8 +1064,8 @@ Choose one of a specified number of words **w**, each of a specified width, usin
 
          $c->outputBits         (qw(o W),       $B);
 
-      my %i = setNN('w', $W, $B, 0b000, 0b001, 0b010, 0b0100);
-      my %m = setN ('m', $W, 1<<2);                                                 # Choose the third word
+      my %i = setWords('w', $W, $B, 0b000, 0b001, 0b010, 0b0100);
+      my %m = setBits ('m', $W, 1<<2);                                              # Choose the third word
 
       my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
@@ -1019,16 +1092,16 @@ Choose one of a specified number of words **w**, each of a specified width, usin
 
       my $c = Silicon::Chip::newChip(title=>"Search $W words of $B bits");
          $c->inputBits ('k',       $B);                                             # Search key
-         $c->inputWords('w',       2**$B-1, $B);                                             # Words to search
+         $c->inputWords('w',       2**$B-1, $B);                                    # Words to search
 
          $c->findWord  (qw(m k w), $B);                                             # Find the word  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
          $c->outputBits(qw(M m),   $W);                                             # Output mask
 
-      my %w = setNN('w', $W, $B, reverse 1..$W);
+      my %w = setWords('w', $W, $B, reverse 1..$W);
 
       for my $k(0..$W)                                                              # Each possible key
-       {my %k = setN('k', $B, $k);
+       {my %k = setBits('k', $B, $k);
         my $s = $c->simulate({%k, %w}, svg=>"svg/findWord_${W}_$B");
         is_deeply($s->steps, 3);
         is_deeply($s->bitsToInteger('M', $W),$k ? 2**($W-$k) : 0);
@@ -1039,7 +1112,7 @@ Choose one of a specified number of words **w**, each of a specified width, usin
 
 Simulate the behavior of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit) given a set of values on its input gates.
 
-## setN($name, $bits, $value)
+## setBits ($name, $bits, $value)
 
 Set an array of input gates to a number prior to running a simulation.
 
@@ -1059,9 +1132,9 @@ Set an array of input gates to a number prior to running a simulation.
          $c->chooseWordUnderMask(qw(W w m), $W, $B);
          $c->outputBits         (qw(o W),       $B);
 
-      my %i = setNN('w', $W, $B, 0b000, 0b001, 0b010, 0b0100);
+      my %i = setWords('w', $W, $B, 0b000, 0b001, 0b010, 0b0100);
 
-      my %m = setN ('m', $W, 1<<2);                                                 # Choose the third word  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+      my %m = setBits ('m', $W, 1<<2);                                              # Choose the third word  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
 
       my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
@@ -1070,7 +1143,7 @@ Set an array of input gates to a number prior to running a simulation.
       is_deeply($s->bitsToInteger('o', $B), 0b010);
      }
 
-## setNN($name, $words, $bits, @values)
+## setWords($name, $words, $bits, @values)
 
 Set an array of arrays of gates to an array of numbers prior to running a simulation.
 
@@ -1092,9 +1165,9 @@ Set an array of arrays of gates to an array of numbers prior to running a simula
          $c->outputBits         (qw(o W),       $B);
 
 
-      my %i = setNN('w', $W, $B, 0b000, 0b001, 0b010, 0b0100);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+      my %i = setWords('w', $W, $B, 0b000, 0b001, 0b010, 0b0100);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-      my %m = setN ('m', $W, 1<<2);                                                 # Choose the third word
+      my %m = setBits ('m', $W, 1<<2);                                              # Choose the third word
 
       my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
@@ -1102,7 +1175,7 @@ Set an array of arrays of gates to an array of numbers prior to running a simula
       is_deeply($s->bitsToInteger('o', $B), 0b010);
      }
 
-## connectBits($oc, $o, $ic, $i, $bits, %options)
+## connectBits ($oc, $o, $ic, $i, $bits, %options)
 
 Create a connection list connecting a set of output bits on the one chip to a set of input bits on another chip.
 
@@ -1133,7 +1206,7 @@ Create a connection list connecting a set of output bits on the one chip to a se
       my %o = connectBits($i, 'o', $o, 'I', 1);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       $o->install($i, {%i}, {%o});
-      my %d = setN('i', 1, 1);
+      my %d = setBits('i', 1, 1);
       my $s = $o->simulate({%d}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
 
       is_deeply($s->steps,  2);
@@ -1172,14 +1245,14 @@ Create a connection list connecting a set of words on the outer chip to a set of
       my %o = connectWords($i, 'o', $o, 'I', 1, 1);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       $o->install($i, {%i}, {%o});
-      my %d = setNN('i', 1, 1, 1);
+      my %d = setWords('i', 1, 1, 1);
       my $s = $o->simulate({%d}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
 
       is_deeply($s->steps,  2);
       is_deeply($s->values, { "(not 1 n_1_1)" => 0, "i_1_1" => 1, "N_1_1" => 0 });
      }
 
-## Silicon::Chip::Simulation::Results::bitsToInteger($simulation, $output, $bits, %options)
+## Silicon::Chip::Simulation::Results::bitsToInteger   ($simulation, $output, $bits, %options)
 
 Represent the state of bits in the simulation results as an unsigned binary integer.
 
@@ -1208,12 +1281,12 @@ Represent the state of bits in the simulation results as an unsigned binary inte
       my %o = connectBits($i, 'o', $o, 'b', $W);
       $o->install($i, {%i}, {%o});
 
-      my %d = setN('a', $W, 0b10110);
+      my %d = setBits('a', $W, 0b10110);
       my $s = $o->simulate({%d}, svg=>"svg/not$W");
       is_deeply($s->bitsToInteger('B', $W), 0b11101001);
      }
 
-## Silicon::Chip::Simulation::Results::wordsToInteger($simulation, $output, $words, $bits, %options)
+## Silicon::Chip::Simulation::Results::wordsToInteger  ($simulation, $output, $words, $bits, %options)
 
 Represent the state of words in the simulation results as an array of unsigned binary integer.
 
@@ -1234,17 +1307,17 @@ Represent the state of words in the simulation results as an array of unsigned b
          $c->inputWords ('i',      @b);
          $c->outputWords(qw(o i),  @b);
 
-      my %d = setNN('i', $W, $B, 0b000,
-                                 0b001,
-                                 0b010,
-                                 0b011);
+      my %d = setWords('i', $W, $B, 0b000,
+                                    0b001,
+                                    0b010,
+                                    0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
       is_deeply([$s->wordsToInteger('o', @b)], [0..3]);
       is_deeply([$s->wordXToInteger('o', @b)], [10, 12, 0]);
      }
 
-## Silicon::Chip::Simulation::Results::wordXToInteger($simulation, $output, $words, $bits, %options)
+## Silicon::Chip::Simulation::Results::wordXToInteger  ($simulation, $output, $words, $bits, %options)
 
 Represent the state of words in the simulation results as an array of unsigned binary integer.
 
@@ -1265,10 +1338,10 @@ Represent the state of words in the simulation results as an array of unsigned b
          $c->inputWords ('i',      @b);
          $c->outputWords(qw(o i),  @b);
 
-      my %d = setNN('i', $W, $B, 0b000,
-                                 0b001,
-                                 0b010,
-                                 0b011);
+      my %d = setWords('i', $W, $B, 0b000,
+                                    0b001,
+                                    0b010,
+                                    0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
       is_deeply([$s->wordsToInteger('o', @b)], [0..3]);
@@ -1355,73 +1428,77 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 1 [andBits](#andbits) - **and** a bus made of bits.
 
-2 [andWords](#andwords) - **and** a bus made of words to produce a single word
+2 [andWords](#andwords) - **and** a bus made of words to produce a single word.
 
-3 [andWordsX](#andwordsx) - **and** a bus made of words by anding the corresponding bits in each word to mak a single word.
+3 [andWordsX](#andwordsx) - **and** a bus made of words by and-ing the corresponding bits in each word to make a single word.
 
 4 [AUTOLOAD](#autoload) - Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provide a more readable way to specify the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-5 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words **w**, each of a specified width, using a point mask **m** placing the selected word in **o**.
+5 [chooseFromTwoWords](#choosefromtwowords) - Choose one of two words based on a bit.
 
-6 [compareEq](#compareeq) - Compare two unsigned binary integers of a specified width returning **1** if they are equal else **0**.
+6 [chooseWordUnderMask](#choosewordundermask) - Choose one of a specified number of words **w**, each of a specified width, using a point mask **m** placing the selected word in **o**.
 
-7 [compareGt](#comparegt) - Compare two unsigned binary integers of specified width and return **1** if the first integer is more than **b** else **0**.
+7 [compareEq](#compareeq) - Compare two unsigned binary integers of a specified width returning **1** if they are equal else **0**.
 
-8 [compareLt](#comparelt) - Compare two unsigned binary integers **a**, **b** of a specified width.
+8 [compareGt](#comparegt) - Compare two unsigned binary integers of specified width and return **1** if the first integer is more than **b** else **0**.
 
-9 [connectBits](#connectbits) - Create a connection list connecting a set of output bits on the one chip to a set of input bits on another chip.
+9 [compareLt](#comparelt) - Compare two unsigned binary integers **a**, **b** of a specified width.
 
-10 [connectWords](#connectwords) - Create a connection list connecting a set of words on the outer chip to a set of words on the inner chip.
+10 [connectBits](#connectbits) - Create a connection list connecting a set of output bits on the one chip to a set of input bits on another chip.
 
-11 [findWord](#findword) - Choose one of a specified number of words **w**, each of a specified width, using a key **k**.
+11 [connectWords](#connectwords) - Create a connection list connecting a set of words on the outer chip to a set of words on the inner chip.
 
-12 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+12 [findWord](#findword) - Choose one of a specified number of words **w**, each of a specified width, using a key **k**.
 
-13 [inputBits](#inputbits) - Create an **input** bus made of bits.
+13 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) of some sort to be added to the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-14 [inputWords](#inputwords) - Create an **input** bus made of words.
+14 [inputBits](#inputbits) - Create an **input** bus made of bits.
 
-15 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+15 [inputWords](#inputwords) - Create an **input** bus made of words.
 
-16 [integerToMonotoneMask](#integertomonotonemask) - Convert an integer **i** of specified width to a monotone mask **m**.
+16 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-17 [integerToPointMask](#integertopointmask) - Convert an integer **i** of specified width to a point mask **m**.
+17 [integerToMonotoneMask](#integertomonotonemask) - Convert an integer **i** of specified width to a monotone mask **m**.
 
-18 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask **i** to an output number **r** representing the location in the mask of the bit set to **1**.
+18 [integerToPointMask](#integertopointmask) - Convert an integer **i** of specified width to a point mask **m**.
 
-19 [n](#n) - Gate name from single index
+19 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask **i** to an output number **r** representing the location in the mask of the bit set to **1**.
 
-20 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+20 [monotoneMaskToPointMask](#monotonemasktopointmask) - Convert a monotone mask **i** to a point mask **o** representing the location in the mask of the first bit set to **1**.
 
-21 [nn](#nn) - Gate name from double index
+21 [n](#n) - Gate name from single index.
 
-22 [notBits](#notbits) - Create a **not** bus made of bits.
+22 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-23 [notWords](#notwords) - Create a **not** bus made of words.
+23 [nn](#nn) - Gate name from double index.
 
-24 [orBits](#orbits) - **or** a bus made of bits.
+24 [notBits](#notbits) - Create a **not** bus made of bits.
 
-25 [orWords](#orwords) - **or** a bus made of words to produce a single word.
+25 [notWords](#notwords) - Create a **not** bus made of words.
 
-26 [orWordsX](#orwordsx) - **or** a bus made of words by oring the corresponding bits in each word to make a single word.
+26 [orBits](#orbits) - **or** a bus made of bits.
 
-27 [outputBits](#outputbits) - Create an **output** bus made of bits.
+27 [orWords](#orwords) - **or** a bus made of words to produce a single word.
 
-28 [outputWords](#outputwords) - Create an **output** bus made of words.
+28 [orWordsX](#orwordsx) - **or** a bus made of words by or-ing the corresponding bits in each word to make a single word.
 
-29 [pointMaskToInteger](#pointmasktointeger) - Convert a mask **i** known to have at most a single bit on - also known as a **point mask** - to an output number **a** representing the location in the mask of the bit set to **1**.
+29 [outputBits](#outputbits) - Create an **output** bus made of bits.
 
-30 [setN](#setn) - Set an array of input gates to a number prior to running a simulation.
+30 [outputWords](#outputwords) - Create an **output** bus made of words.
 
-31 [setNN](#setnn) - Set an array of arrays of gates to an array of numbers prior to running a simulation.
+31 [pointMaskToInteger](#pointmasktointeger) - Convert a mask **i** known to have at most a single bit on - also known as a **point mask** - to an output number **a** representing the location in the mask of the bit set to **1**.
 
-32 [Silicon::Chip::Simulation::Results::bitsToInteger](#silicon-chip-simulation-results-bitstointeger) - Represent the state of bits in the simulation results as an unsigned binary integer.
+32 [setBits](#setbits) - Set an array of input gates to a number prior to running a simulation.
 
-33 [Silicon::Chip::Simulation::Results::wordsToInteger](#silicon-chip-simulation-results-wordstointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+33 [setWords](#setwords) - Set an array of arrays of gates to an array of numbers prior to running a simulation.
 
-34 [Silicon::Chip::Simulation::Results::wordXToInteger](#silicon-chip-simulation-results-wordxtointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+34 [Silicon::Chip::Simulation::Results::bitsToInteger](#silicon-chip-simulation-results-bitstointeger) - Represent the state of bits in the simulation results as an unsigned binary integer.
 
-35 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output value of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilizes.
+35 [Silicon::Chip::Simulation::Results::wordsToInteger](#silicon-chip-simulation-results-wordstointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+
+36 [Silicon::Chip::Simulation::Results::wordXToInteger](#silicon-chip-simulation-results-wordxtointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+
+37 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output value of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilizes.
 
 # Installation
 
