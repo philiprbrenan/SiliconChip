@@ -518,7 +518,7 @@ my sub dumpGates($%)                                                            
   $s
  }
 
-sub Silicon::Chip::Simulation::print($%)                                        # Print simulation results as text.
+sub Silicon::Chip::Simulation::print($%)                                        #P Print simulation results as text.
  {my ($sim, %options) = @_;                                                     # Simulation, options
   dumpGates($sim->chip, %options, values=>$sim->values);
  }
@@ -680,7 +680,7 @@ my sub svgGates($%)                                                             
   $t
  }
 
-sub Silicon::Chip::Simulation::printSvg($%)                                     # Print simulation results as svg.
+sub Silicon::Chip::Simulation::printSvg($%)                                     #P Print simulation results as svg.
  {my ($sim, %options) = @_;                                                     # Simulation, options
   svgGates($sim->chip, %options);
  }
