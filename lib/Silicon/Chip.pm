@@ -25,7 +25,7 @@ my sub gateExternalOutput {4}                                                   
 my sub gateOuterInput     {5}                                                   # Input gate on the external chip connecting to the outer world
 my sub gateOuterOutput    {6}                                                   # Output gate on the external chip connecting to the outer world
 
-my $possibleTypes = q(and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor);# Possible gate types
+my $possibleTypes = q(and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor);#Substitute: possible gate types
 
 #D1 Construct                                                                   # Construct a L<silicon> L<chip> using standard L<lgs>, components and sub chips combined via buses.
 
@@ -1156,6 +1156,8 @@ use vars qw(@ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
 @EXPORT_OK    = qw(connectBits connectWords n nn setBits setWords);
 %EXPORT_TAGS = (all=>[@EXPORT, @EXPORT_OK]);
 
+#Images https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/
+
 =pod
 
 =encoding utf-8
@@ -1238,6 +1240,36 @@ B<Example:>
     ok($s->steps          == 2);
     ok($s->values->{and1} == 1);
    }
+  
+  if (1)                                                                          # 4 bit equal 
+   {my $B = 4;                                                                    # Number of bits
+  
+  
+    my $c = Silicon::Chip::newChip(title=>"$B Bit Equals");                       # Create chip  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+  
+    $c->input ("a$_")                       for 1..$B;                            # First number
+    $c->input ("b$_")                       for 1..$B;                            # Second number
+  
+    $c->nxor  ("e$_", {1=>"a$_", 2=>"b$_"}) for 1..$B;                            # Test each bit for equality
+    $c->and   ("and", {map{$_=>"e$_"}           1..$B});                          # And tests together to get total equality
+  
+    $c->output("out", "and");                                                     # Output gate
+  
+    my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
+                          b1=>1, b2=>0, b3=>1, b4=>0},
+                          svg=>q(svg/Equals));                                    # Svg drawing of layout
+  
+    is_deeply($s->steps,         3);                                              # Three steps
+    is_deeply($s->values->{out}, 1);                                              # Out is 1 for equals
+  
+    my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
+                          b1=>1, b2=>0, b3=>1, b4=>0});
+    is_deeply($t->values->{out}, 0);                                              # Out is 0 for not equals
+   }
+  
+
+=for html <img src="https:/raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
   
 
 =head2 gate($chip, $type, $output, $inputs)
@@ -3065,6 +3097,8 @@ eval "use Test::More tests=>478;";
 eval "Test::More->builder->output('/dev/null');" if -e q(/home/phil/);
 eval {goto latest};
 
+#Svg https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/
+
 if (1)                                                                          #Tn #Tnn
  {is_deeply( n(a,1),   "a_1");
   is_deeply(nn(a,1,2), "a_1_2");
@@ -3222,7 +3256,7 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          # 4 bit equal
+if (1)                                                                          # 4 bit equal #TnewChip
  {my $B = 4;                                                                    # Number of bits
 
   my $c = Silicon::Chip::newChip(title=>"$B Bit Equals");                       # Create chip
@@ -3237,7 +3271,7 @@ if (1)                                                                          
 
   my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                         b1=>1, b2=>0, b3=>1, b4=>0},
-                        svg=>"svg/Equals$B");                                   # Svg drawing of layout
+                        svg=>q(svg/Equals));                                    # Svg drawing of layout
 
   is_deeply($s->steps,         3);                                              # Three steps
   is_deeply($s->values->{out}, 1);                                              # Out is 1 for equals
