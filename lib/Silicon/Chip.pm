@@ -68,7 +68,7 @@ END
   1
  }
 
-sub gate($$$;$)                                                                 # A L<lg> of some sort to be added to the L<chip>.
+sub gate($$$;$)                                                                 # A L<lg> chosen from B<possibleTypes>.
  {my ($chip, $type, $output, $inputs) = @_;                                     # Chip, gate type, output name, input names to output from another gate
   @_ >= 3 or confess "Three or more parameters";
   my $gates = $chip->gates;                                                     # Gates implementing the chip
@@ -1269,12 +1269,12 @@ B<Example:>
    }
   
 
-=for html <img src="https://github.com/philiprbrenan/SiliconChip/blob/main/lib/Silicon/svg/Equals.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
   
 
 =head2 gate($chip, $type, $output, $inputs)
 
-A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> chosen from B<and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor>.
 
      Parameter  Description
   1  $chip      Chip
@@ -3008,7 +3008,7 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 12 L<findWord|/findWord> - Choose one of a specified number of words B<w>, each of a specified width, using a key B<k>.
 
-13 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> of some sort to be added to the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+13 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> chosen from B<and|continue|gt|input|lt|nand|nor|not|nxor|or|output|xor>.
 
 14 L<inputBits|/inputBits> - Create an B<input> bus made of bits.
 
@@ -3097,7 +3097,7 @@ eval "use Test::More tests=>478;";
 eval "Test::More->builder->output('/dev/null');" if -e q(/home/phil/);
 eval {goto latest};
 
-#Svg https://github.com/philiprbrenan/SiliconChip/blob/main/lib/Silicon/
+#svg https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/
 
 if (1)                                                                          #Tn #Tnn
  {is_deeply( n(a,1),   "a_1");
