@@ -6,7 +6,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="1" y="16"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="1" y="16">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2" y="16.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2" y="16.5833333333333">W.a_1_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2" y="16.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="1.5" y1="12.5" y2="12.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="1.5" x2="1.5" y1="12.5" y2="16"/>
 <circle cx="1.5" cy="12.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -22,7 +22,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="3" y="17"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="3" y="17">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4" y="17.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4" y="17.5833333333333">W.a_1_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4" y="17.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="3.5" y1="12.5" y2="12.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="3.5" x2="3.5" y1="12.5" y2="17"/>
 <circle cx="3.5" cy="12.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -38,7 +38,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="5" y="18"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="5" y="18">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="6" y="18.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="6" y="18.5833333333333">W.a_1_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="6" y="18.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="5.5" y1="12.5" y2="12.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="5.5" x2="5.5" y1="12.5" y2="18"/>
 <circle cx="5.5" cy="12.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -54,7 +54,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="7" y="19"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="7" y="19">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="8" y="19.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="8" y="19.5833333333333">W.a_2_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="8" y="19.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="7.5" y1="13.5" y2="13.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="7.5" x2="7.5" y1="13.5" y2="19"/>
 <circle cx="7.5" cy="13.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -70,7 +70,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="9" y="20"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="9" y="20">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="10" y="20.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="10" y="20.5833333333333">W.a_2_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="10" y="20.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="9.5" y1="13.5" y2="13.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="9.5" x2="9.5" y1="13.5" y2="20"/>
 <circle cx="9.5" cy="13.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -86,7 +86,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="11" y="21"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="11" y="21">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="12" y="21.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="12" y="21.5833333333333">W.a_2_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="12" y="21.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="11.5" y1="13.5" y2="13.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="11.5" x2="11.5" y1="13.5" y2="21"/>
 <circle cx="11.5" cy="13.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -102,7 +102,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="13" y="22"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="13" y="22">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="14" y="22.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="14" y="22.5833333333333">W.a_3_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="14" y="22.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="13.5" y1="14.5" y2="14.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="13.5" x2="13.5" y1="14.5" y2="22"/>
 <circle cx="13.5" cy="14.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -118,7 +118,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="15" y="23"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="15" y="23">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="16" y="23.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="16" y="23.5833333333333">W.a_3_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="16" y="23.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="15.5" y1="14.5" y2="14.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="15.5" x2="15.5" y1="14.5" y2="23"/>
 <circle cx="15.5" cy="14.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -134,7 +134,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="17" y="24"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="17" y="24">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="18" y="24.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="18" y="24.5833333333333">W.a_3_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="18" y="24.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="17.5" y1="14.5" y2="14.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="17.5" x2="17.5" y1="14.5" y2="24"/>
 <circle cx="17.5" cy="14.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -150,7 +150,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="19" y="25"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="19" y="25">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="20" y="25.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="20" y="25.5833333333333">W.a_4_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="20" y="25.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="19.5" y1="15.5" y2="15.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="19.5" x2="19.5" y1="15.5" y2="25"/>
 <circle cx="19.5" cy="15.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -166,7 +166,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="21" y="26"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="21" y="26">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="22" y="26.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="22" y="26.5833333333333">W.a_4_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="22" y="26.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="21.5" y1="15.5" y2="15.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="21.5" x2="21.5" y1="15.5" y2="26"/>
 <circle cx="21.5" cy="15.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -182,7 +182,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="23" y="27"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="23" y="27">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="24" y="27.4166666666667">and</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="24" y="27.5833333333333">W.a_4_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="24" y="27.5833333333333">and</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="23.5" y1="15.5" y2="15.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="23.5" x2="23.5" y1="15.5" y2="27"/>
 <circle cx="23.5" cy="15.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -198,7 +198,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="4" x="25" y="28"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="25" y="28">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="27" y="28.4166666666667">or</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="27" y="28.5833333333333">W_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="27" y="28.5833333333333">or</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="3" x2="25.5" y1="16.5" y2="16.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="25.5" x2="25.5" y1="16.5" y2="28"/>
 <circle cx="25.5" cy="16.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -226,7 +226,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="4" x="29" y="29"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="29" y="29">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="31" y="29.4166666666667">or</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="31" y="29.5833333333333">W_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="31" y="29.5833333333333">or</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="5" x2="29.5" y1="17.5" y2="17.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="29.5" x2="29.5" y1="17.5" y2="29"/>
 <circle cx="29.5" cy="17.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -254,7 +254,7 @@
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="4" x="33" y="30"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="33" y="30">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="35" y="30.4166666666667">or</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="35" y="30.5833333333333">W_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="35" y="30.5833333333333">or</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="7" x2="33.5" y1="18.5" y2="18.5"/>
 <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="33.5" x2="33.5" y1="18.5" y2="30"/>
 <circle cx="33.5" cy="18.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
@@ -282,86 +282,86 @@
 <circle cx="0.5" cy="12.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="12">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="12.4166666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="12.5833333333333">m_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="12.5833333333333">input</text>
 <circle cx="0.5" cy="13.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="13">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="13.4166666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="13.5833333333333">m_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="13.5833333333333">input</text>
 <circle cx="0.5" cy="14.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="14">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="14.4166666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="14.5833333333333">m_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="14.5833333333333">input</text>
 <circle cx="0.5" cy="15.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="15">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="15.4166666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="15.5833333333333">m_4</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="15.5833333333333">input</text>
 <circle cx="37.5" cy="28.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="38" y="28">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="28.4166666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="28.5833333333333">o_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="28.5833333333333">output</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="29" x2="37" y1="28.5" y2="28.5"/>
 <circle cx="37" cy="28.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="29" cy="28.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="37.5" cy="29.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="38" y="29">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="29.4166666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="29.5833333333333">o_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="29.5833333333333">output</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="33" x2="37" y1="29.5" y2="29.5"/>
 <circle cx="37" cy="29.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="33" cy="29.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="37.5" cy="30.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="38" y="30">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="30.4166666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="30.5833333333333">o_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="37.5" y="30.5833333333333">output</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="37" x2="37" y1="30.5" y2="30.5"/>
 <circle cx="37" cy="30.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="37" cy="30.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="0.5" cy="0.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="0">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.583333333333333">w_1_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.583333333333333">input</text>
 <circle cx="0.5" cy="1.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="1">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.58333333333333">w_1_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.58333333333333">input</text>
 <circle cx="0.5" cy="2.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="2">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="2.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="2.58333333333333">w_1_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="2.58333333333333">input</text>
 <circle cx="0.5" cy="3.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="3">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="3.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="3.58333333333333">w_2_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="3.58333333333333">input</text>
 <circle cx="0.5" cy="4.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="4">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="4.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="4.58333333333333">w_2_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="4.58333333333333">input</text>
 <circle cx="0.5" cy="5.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="5">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="5.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="5.58333333333333">w_2_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="5.58333333333333">input</text>
 <circle cx="0.5" cy="6.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="6">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="6.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="6.58333333333333">w_3_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="6.58333333333333">input</text>
 <circle cx="0.5" cy="7.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="7">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="7.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="7.58333333333333">w_3_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="7.58333333333333">input</text>
 <circle cx="0.5" cy="8.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="8">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="8.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="8.58333333333333">w_3_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="8.58333333333333">input</text>
 <circle cx="0.5" cy="9.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="9">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="9.41666666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="9.58333333333333">w_4_1</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="9.58333333333333">input</text>
 <circle cx="0.5" cy="10.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="10">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="10.4166666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="10.5833333333333">w_4_2</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="10.5833333333333">input</text>
 <circle cx="0.5" cy="11.5" fill="transparent" font-size="0.2" r="0.5" stroke="blue" stroke-width="0.02"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="11">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="11.4166666666667">input</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="11.5833333333333">w_4_3</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="11.5833333333333">input</text>
 </svg>
