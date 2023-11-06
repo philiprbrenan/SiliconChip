@@ -200,7 +200,7 @@ Create a bus set to a specified number.
      }
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/bits.svg">  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/bits.svg">
 </div>
 
 #### inputBits   ($chip, $name, $bits, %options)
@@ -239,9 +239,13 @@ Create an **input** bus made of bits.
       $o->install($i, {%i}, {%o});
 
       my %d = setBits('a', $W, 0b10110);
-      my $s = $o->simulate({%d}, svg=>"svg/not$W");
+      my $s = $o->simulate({%d}, svg=>q(svg/not));
       is_deeply($s->bitsToInteger('B', $W), 0b11101001);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
+</div>
 
 #### outputBits  ($chip, $name, $input, $bits, %options)
 
@@ -280,9 +284,13 @@ Create an **output** bus made of bits.
       $o->install($i, {%i}, {%o});
 
       my %d = setBits('a', $W, 0b10110);
-      my $s = $o->simulate({%d}, svg=>"svg/not$W");
+      my $s = $o->simulate({%d}, svg=>q(svg/not));
       is_deeply($s->bitsToInteger('B', $W), 0b11101001);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
+</div>
 
     if (1)
      {my @B = ((my $W = 4), (my $B = 2));
@@ -317,9 +325,9 @@ Create an **output** bus made of bits.
       is_deeply($s->bitsToInteger('And',  $W),  0b1000);
       is_deeply($s->bitsToInteger('AndX', $B),  0b00);
 
-      is_deeply($s->bitsToInteger ('Or',   $W), 0b1110);
+      is_deeply($s->bitsToInteger ('Or',  $W),  0b1110);
       is_deeply($s->bitsToInteger ('OrX', $B),  0b11);
-      is_deeply([$s->wordsToInteger('N',  @B)],  [3, 2, 1, 0]);
+      is_deeply([$s->wordsToInteger('N',  @B)], [3, 2, 1, 0]);
      }
 
 #### notBits ($chip, $name, $input, $bits, %options)
@@ -355,9 +363,13 @@ Create a **not** bus made of bits.
       $o->install($i, {%i}, {%o});
 
       my %d = setBits('a', $W, 0b10110);
-      my $s = $o->simulate({%d}, svg=>"svg/not$W");
+      my $s = $o->simulate({%d}, svg=>q(svg/not));
       is_deeply($s->bitsToInteger('B', $W), 0b11101001);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
+</div>
 
 #### andBits ($chip, $name, $input, $bits, %options)
 
@@ -389,13 +401,17 @@ Create a **not** bus made of bits.
          $c->output    (qw(nOr  nor));
 
       my %d = setBits('i', $W, 0b10110);
-      my $s = $c->simulate({%d}, svg=>"svg/andOrBits$W");
+      my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
 
       is_deeply($s->values->{And},  0);
       is_deeply($s->values->{Or},   1);
       is_deeply($s->values->{nAnd}, 1);
       is_deeply($s->values->{nOr},  0);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/andOrBits.svg">
+</div>
 
 #### nandBits($chip, $name, $input, $bits, %options)
 
@@ -427,13 +443,17 @@ Create a **not** bus made of bits.
          $c->output    (qw(nOr  nor));
 
       my %d = setBits('i', $W, 0b10110);
-      my $s = $c->simulate({%d}, svg=>"svg/andOrBits$W");
+      my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
 
       is_deeply($s->values->{And},  0);
       is_deeply($s->values->{Or},   1);
       is_deeply($s->values->{nAnd}, 1);
       is_deeply($s->values->{nOr},  0);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/andOrBits.svg">
+</div>
 
 #### orBits  ($chip, $name, $input, $bits, %options)
 
@@ -465,13 +485,17 @@ Create a **not** bus made of bits.
          $c->output    (qw(nOr  nor));
 
       my %d = setBits('i', $W, 0b10110);
-      my $s = $c->simulate({%d}, svg=>"svg/andOrBits$W");
+      my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
 
       is_deeply($s->values->{And},  0);
       is_deeply($s->values->{Or},   1);
       is_deeply($s->values->{nAnd}, 1);
       is_deeply($s->values->{nOr},  0);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/andOrBits.svg">
+</div>
 
 #### norBits ($chip, $name, $input, $bits, %options)
 
@@ -503,13 +527,17 @@ Create a **not** bus made of bits.
          $c->output    (qw(nOr  nor));
 
       my %d = setBits('i', $W, 0b10110);
-      my $s = $c->simulate({%d}, svg=>"svg/andOrBits$W");
+      my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
 
       is_deeply($s->values->{And},  0);
       is_deeply($s->values->{Or},   1);
       is_deeply($s->values->{nAnd}, 1);
       is_deeply($s->values->{nOr},  0);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/andOrBits.svg">
+</div>
 
 ### Words
 
@@ -621,9 +649,9 @@ Create a **not** bus made of words.
       is_deeply($s->bitsToInteger('And',  $W),  0b1000);
       is_deeply($s->bitsToInteger('AndX', $B),  0b00);
 
-      is_deeply($s->bitsToInteger ('Or',   $W), 0b1110);
+      is_deeply($s->bitsToInteger ('Or',  $W),  0b1110);
       is_deeply($s->bitsToInteger ('OrX', $B),  0b11);
-      is_deeply([$s->wordsToInteger('N',  @B)],  [3, 2, 1, 0]);
+      is_deeply([$s->wordsToInteger('N',  @B)], [3, 2, 1, 0]);
      }
 
 #### andWords($chip, $name, $input, $words, $bits, %options)
@@ -667,9 +695,9 @@ Create a **not** bus made of words.
       is_deeply($s->bitsToInteger('And',  $W),  0b1000);
       is_deeply($s->bitsToInteger('AndX', $B),  0b00);
 
-      is_deeply($s->bitsToInteger ('Or',   $W), 0b1110);
+      is_deeply($s->bitsToInteger ('Or',  $W),  0b1110);
       is_deeply($s->bitsToInteger ('OrX', $B),  0b11);
-      is_deeply([$s->wordsToInteger('N',  @B)],  [3, 2, 1, 0]);
+      is_deeply([$s->wordsToInteger('N',  @B)], [3, 2, 1, 0]);
      }
 
     if (1)
@@ -730,9 +758,9 @@ Create a **not** bus made of words.
       is_deeply($s->bitsToInteger('And',  $W),  0b1000);
       is_deeply($s->bitsToInteger('AndX', $B),  0b00);
 
-      is_deeply($s->bitsToInteger ('Or',   $W), 0b1110);
+      is_deeply($s->bitsToInteger ('Or',  $W),  0b1110);
       is_deeply($s->bitsToInteger ('OrX', $B),  0b11);
-      is_deeply([$s->wordsToInteger('N',  @B)],  [3, 2, 1, 0]);
+      is_deeply([$s->wordsToInteger('N',  @B)], [3, 2, 1, 0]);
      }
 
 #### orWords ($chip, $name, $input, $words, $bits, %options)
@@ -776,9 +804,9 @@ Create a **not** bus made of words.
       is_deeply($s->bitsToInteger('And',  $W),  0b1000);
       is_deeply($s->bitsToInteger('AndX', $B),  0b00);
 
-      is_deeply($s->bitsToInteger ('Or',   $W), 0b1110);
+      is_deeply($s->bitsToInteger ('Or',  $W),  0b1110);
       is_deeply($s->bitsToInteger ('OrX', $B),  0b11);
-      is_deeply([$s->wordsToInteger('N',  @B)],  [3, 2, 1, 0]);
+      is_deeply([$s->wordsToInteger('N',  @B)], [3, 2, 1, 0]);
      }
 
     if (1)
@@ -839,9 +867,9 @@ Create a **not** bus made of words.
       is_deeply($s->bitsToInteger('And',  $W),  0b1000);
       is_deeply($s->bitsToInteger('AndX', $B),  0b00);
 
-      is_deeply($s->bitsToInteger ('Or',   $W), 0b1110);
+      is_deeply($s->bitsToInteger ('Or',  $W),  0b1110);
       is_deeply($s->bitsToInteger ('OrX', $B),  0b11);
-      is_deeply([$s->wordsToInteger('N',  @B)],  [3, 2, 1, 0]);
+      is_deeply([$s->wordsToInteger('N',  @B)], [3, 2, 1, 0]);
      }
 
 ## Install
@@ -911,51 +939,6 @@ Print simulation results as text.
     and1                            :   1 and                             i1 i2
     o                               :   1 output                          and1
     END
-
-      is_deeply ($s->printSvg, <<END);
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-    <svg height="100%" viewBox="0 0 5 4" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="4" y="0.5">And gate</text>
-    <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="1" y="2"/>
-    <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2" y="2.41666666666667">and</text>
-    <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2" y="2.58333333333333">and1</text>
-    <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="1.5" y1="0.5" y2="0.5"/>
-    <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="1.5" x2="1.5" y1="0.5" y2="2"/>
-    <circle cx="1.5" cy="0.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="1.5" cy="2" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="1" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="2.5" y1="1.5" y2="1.5"/>
-    <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="2.5" x2="2.5" y1="1.5" y2="2"/>
-    <circle cx="2.5" cy="1.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="2.5" cy="2" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="1" cy="1.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="0" y="0"/>
-    <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
-    <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.583333333333333">i1</text>
-    <line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0.5" y1="0.5" y2="0.5"/>
-    <line font-size="0.2" stroke="darkRed" stroke-width="0.02" x1="0.5" x2="0.5" y1="0.5" y2="1"/>
-    <circle cx="0.5" cy="0.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="0.5" cy="1" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="1" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="0" y="1"/>
-    <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.41666666666667">input</text>
-    <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.58333333333333">i2</text>
-    <line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0.5" y1="1.5" y2="1.5"/>
-    <line font-size="0.2" stroke="darkRed" stroke-width="0.02" x1="0.5" x2="0.5" y1="1.5" y2="2"/>
-    <circle cx="0.5" cy="1.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="0.5" cy="2" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="1" cy="1.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="3" y="2"/>
-    <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="2.41666666666667">output</text>
-    <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="2.58333333333333">o</text>
-    <line font-size="0.2" stroke="black" stroke-width="0.02" x1="3" x2="3.5" y1="2.5" y2="2.5"/>
-    <line font-size="0.2" stroke="darkRed" stroke-width="0.02" x1="3.5" x2="3.5" y1="2.5" y2="3"/>
-    <circle cx="3.5" cy="2.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="3.5" cy="3" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="3" cy="2.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    </svg>
-    END
      }
 
 ## Silicon::Chip::Simulation::printSvg ($sim, %options)
@@ -975,13 +958,6 @@ Print simulation results as svg.
       $c->and   ("and1", [qw(i1 i2)]);
       $c->output("o", "and1");
       my $s = $c->simulate({i1=>1, i2=>1});
-
-      is_deeply($s->print, <<END);
-    i1                              :   1 input                           i1
-    i2                              :   1 input                           i2
-    and1                            :   1 and                             i1 i2
-    o                               :   1 output                          and1
-    END
 
       is_deeply ($s->printSvg, <<END);
     <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
@@ -1213,7 +1189,7 @@ Choose one of two words based on a bit.  The first word is chosen if the bit is 
       my %b = setBits('b', $B, 0b1100);
 
 
-      my $s = $c->simulate({%a, %b, c=>1}, svg=>"svg/chooseFromTwoWords$B");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+      my $s = $c->simulate({%a, %b, c=>1}, svg=>q(svg/chooseFromTwoWords));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps,               4);
       is_deeply($s->bitsToInteger('out', $B), 0b1100);
@@ -1222,6 +1198,10 @@ Choose one of two words based on a bit.  The first word is chosen if the bit is 
       is_deeply($t->steps,               4);
       is_deeply($t->bitsToInteger('out', $B), 0b0011);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/chooseFromTwoWords.svg">
+</div>
 
 ### enableWord  ($chip, $output, $a, $enable, $bits, %options)
 
@@ -1251,7 +1231,7 @@ Output a word or zeros depending on a choice bit.  The first word is chosen if t
       my %a = setBits('a', $B, 0b0011);
 
 
-      my $s = $c->simulate({%a, c=>1}, svg=>"svg/enableWord");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+      my $s = $c->simulate({%a, c=>1}, svg=>q(svg/enableWord));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps,               4);
       is_deeply($s->bitsToInteger('out', $B), 0b0011);
@@ -1260,6 +1240,10 @@ Output a word or zeros depending on a choice bit.  The first word is chosen if t
       is_deeply($t->steps,               4);
       is_deeply($t->bitsToInteger('out', $B), 0b0000);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/enableWord.svg">
+</div>
 
 ## Masks
 
@@ -1497,11 +1481,17 @@ Choose one of a specified number of words **w**, each of a specified width, usin
 
       for my $k(0..$W)                                                              # Each possible key
        {my %k = setBits('k', $B, $k);
-        my $s = $c->simulate({%k, %w}, svg=>"svg/findWord_${W}_$B");
+
+        my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
         is_deeply($s->steps, 3);
         is_deeply($s->bitsToInteger('M', $W),$k ? 2**($W-$k) : 0);
        }
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/findWord.svg">
+</div>
 
 # Simulate
 
@@ -1543,12 +1533,12 @@ Set an array of input gates to a number prior to running a simulation.
       my $s = $c->simulate({%a, %b, n(a,2)=>1, n(b,2)=>1});                         # Two equal numbers
       is_deeply($s->values->{out}, 0);
 
-      my $t = $c->simulate({%a, %b, n(a,2)=>1}, svg=>q(svg/Compare$B));             # Svg drawing of layout
+      my $t = $c->simulate({%a, %b, n(a,2)=>1}, svg=>q(svg/Compare));              # Svg drawing of layout
       is_deeply($t->values->{out}, 1);
      }
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare$B.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare.svg">
 </div>
 
     if (1)
@@ -1710,9 +1700,13 @@ Represent the state of bits in the simulation results as an unsigned binary inte
       $o->install($i, {%i}, {%o});
 
       my %d = setBits('a', $W, 0b10110);
-      my $s = $o->simulate({%d}, svg=>"svg/not$W");
+      my $s = $o->simulate({%d}, svg=>q(svg/not));
       is_deeply($s->bitsToInteger('B', $W), 0b11101001);
      }
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
+</div>
 
 ## Silicon::Chip::Simulation::wordsToInteger   ($simulation, $output, $words, $bits, %options)
 
