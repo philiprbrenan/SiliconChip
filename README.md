@@ -75,8 +75,8 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
       $c->output("o2", "and");
       my $s = $c->simulate({}, svg=>q(svg/oneZero));
       is_deeply($s->steps       , 3);
-      is_deeply($s->values->{o1}, 1);
-      is_deeply($s->values->{o2}, 0);
+      is_deeply($s->value("o1"), 1);
+      is_deeply($s->value("o2"), 0);
      }
     
 
@@ -94,7 +94,7 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
       $c->output("o", "and1");
       my $s = $c->simulate({i1=>1, i2=>1});
       ok($s->steps          == 2);
-      ok($s->values->{and1} == 1);
+      ok($s->value("and1") == 1);
      }
     
     if (1)                                                                          # 4 bit equal 
@@ -117,11 +117,11 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
                             svg=>q(svg/Equals));                                    # Svg drawing of layout
     
       is_deeply($s->steps,         3);                                              # Three steps
-      is_deeply($s->values->{out}, 1);                                              # Out is 1 for equals
+      is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
     
       my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                             b1=>1, b2=>0, b3=>1, b4=>0});
-      is_deeply($t->values->{out}, 0);                                              # Out is 0 for not equals
+      is_deeply($t->value("out"), 0);                                               # Out is 0 for not equals
      }
     
 
@@ -155,13 +155,42 @@ A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) chosen from **and|conti
       $c->output( "o", "or");
       my $s = $c->simulate({i11=>1, i12=>1, i21=>1, i22=>1});
       ok($s->steps         == 3);
-      ok($s->values->{or}  == 1);
+      ok($s->value("or")  == 1);
          $s  = $c->simulate({i11=>1, i12=>0, i21=>1, i22=>1});
       ok($s->steps         == 3);
-      ok($s->values->{or}  == 1);
+      ok($s->value("or")  == 1);
          $s  = $c->simulate({i11=>1, i12=>0, i21=>1, i22=>0});
       ok($s->steps         == 3);
-      ok($s->values->{o}   == 0);
+      ok($s->value("o")   == 0);
+     }
+    
+
+## connectInput($chip, $in, $to, %options)
+
+Connect a previously defined input gate to the output of another previously gate on the same chip. This allows us to define a set of gates on the chip without having to know, a priori, all the names of the gates that will provide input to these gates.
+
+       Parameter  Description
+    1  $chip      Chip
+    2  $in        Input gate
+    3  $to        Gate to connect input gate to
+    4  %options   Options
+
+**Example:**
+
+    if (1)                                                                          # Internal input gate   
+     {my $c = newChip();
+         $c->input ('i');                                                           # Input
+         $c->input ('j');                                                           # Internal input which we will connect to later
+         $c->output(qw(o j));                                                       # Output
+    
+    
+         $c->connectInput(qw(j i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    
+      my $s = $c->simulate({i=>1});
+      is_deeply($s->steps, 1);
+      is_deeply($s->value("j"), undef);
+      is_deeply($s->value("o"), 1);
      }
     
 
@@ -411,10 +440,10 @@ Create a **not** bus made of bits.
       my %d = setBits('i', $W, 0b10110);
       my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
     
-      is_deeply($s->values->{And},  0);
-      is_deeply($s->values->{Or},   1);
-      is_deeply($s->values->{nAnd}, 1);
-      is_deeply($s->values->{nOr},  0);
+      is_deeply($s->value("And"),  0);
+      is_deeply($s->value("Or"),   1);
+      is_deeply($s->value("nAnd"), 1);
+      is_deeply($s->value("nOr"),  0);
      }
     
 
@@ -454,10 +483,10 @@ Create a **not** bus made of bits.
       my %d = setBits('i', $W, 0b10110);
       my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
     
-      is_deeply($s->values->{And},  0);
-      is_deeply($s->values->{Or},   1);
-      is_deeply($s->values->{nAnd}, 1);
-      is_deeply($s->values->{nOr},  0);
+      is_deeply($s->value("And"),  0);
+      is_deeply($s->value("Or"),   1);
+      is_deeply($s->value("nAnd"), 1);
+      is_deeply($s->value("nOr"),  0);
      }
     
 
@@ -497,10 +526,10 @@ Create a **not** bus made of bits.
       my %d = setBits('i', $W, 0b10110);
       my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
     
-      is_deeply($s->values->{And},  0);
-      is_deeply($s->values->{Or},   1);
-      is_deeply($s->values->{nAnd}, 1);
-      is_deeply($s->values->{nOr},  0);
+      is_deeply($s->value("And"),  0);
+      is_deeply($s->value("Or"),   1);
+      is_deeply($s->value("nAnd"), 1);
+      is_deeply($s->value("nOr"),  0);
      }
     
 
@@ -540,10 +569,10 @@ Create a **not** bus made of bits.
       my %d = setBits('i', $W, 0b10110);
       my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
     
-      is_deeply($s->values->{And},  0);
-      is_deeply($s->values->{Or},   1);
-      is_deeply($s->values->{nAnd}, 1);
-      is_deeply($s->values->{nOr},  0);
+      is_deeply($s->value("And"),  0);
+      is_deeply($s->value("Or"),   1);
+      is_deeply($s->value("nAnd"), 1);
+      is_deeply($s->value("nOr"),  0);
      }
     
 
@@ -924,7 +953,7 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
       $o->install($i, {%i}, {%o});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       my %d = setBits('i', 1, 1);
-      my $s = $o->simulate({%d}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
+      my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
     
       is_deeply($s->steps,  2);
       is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
@@ -935,13 +964,45 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
 
 Visualize the [chip](https://en.wikipedia.org/wiki/Integrated_circuit) in various ways.
 
-## dumpGates   ($chip, %options)
+## print   ($chip, %options)
 
 Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) present on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
        Parameter  Description
     1  $chip      Chip
     2  %options   Gates
+
+**Example:**
+
+    if (1)                                                                             
+     {my $c = Silicon::Chip::newChip(title=>"And gate");
+      $c->input ("i1");
+      $c->input ("i2");
+      $c->and   ("and1", [qw(i1 i2)]);
+      $c->output("o", "and1");
+      my $s = $c->simulate({i1=>1, i2=>1});
+    
+    
+      is_deeply($c->print, <<END);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    i1                              :     input                           i1
+    i2                              :     input                           i2
+    and1                            :     and                             i1 i2
+    o                               :     output                          and1
+    END
+    
+    
+      is_deeply($s->print, <<END);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    i1                              :   1 input                           i1
+    i2                              :   1 input                           i2
+    and1                            :   1 and                             i1 i2
+    o                               :   1 output                          and1
+    END
+    
+      ok($s->printSvg ne $c->printSvg);
+     }
+    
 
 ## Silicon::Chip::Simulation::print($sim, %options)
 
@@ -953,7 +1014,7 @@ Print simulation results as text.
 
 **Example:**
 
-    if (1)                                                                          
+    if (1)                                                                             
      {my $c = Silicon::Chip::newChip(title=>"And gate");
       $c->input ("i1");
       $c->input ("i2");
@@ -961,22 +1022,61 @@ Print simulation results as text.
       $c->output("o", "and1");
       my $s = $c->simulate({i1=>1, i2=>1});
     
+      is_deeply($c->print, <<END);
+    i1                              :     input                           i1
+    i2                              :     input                           i2
+    and1                            :     and                             i1 i2
+    o                               :     output                          and1
+    END
+    
       is_deeply($s->print, <<END);
     i1                              :   1 input                           i1
     i2                              :   1 input                           i2
     and1                            :   1 and                             i1 i2
     o                               :   1 output                          and1
     END
+    
+      ok($s->printSvg ne $c->printSvg);
      }
     
 
-## svgGates($chip, %options)
+## printSvg($chip, %options)
 
 Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
        Parameter  Description
     1  $chip      Chip
     2  %options   Options
+
+**Example:**
+
+    if (1)                                                                             
+     {my $c = Silicon::Chip::newChip(title=>"And gate");
+      $c->input ("i1");
+      $c->input ("i2");
+      $c->and   ("and1", [qw(i1 i2)]);
+      $c->output("o", "and1");
+      my $s = $c->simulate({i1=>1, i2=>1});
+    
+      is_deeply($c->print, <<END);
+    i1                              :     input                           i1
+    i2                              :     input                           i2
+    and1                            :     and                             i1 i2
+    o                               :     output                          and1
+    END
+    
+      is_deeply($s->print, <<END);
+    i1                              :   1 input                           i1
+    i2                              :   1 input                           i2
+    and1                            :   1 and                             i1 i2
+    o                               :   1 output                          and1
+    END
+    
+    
+      ok($s->printSvg ne $c->printSvg);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+     }
+    
 
 ## Silicon::Chip::Simulation::printSvg ($sim, %options)
 
@@ -988,7 +1088,7 @@ Print simulation results as svg.
 
 **Example:**
 
-    if (1)                                                                          
+    if (1)                                                                             
      {my $c = Silicon::Chip::newChip(title=>"And gate");
       $c->input ("i1");
       $c->input ("i2");
@@ -996,50 +1096,21 @@ Print simulation results as svg.
       $c->output("o", "and1");
       my $s = $c->simulate({i1=>1, i2=>1});
     
-      is_deeply ($s->printSvg, <<END);
-    <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-    <svg height="100%" viewBox="0 0 5 4" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="4" y="0.5">And gate</text>
-    <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="2" x="1" y="2"/>
-    <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2" y="2.41666666666667">and</text>
-    <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2" y="2.58333333333333">and1</text>
-    <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="1.5" y1="0.5" y2="0.5"/>
-    <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="1.5" x2="1.5" y1="0.5" y2="2"/>
-    <circle cx="1.5" cy="0.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="1.5" cy="2" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="1" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="2.5" y1="1.5" y2="1.5"/>
-    <line font-size="0.2" stroke="purple" stroke-width="0.02" x1="2.5" x2="2.5" y1="1.5" y2="2"/>
-    <circle cx="2.5" cy="1.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="2.5" cy="2" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="1" cy="1.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="0" y="0"/>
-    <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
-    <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.583333333333333">i1</text>
-    <line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0.5" y1="0.5" y2="0.5"/>
-    <line font-size="0.2" stroke="darkRed" stroke-width="0.02" x1="0.5" x2="0.5" y1="0.5" y2="1"/>
-    <circle cx="0.5" cy="0.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="0.5" cy="1" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="1" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="0" y="1"/>
-    <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.41666666666667">input</text>
-    <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.58333333333333">i2</text>
-    <line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0.5" y1="1.5" y2="1.5"/>
-    <line font-size="0.2" stroke="darkRed" stroke-width="0.02" x1="0.5" x2="0.5" y1="1.5" y2="2"/>
-    <circle cx="0.5" cy="1.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="0.5" cy="2" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="1" cy="1.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="3" y="2"/>
-    <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="2.41666666666667">output</text>
-    <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="2.58333333333333">o</text>
-    <line font-size="0.2" stroke="black" stroke-width="0.02" x1="3" x2="3.5" y1="2.5" y2="2.5"/>
-    <line font-size="0.2" stroke="darkRed" stroke-width="0.02" x1="3.5" x2="3.5" y1="2.5" y2="3"/>
-    <circle cx="3.5" cy="2.5" fill="red" font-size="0.2" r="0.06" stroke-width="0.02"/>
-    <circle cx="3.5" cy="3" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    <circle cx="3" cy="2.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-    </svg>
+      is_deeply($c->print, <<END);
+    i1                              :     input                           i1
+    i2                              :     input                           i2
+    and1                            :     and                             i1 i2
+    o                               :     output                          and1
     END
+    
+      is_deeply($s->print, <<END);
+    i1                              :   1 input                           i1
+    i2                              :   1 input                           i2
+    and1                            :   1 and                             i1 i2
+    o                               :   1 output                          and1
+    END
+    
+      ok($s->printSvg ne $c->printSvg);
      }
     
 
@@ -1120,7 +1191,7 @@ Compare two unsigned binary integers of a specified width returning **1** if the
     
           my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>"svg/CompareEq$B"):()); # Svg drawing of layout
     
-          is_deeply($s->values->{out}, $i == $j ? 1 : 0);                           # Equal
+          is_deeply($s->value("out"), $i == $j ? 1 : 0);                            # Equal
           is_deeply($s->steps, 3);                                                  # Number of steps to stability
          }
        }
@@ -1157,7 +1228,7 @@ Compare two unsigned binary integers of specified width and return **1** if the 
           my %b = setBits('b', $B, $j);                                             # Number b
     
           my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>"svg/CompareGt$B"):()); # Svg drawing of layout
-          is_deeply($s->values->{out}, $i > $j ? 1 : 0);                            # More than
+          is_deeply($s->value("out"), $i > $j ? 1 : 0);                             # More than
           is_deeply($s->steps, 4);                                                  # Number of steps to stability
          }
        }
@@ -1194,7 +1265,7 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
           my %b = setBits('b', $B, $j);                                             # Number b
     
           my $s = $c->simulate({%a, %b}, $i==1&&$j==2?(svg=>"svg/CompareLt$B"):()); # Svg drawing of layout
-          is_deeply($s->values->{out}, $i < $j ? 1 : 0);                            # More than
+          is_deeply($s->value("out"), $i < $j ? 1 : 0);                             # More than
           is_deeply($s->steps, 4);                                                  # Number of steps to stability
          }
        }
@@ -1587,10 +1658,10 @@ Set an array of input gates to a number prior to running a simulation.
 
     
       my $s = $c->simulate({%a, %b, n(a,2)=>1, n(b,2)=>1});                         # Two equal numbers
-      is_deeply($s->values->{out}, 0);
+      is_deeply($s->value("out"), 0);
     
       my $t = $c->simulate({%a, %b, n(a,2)=>1}, svg=>q(svg/Compare));               # Svg drawing of layout
-      is_deeply($t->values->{out}, 1);
+      is_deeply($t->value("out"), 1);
      }
     
 
@@ -1684,7 +1755,7 @@ Create a connection list connecting a set of output bits on the one chip to a se
 
       $o->install($i, {%i}, {%o});
       my %d = setBits('i', 1, 1);
-      my $s = $o->simulate({%d}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
+      my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
     
       is_deeply($s->steps,  2);
       is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
@@ -1724,10 +1795,36 @@ Create a connection list connecting a set of words on the outer chip to a set of
 
       $o->install($i, {%i}, {%o});
       my %d = setWords('i', 1, 1, 1);
-      my $s = $o->simulate({%d}, dumpGatesOff=>"dump/not1", svg=>"svg/not1");
+      my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
     
       is_deeply($s->steps,  2);
       is_deeply($s->values, { "(not 1 n_1_1)" => 0, "i_1_1" => 1, "N_1_1" => 0 });
+     }
+    
+
+## Silicon::Chip::Simulation::value($simulation, $name, %options)
+
+Get the value of a gate as seen in a simulation
+
+       Parameter    Description
+    1  $simulation  Chip
+    2  $name        Gate
+    3  %options     Options
+
+**Example:**
+
+    if (1)                                                                          # Internal input gate   
+     {my $c = newChip();
+         $c->input ('i');                                                           # Input
+         $c->input ('j');                                                           # Internal input which we will connect to later
+         $c->output(qw(o j));                                                       # Output
+    
+         $c->connectInput(qw(j i));
+    
+      my $s = $c->simulate({i=>1});
+      is_deeply($s->steps, 1);
+      is_deeply($s->value("j"), undef);
+      is_deeply($s->value("o"), 1);
      }
     
 
@@ -1864,9 +1961,9 @@ Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gat
       $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
     
     
-      my $s = $o->simulate({Oi1=>1}, dumpGatesOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+      my $s = $o->simulate({Oi1=>1}, printOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-      is_deeply($s->values->{Oo}, 0);
+      is_deeply($s->value("Oo"), 0);
       is_deeply($s->steps,        4);
      }
     
@@ -1933,9 +2030,9 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 11 [connectBits](#connectbits) - Create a connection list connecting a set of output bits on the one chip to a set of input bits on another chip.
 
-12 [connectWords](#connectwords) - Create a connection list connecting a set of words on the outer chip to a set of words on the inner chip.
+12 [connectInput](#connectinput) - Connect a previously defined input gate to the output of another previously gate on the same chip.
 
-13 [dumpGates](#dumpgates) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) present on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+13 [connectWords](#connectwords) - Create a connection list connecting a set of words on the outer chip to a set of words on the inner chip.
 
 14 [enableWord](#enableword) - Output a word or zeros depending on a choice bit.
 
@@ -1983,23 +2080,27 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 36 [pointMaskToInteger](#pointmasktointeger) - Convert a mask **i** known to have at most a single bit on - also known as a **point mask** - to an output number **a** representing the location in the mask of the bit set to **1**.
 
-37 [setBits](#setbits) - Set an array of input gates to a number prior to running a simulation.
+37 [print](#print) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) present on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-38 [setWords](#setwords) - Set an array of arrays of gates to an array of numbers prior to running a simulation.
+38 [printSvg](#printsvg) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-39 [Silicon::Chip::Simulation::bitsToInteger](#silicon-chip-simulation-bitstointeger) - Represent the state of bits in the simulation results as an unsigned binary integer.
+39 [setBits](#setbits) - Set an array of input gates to a number prior to running a simulation.
 
-40 [Silicon::Chip::Simulation::print](#silicon-chip-simulation-print) - Print simulation results as text.
+40 [setWords](#setwords) - Set an array of arrays of gates to an array of numbers prior to running a simulation.
 
-41 [Silicon::Chip::Simulation::printSvg](#silicon-chip-simulation-printsvg) - Print simulation results as svg.
+41 [Silicon::Chip::Simulation::bitsToInteger](#silicon-chip-simulation-bitstointeger) - Represent the state of bits in the simulation results as an unsigned binary integer.
 
-42 [Silicon::Chip::Simulation::wordsToInteger](#silicon-chip-simulation-wordstointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+42 [Silicon::Chip::Simulation::print](#silicon-chip-simulation-print) - Print simulation results as text.
 
-43 [Silicon::Chip::Simulation::wordXToInteger](#silicon-chip-simulation-wordxtointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+43 [Silicon::Chip::Simulation::printSvg](#silicon-chip-simulation-printsvg) - Print simulation results as svg.
 
-44 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output value of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilizes.
+44 [Silicon::Chip::Simulation::value](#silicon-chip-simulation-value) - Get the value of a gate as seen in a simulation
 
-45 [svgGates](#svggates) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+45 [Silicon::Chip::Simulation::wordsToInteger](#silicon-chip-simulation-wordstointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+
+46 [Silicon::Chip::Simulation::wordXToInteger](#silicon-chip-simulation-wordxtointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+
+47 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output value of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilizes.
 
 # Installation
 
