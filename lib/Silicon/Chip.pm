@@ -211,7 +211,7 @@ my sub sizeBits($$%)                                                            
  {my ($chip, $name, %options) = @_;                                             # Chip, bits bus name, options
   return $options{bits} if defined($options{bits});
   my $s = $chip->sizeBits->{$name};
-  defined($s) or confess "No bit bus named $name\n";
+  defined($s) or confess "No bit bus named ".dump($name)."\n";
   $s
  }
 
@@ -935,8 +935,7 @@ sub enableWord($$$$%)                                                           
     $chip->and(n("$o.b", $i), [n("$o.z", $i),   "$o.n"     ]);                  # Choose first word
     $chip->or (n( $o,    $i), [n("$o.a", $i), n("$o.b", $i)]);                  # Or results of choice
    }
-  setSizeBits($chip, $o, $B);                                                # Record bus size
-
+  setSizeBits($chip, $o, $B);                                                   # Record bus size
   $chip
  }
 
