@@ -198,7 +198,7 @@ Connect a previously defined input gate to the output of another previously gate
          $c->outputWords(qw(o i));                                                  # Output
       my $s = $c->simulate({});
       is_deeply($s->steps, 2);
-      is_deeply([$s->wordsToInteger("i")], [@n]);
+      is_deeply([$s->wInt("i")], [@n]);
      }
 
     if (1)                                                                           # Internal input gate
@@ -208,7 +208,7 @@ Connect a previously defined input gate to the output of another previously gate
          $c->outputWords(qw(o i));                                                  # Output
       my $s = $c->simulate({});
       is_deeply($s->steps, 2);
-      is_deeply([$s->wordsToInteger("i")], [@n]);
+      is_deeply([$s->wInt("i")], [@n]);
      }
 
 ## Buses
@@ -266,7 +266,7 @@ Create a bus set to a specified number.
         my $s = $c->simulate({}, $i == 3 ? (svg=>q(svg/bits)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
         is_deeply($s->steps, 2);
-        is_deeply($s->bint("o"), $i);
+        is_deeply($s->bInt("o"), $i);
        }
      }
 
@@ -311,7 +311,7 @@ Create an **input** bus made of bits.
 
       my %d = setBits($o, 'a', 0b10110);
       my $s = $o->simulate({%d}, svg=>q(svg/not));
-      is_deeply($s->bint('B'), 0b11101001);
+      is_deeply($s->bInt('B'), 0b11101001);
      }
 
 <div>
@@ -355,7 +355,7 @@ Create an **output** bus made of bits.
 
       my %d = setBits($o, 'a', 0b10110);
       my $s = $o->simulate({%d}, svg=>q(svg/not));
-      is_deeply($s->bint('B'), 0b11101001);
+      is_deeply($s->bInt('B'), 0b11101001);
      }
 
 <div>
@@ -388,12 +388,12 @@ Create an **output** bus made of bits.
       my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
       my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-      is_deeply($s->bint('And'),  0b1000);
-      is_deeply($s->bint('AndX'), 0b0000);
+      is_deeply($s->bInt('And'),  0b1000);
+      is_deeply($s->bInt('AndX'), 0b0000);
 
-      is_deeply($s->bint('Or'),  0b1110);
-      is_deeply($s->bint('OrX'), 0b11);
-      is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+      is_deeply($s->bInt('Or'),  0b1110);
+      is_deeply($s->bInt('OrX'), 0b11);
+      is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
      }
 
 #### notBits ($chip, $name, $input, %options)
@@ -429,7 +429,7 @@ Create a **not** bus made of bits.
 
       my %d = setBits($o, 'a', 0b10110);
       my $s = $o->simulate({%d}, svg=>q(svg/not));
-      is_deeply($s->bint('B'), 0b11101001);
+      is_deeply($s->bInt('B'), 0b11101001);
      }
 
 <div>
@@ -648,7 +648,7 @@ Create a word bus set to specified numbers.
          $c->outputWords(qw(o i));                                                  # Output
       my $s = $c->simulate({});
       is_deeply($s->steps, 2);
-      is_deeply([$s->wordsToInteger("i")], [@n]);
+      is_deeply([$s->wInt("i")], [@n]);
      }
 
     if (1)                                                                           # Internal input gate
@@ -660,7 +660,7 @@ Create a word bus set to specified numbers.
          $c->outputWords(qw(o i));                                                  # Output
       my $s = $c->simulate({});
       is_deeply($s->steps, 2);
-      is_deeply([$s->wordsToInteger("i")], [@n]);
+      is_deeply([$s->wInt("i")], [@n]);
      }
 
 #### inputWords  ($chip, $name, $words, $bits, %options)
@@ -688,7 +688,7 @@ Create an **input** bus made of words.
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-      is_deeply([$s->wordsToInteger('o')], [0..3]);
+      is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
      }
 
@@ -716,7 +716,7 @@ Create an **output** bus made of words.
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-      is_deeply([$s->wordsToInteger('o')], [0..3]);
+      is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
      }
 
@@ -752,12 +752,12 @@ Create a **not** bus made of words.
       my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
       my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-      is_deeply($s->bint('And'),  0b1000);
-      is_deeply($s->bint('AndX'), 0b0000);
+      is_deeply($s->bInt('And'),  0b1000);
+      is_deeply($s->bInt('AndX'), 0b0000);
 
-      is_deeply($s->bint('Or'),  0b1110);
-      is_deeply($s->bint('OrX'), 0b11);
-      is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+      is_deeply($s->bInt('Or'),  0b1110);
+      is_deeply($s->bInt('OrX'), 0b11);
+      is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
      }
 
 #### andWords($chip, $name, $input, %options)
@@ -792,12 +792,12 @@ Create a **not** bus made of words.
       my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
       my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-      is_deeply($s->bint('And'),  0b1000);
-      is_deeply($s->bint('AndX'), 0b0000);
+      is_deeply($s->bInt('And'),  0b1000);
+      is_deeply($s->bInt('AndX'), 0b0000);
 
-      is_deeply($s->bint('Or'),  0b1110);
-      is_deeply($s->bint('OrX'), 0b11);
-      is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+      is_deeply($s->bInt('Or'),  0b1110);
+      is_deeply($s->bInt('OrX'), 0b11);
+      is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
      }
 
     if (1)
@@ -810,7 +810,7 @@ Create a **not** bus made of words.
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-      is_deeply([$s->wordsToInteger('o')], [0..3]);
+      is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
      }
 
@@ -846,12 +846,12 @@ Create a **not** bus made of words.
       my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
       my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-      is_deeply($s->bint('And'),  0b1000);
-      is_deeply($s->bint('AndX'), 0b0000);
+      is_deeply($s->bInt('And'),  0b1000);
+      is_deeply($s->bInt('AndX'), 0b0000);
 
-      is_deeply($s->bint('Or'),  0b1110);
-      is_deeply($s->bint('OrX'), 0b11);
-      is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+      is_deeply($s->bInt('Or'),  0b1110);
+      is_deeply($s->bInt('OrX'), 0b11);
+      is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
      }
 
 #### orWords ($chip, $name, $input, %options)
@@ -886,12 +886,12 @@ Create a **not** bus made of words.
       my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
       my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-      is_deeply($s->bint('And'),  0b1000);
-      is_deeply($s->bint('AndX'), 0b0000);
+      is_deeply($s->bInt('And'),  0b1000);
+      is_deeply($s->bInt('AndX'), 0b0000);
 
-      is_deeply($s->bint('Or'),  0b1110);
-      is_deeply($s->bint('OrX'), 0b11);
-      is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+      is_deeply($s->bInt('Or'),  0b1110);
+      is_deeply($s->bInt('OrX'), 0b11);
+      is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
      }
 
     if (1)
@@ -904,7 +904,7 @@ Create a **not** bus made of words.
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-      is_deeply([$s->wordsToInteger('o')], [0..3]);
+      is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
      }
 
@@ -940,12 +940,12 @@ Create a **not** bus made of words.
       my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
       my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-      is_deeply($s->bint('And'),  0b1000);
-      is_deeply($s->bint('AndX'), 0b0000);
+      is_deeply($s->bInt('And'),  0b1000);
+      is_deeply($s->bInt('AndX'), 0b0000);
 
-      is_deeply($s->bint('Or'),  0b1110);
-      is_deeply($s->bint('OrX'), 0b11);
-      is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+      is_deeply($s->bInt('Or'),  0b1110);
+      is_deeply($s->bInt('OrX'), 0b11);
+      is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
      }
 
 ## Install
@@ -1323,11 +1323,11 @@ Choose one of two words based on a bit.  The first word is chosen if the bit is 
       my $s = $c->simulate({%a, %b, c=>1}, svg=>q(svg/chooseFromTwoWords));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps,               4);
-      is_deeply($s->bint('out'), 0b1100);
+      is_deeply($s->bInt('out'), 0b1100);
 
       my $t = $c->simulate({%a, %b, c=>0});
       is_deeply($t->steps,               4);
-      is_deeply($t->bint('out'), 0b0011);
+      is_deeply($t->bInt('out'), 0b0011);
      }
 
 <div>
@@ -1364,11 +1364,11 @@ Output a word or zeros depending on a choice bit.  The first word is chosen if t
       my $s = $c->simulate({%a, c=>1}, svg=>q(svg/enableWord));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps,               4);
-      is_deeply($s->bint('out'), 3);
+      is_deeply($s->bInt('out'), 3);
 
       my $t = $c->simulate({%a, c=>0});
       is_deeply($t->steps,               4);
-      is_deeply($t->bint('out'), 0);
+      is_deeply($t->bInt('out'), 0);
      }
 
 <div>
@@ -1443,7 +1443,7 @@ Convert an integer **i** of specified width to a point mask **m**. If the input 
         my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
         is_deeply($s->steps, 3);
 
-        my $r = $s->bint('o');                                                      # Mask values
+        my $r = $s->bInt('o');                                                      # Mask values
         is_deeply($r, $i ? 1<<($i-1) : 0);                                          # Expected mask
        }
      }
@@ -1481,7 +1481,7 @@ Convert a monotone mask **i** to an output number **r** representing the locatio
 
 
         is_deeply($s->steps, 4);
-        is_deeply($s->bint('m'), $i);
+        is_deeply($s->bInt('m'), $i);
        }
      }
 
@@ -1511,7 +1511,7 @@ Convert a monotone mask **i** to a point mask **o** representing the location in
        {my %m = $c->setBits('m', eval '0b'.(1 x $i).('0' x ($B-$i)));
         my $s = $c->simulate({%m});
         is_deeply($s->steps,                    2);
-        is_deeply($s->bint('out'), $i ? (1<<($B-1)) / (1<<($i-1)) : 0);
+        is_deeply($s->bInt('out'), $i ? (1<<($B-1)) / (1<<($i-1)) : 0);
        }
      }
 
@@ -1544,7 +1544,7 @@ Convert an integer **i** of specified width to a monotone mask **m**. If the inp
        {my %i = setBits($c, 'i', $i);                                               # The number to convert
         my $s = $c->simulate(\%i, $i == 2 ? (svg=>"svg/integerToMontoneMask$B"):());
         is_deeply($s->steps, 4);
-        is_deeply($s->bint('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);# Expected mask
+        is_deeply($s->bInt('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);# Expected mask
        }
      }
 
@@ -1580,7 +1580,7 @@ Choose one of a specified number of words **w**, each of a specified width, usin
       my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
       is_deeply($s->steps, 3);
-      is_deeply($s->bint('o'), 0b010);
+      is_deeply($s->bInt('o'), 0b010);
      }
 
 ### findWord($chip, $output, $key, $words, %options)
@@ -1617,7 +1617,7 @@ Choose one of a specified number of words **w**, each of a specified width, usin
         my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
         is_deeply($s->steps, 3);
-        is_deeply($s->bint('M'),$k ? 2**($W-$k) : 0);
+        is_deeply($s->bInt('M'),$k ? 2**($W-$k) : 0);
        }
      }
 
@@ -1694,7 +1694,7 @@ Set an array of input gates to a number prior to running a simulation.
       my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
       is_deeply($s->steps, 3);
-      is_deeply($s->bint('o'), 0b010);
+      is_deeply($s->bInt('o'), 0b010);
      }
 
 ## setWords($chip, $name, @values)
@@ -1727,7 +1727,7 @@ Set an array of arrays of gates to an array of numbers prior to running a simula
       my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
       is_deeply($s->steps, 3);
-      is_deeply($s->bint('o'), 0b010);
+      is_deeply($s->bInt('o'), 0b010);
      }
 
 ## connectBits ($oc, $o, $ic, $i, %options)
@@ -1838,7 +1838,7 @@ Get the value of a gate as seen in a simulation
          $c->outputWords(qw(o i));                                                  # Output
       my $s = $c->simulate({});
       is_deeply($s->steps, 2);
-      is_deeply([$s->wordsToInteger("i")], [@n]);
+      is_deeply([$s->wInt("i")], [@n]);
      }
 
     if (1)                                                                           # Internal input gate
@@ -1848,7 +1848,7 @@ Get the value of a gate as seen in a simulation
          $c->outputWords(qw(o i));                                                  # Output
       my $s = $c->simulate({});
       is_deeply($s->steps, 2);
-      is_deeply([$s->wordsToInteger("i")], [@n]);
+      is_deeply([$s->wInt("i")], [@n]);
      }
 
 ## Silicon::Chip::Simulation::bint ($simulation, $output, %options)
@@ -1881,7 +1881,7 @@ Represent the state of bits in the simulation results as an unsigned binary inte
 
       my %d = setBits($o, 'a', 0b10110);
       my $s = $o->simulate({%d}, svg=>q(svg/not));
-      is_deeply($s->bint('B'), 0b11101001);
+      is_deeply($s->bInt('B'), 0b11101001);
      }
 
 <div>
@@ -1909,7 +1909,7 @@ Represent the state of words in the simulation results as an array of unsigned b
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-      is_deeply([$s->wordsToInteger('o')], [0..3]);
+      is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
      }
 
@@ -1934,7 +1934,7 @@ Represent the state of words in the simulation results as an array of unsigned b
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
       my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-      is_deeply([$s->wordsToInteger('o')], [0..3]);
+      is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
      }
 
