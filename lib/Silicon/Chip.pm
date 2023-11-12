@@ -4,6 +4,7 @@
 # Philip R Brenan at appaapps dot com, Appa Apps Ltd Inc., 2023
 #-------------------------------------------------------------------------------
 # Update sizes from sub chips
+# Forward propogation of constants from bits()
 use v5.34;
 package Silicon::Chip;
 our $VERSION = 20231111;                                                        # Version
@@ -690,6 +691,62 @@ my sub newGatePosition(%)                                                       
    );
  }
 
+my sub firstLastOne($)                                                          # Find the first and last ones in a bit string and return the 1-based indices as a pair.
+ {my ($a) = @_;                                                                 # First string, second string
+  my sub a($) {substr($a, $_[0]-1, 1)}                                          # Index to element of first  bit string array
+
+  my $f; my $l;                                                                 # Last B<1> in the first string and first B<1> in the second
+  for my $i(1..length($a))
+   {$l = $i if a $i;
+    $f = $i if a($i) and !defined $f;
+   }
+  ($f, $l)
+ }
+
+my sub layoutInputBus(@)                                                        # Given an array of bit strings lay them out from left to right in lines so that the B<1>s of each possible pairs of bit strings do not overlap per L<canBothFitOnSameLine>.  Returns an array mapping the strings to lines.
+ {my (@a) = @_;                                                                 # Array of bit strings to be laid out
+
+  my @l;                                                                        # Proposed input bus lines
+  my %u = map {$_=>1} 1..@a;                                                    # Unplaced inputs
+  my @m;                                                                        # Input index to input bus line
+
+  my sub combine($$)                                                            # Combine the latest element to fit on the specified line
+   {my ($a, $b) = @_;                                                           # Old line new line
+    my $c = '';                                                                 # Resulting line
+    for  my $i(1..length($a))
+     {$c .= substr($a, $i-1, 1) || substr($b, $i-1, 1) ? '1' : '0';             # Merge bit by bit
+     }
+    $c
+   }
+
+  my sub findFirst()                                                            # Find first remaining input to place
+   {my ($a) = sort {$a <=> $b} keys %u;
+    $a
+   }
+
+  for(;keys %u;)                                                                # Unplaced inputs still
+   {my $p  = findFirst;                                                         # New bus line
+    delete $u{$p};
+    my $l  = $a[$p-1];
+    my ($s, $e) = firstLastOne($l);
+    push @l, $l;                                                                # New bus line
+    $m[$p] = @l;
+
+    for my $i(1..@a)                                                            # Possible inputs on this line
+     {next unless $u{$i};                                                       # Skip inputs already placed
+      my $l = $a[$i-1];                                                         # Input line
+      my ($S, $F) = firstLastOne($l);                                           # Position requested on bus line
+      if ($S > $e)                                                              # Can fit on the current line
+       {$l[-1] = combine($l[-1], $l);                                           # Place latest addition to current line
+        $m[$i] = @l;                                                            # Map placement
+        $e     = $F;                                                            # Current end point
+        delete $u{$i};                                                          # Used
+       }
+     }
+   }
+  @m
+ }
+
 sub printSvg($%)                                                                # Dump the L<lgs> on a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip>.
  {my ($chip, %options) = @_;                                                    # Chip, options
   my $gates   = $chip->gates;                                                   # Gates on chip
@@ -955,6 +1012,19 @@ END
  }
 
 sub enableWord($$$$%)                                                           # Output a word or zeros depending on a choice bit.  The first word is chosen if the choice bit is B<1> otherwise all zeroes are chosen.
+ {my ($chip, $output, $a, $enable, %options) = @_;                              # Chip, name of component also the chosen word, the first word, the second word, the choosing bit, options
+  @_ >= 4 or confess "Four or more parameters";
+  my $o = $output;
+  my $B = sizeBits($chip, $a);
+
+  for my $i(1..$B)                                                              # Choose each bit of input word
+   {$chip->and(n($o, $i), [n($a, $i), $enable]);
+   }
+  setSizeBits($chip, $o, $B);                                                   # Record bus size
+  $chip
+ }
+
+sub enableWord2($$$$%)                                                          # Output a word or zeros depending on a choice bit.  The first word is chosen if the choice bit is B<1> otherwise all zeroes are chosen.
  {my ($chip, $output, $a, $enable, %options) = @_;                              # Chip, name of component also the chosen word, the first word, the second word, the choosing bit, options
   @_ >= 4 or confess "Four or more parameters";
   my $o = $output;
@@ -1392,7 +1462,12 @@ sub simulate($$%)                                                               
 
     for my $c(keys %changes)                                                    # Update state of circuit
      {$values{$c} = $changes{$c};
-      $changed{$c} = $t;                                                        # Last time we changed this gate
+      if ($options{latest})
+       {$changed{$c} = $t;                                                      # Latest time we changed this gate
+       }
+      else
+       {$changed{$c} = $t unless defined($changed{$c});                         # Earliest time we changed this gate
+       }
      }
    }
 
@@ -3794,7 +3869,7 @@ under the same terms as Perl itself.
 #D0 Tests                                                                       # Tests and examples
 goto finish if caller;                                                          # Skip testing if we are being called as a module
 clearFolder(q(svg), 99);                                                        # Clear the output svg folder
-eval "use Test::More tests=>535";
+eval "use Test::More tests=>542";
 eval "Test::More->builder->output('/dev/null')" if -e q(/home/phil/);
 eval {goto latest};
 
@@ -4390,7 +4465,7 @@ if (1)                                                                          
      $c->outputBits (qw(OrX  orX));
      $c->outputWords(qw(N    n));
   my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
-  my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
+  my $s = $c->simulate({%d}, svg=>"svg/andOrWords");
 
   is_deeply($s->bInt('And'),  0b1000);
   is_deeply($s->bInt('AndX'), 0b0000);
@@ -4451,11 +4526,11 @@ if (1)                                                                          
   my %a = setBits($c, 'a', 3);
 
   my $s = $c->simulate({%a, c=>1}, svg=>q(svg/enableWord));
-  is_deeply($s->steps,               4);
+  is_deeply($s->steps,       2);
   is_deeply($s->bInt('out'), 3);
 
   my $t = $c->simulate({%a, c=>0});
-  is_deeply($t->steps,               4);
+  is_deeply($t->steps,       2);
   is_deeply($t->bInt('out'), 0);
  }
 
@@ -4548,5 +4623,20 @@ if (1)                                                                          
   is_deeply([$s->wInt("o")], [1..$W]);
  }
 
-#done_testing();
+#latest:;
+if (1)                                                                          #TcanBothFitOnSameLine
+ {is_deeply([firstLastOne "10"],    [1,1]);
+  is_deeply([firstLastOne "01010"], [2,4]);
+ }
+
+#latest:;
+if (1)                                                                          #TcanBothFitOnSameLine
+ {is_deeply([layoutInputBus qw(1000 1100 0010 0001)],                 [undef, 1,2,1,1]);
+  is_deeply([layoutInputBus qw(1100 1100 0011 0011)],                 [undef, 1,2,1,2]);
+  is_deeply([layoutInputBus qw(11000 10100 01000 00011)],             [undef, 1,2,3,1]);
+  is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010)],       [undef, 1, 2, 3, 1, 2]);
+  is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010 00010)], [undef, 1, 2, 3, 1, 2, 3]);
+ }
+
+done_testing();
 finish: 1;
