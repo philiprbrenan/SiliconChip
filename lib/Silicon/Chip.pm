@@ -835,6 +835,17 @@ sub printSvg($%)                                                                
        cdata             => $v ? "1" : "0");
      }
 
+    if (defined(my $t = $$changed{$g->output}) and !$g->io)                     # Gate change time if known for a non io gate
+     {$s->text(
+       x                 => $w + ($g->io != gateOuterOutput ? $x : $x + 1),
+       y                 => 1 + $y,
+       fill              =>"black",
+       stroke_width      => fw,
+       font_size         => fs,
+       text_anchor       => "end",
+       cdata             => $t+1);
+     }
+
     my sub ot($$$$)                                                             # Output svg text
      {my ($dy, $fill, $pos, $text) = @_;
       $s->text(x                 => $x+$w/2,
@@ -1019,24 +1030,6 @@ sub enableWord($$$$%)                                                           
 
   for my $i(1..$B)                                                              # Choose each bit of input word
    {$chip->and(n($o, $i), [n($a, $i), $enable]);
-   }
-  setSizeBits($chip, $o, $B);                                                   # Record bus size
-  $chip
- }
-
-sub enableWord2($$$$%)                                                          # Output a word or zeros depending on a choice bit.  The first word is chosen if the choice bit is B<1> otherwise all zeroes are chosen.
- {my ($chip, $output, $a, $enable, %options) = @_;                              # Chip, name of component also the chosen word, the first word, the second word, the choosing bit, options
-  @_ >= 4 or confess "Four or more parameters";
-  my $o = $output;
-
-  my $B = sizeBits($chip, $a);
-
-  $chip->not ("$o.n", $enable);                                                 # Not of the choosing bit
-  $chip->bits("$o.z", $B, 0);                                                   # Zero value to transmit if choice bit is B<0>
-  for my $i(1..$B)
-   {$chip->and(n("$o.a", $i), [n($a,     $i), $enable      ]);                  # Choose second word
-    $chip->and(n("$o.b", $i), [n("$o.z", $i),   "$o.n"     ]);                  # Choose first word
-    $chip->or (n( $o,    $i), [n("$o.a", $i), n("$o.b", $i)]);                  # Or results of choice
    }
   setSizeBits($chip, $o, $B);                                                   # Record bus size
   $chip
