@@ -1158,14 +1158,14 @@ sub setWords($$@)                                                               
   @_ >= 3 or confess "Three or more parameters";
   my ($words, $bits) = sizeWords($chip, $name);
   my %i;
-  my $W = 2**$words;
+  my $M = 2**$bits-1;                                                           # Maximum we can store in a word of this many bits
   for   my $w(1..$words)                                                        # Each word
    {my $n = shift @values;
     $n >= 0 or confess <<"END";
 Value $n is less than 0
 END
-    $n < $W or confess <<"END";
- "Value $n is greater then or equal to $W";
+    $n <= $M or confess <<"END";
+ "Value $n is greater then or equal to $M";
 END
     my @b = split //,  sprintf "%0${bits}b", $n;
     for my $b(1..$bits)                                                         # Each bit
@@ -1585,56 +1585,6 @@ B<Example:>
        $s  = $c->simulate({i11=>1, i12=>0, i21=>1, i22=>0});
     ok($s->steps        == 3);
     ok($s->value("o")   == 0);
-   }
-
-
-=head2 connectInput($chip, $in, $to, %options)
-
-Connect a previously defined input gate to the output of another previously gate on the same chip. This allows us to define a set of gates on the chip without having to know, first, all the names of the gates that will provide input to these gates.
-
-     Parameter  Description
-  1  $chip      Chip
-  2  $in        Input gate
-  3  $to        Gate to connect input gate to
-  4  %options   Options
-
-B<Example:>
-
-
-  if (1)                                                                          # Internal input gate
-   {my $c = newChip();
-       $c->input ('i');                                                           # Input
-       $c->input ('j');                                                           # Internal input which we will connect to later
-       $c->output(qw(o j));                                                       # Output
-
-
-       $c->connectInput(qw(j i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
-
-
-    my $s = $c->simulate({i=>1});
-    is_deeply($s->steps, 1);
-    is_deeply($s->value("j"), undef);
-    is_deeply($s->value("o"), 1);
-   }
-
-  if (1)                                                                           # Internal input gate
-   {my @n = qw(3 2 1 2 3);
-    my $c = newChip();
-       $c->words('i', 2, @n);                                                     # Input
-       $c->outputWords(qw(o i));                                                  # Output
-    my $s = $c->simulate({});
-    is_deeply($s->steps, 2);
-    is_deeply([$s->wInt("i")], [@n]);
-   }
-
-  if (1)                                                                           # Internal input gate
-   {my @n = qw(3 2 1 2 3);
-    my $c = newChip();
-       $c->words('i', 2, @n);                                                     # Input
-       $c->outputWords(qw(o i));                                                  # Output
-    my $s = $c->simulate({});
-    is_deeply($s->steps, 2);
-    is_deeply([$s->wInt("i")], [@n]);
    }
 
 
@@ -2403,6 +2353,116 @@ B<Example:>
    }
 
 
+=head2 Connect
+
+Connect input buses to other buses.
+
+=head3 connectInput($chip, $in, $to, %options)
+
+Connect a previously defined input gate to the output of another gate on the same chip. This allows us to define a set of gates on the chip without having to know, first, all the names of the gates that will provide input to these gates.
+
+     Parameter  Description
+  1  $chip      Chip
+  2  $in        Input gate
+  3  $to        Gate to connect input gate to
+  4  %options   Options
+
+B<Example:>
+
+
+  if (1)                                                                          # Internal input gate
+   {my $c = newChip();
+       $c->input ('i');                                                           # Input
+       $c->input ('j');                                                           # Internal input which we will connect to later
+       $c->output(qw(o j));                                                       # Output
+
+
+       $c->connectInput(qw(j i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+    my $s = $c->simulate({i=>1});
+    is_deeply($s->steps, 1);
+    is_deeply($s->value("j"), undef);
+    is_deeply($s->value("o"), 1);
+   }
+
+  if (1)                                                                           # Internal input gate
+   {my @n = qw(3 2 1 2 3);
+    my $c = newChip();
+       $c->words('i', 2, @n);                                                     # Input
+       $c->outputWords(qw(o i));                                                  # Output
+    my $s = $c->simulate({});
+    is_deeply($s->steps, 2);
+    is_deeply([$s->wInt("i")], [@n]);
+   }
+
+  if (1)                                                                           # Internal input gate
+   {my @n = qw(3 2 1 2 3);
+    my $c = newChip();
+       $c->words('i', 2, @n);                                                     # Input
+       $c->outputWords(qw(o i));                                                  # Output
+    my $s = $c->simulate({});
+    is_deeply($s->steps, 2);
+    is_deeply([$s->wInt("i")], [@n]);
+   }
+
+
+=head3 connectInputBits($chip, $in, $to, %options)
+
+Connect a previously defined input bit bus to another bit bus provided the two buses have the same size.
+
+     Parameter  Description
+  1  $chip      Chip
+  2  $in        Input gate
+  3  $to        Gate to connect input gate to
+  4  %options   Options
+
+B<Example:>
+
+
+  if (1)
+   {my $N = 5; my $B = 5;
+     my $c = newChip();
+    $c->bits      ('a', $B, $N);
+    $c->inputBits ('i', $N);
+    $c->outputBits(qw(o i));
+
+    $c->connectInputBits(qw(i a));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    my $s = $c->simulate({});
+    is_deeply($s->steps, 2);
+    is_deeply($s->bInt("o"), $N);
+   }
+
+
+=head3 connectInputWords   ($chip, $in, $to, %options)
+
+Connect a previously defined input word bus to another word bus provided the two buses have the same size.
+
+     Parameter  Description
+  1  $chip      Chip
+  2  $in        Input gate
+  3  $to        Gate to connect input gate to
+  4  %options   Options
+
+B<Example:>
+
+
+  if (1)
+   {my $W = 6; my $B = 5;
+    my $c = newChip();
+    $c->words      ('a',     $B, 1..$W);
+    $c->inputWords ('i', $W, $B);
+    $c->outputWords(qw(o i));
+
+    $c->connectInputWords(qw(i a));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    my $s = $c->simulate({});
+    is_deeply($s->steps, 2);
+    is_deeply([$s->wInt("o")], [1..$W]);
+   }
+
+
 =head2 Install
 
 Install a chip within a chip as a sub chip.
@@ -3030,7 +3090,7 @@ B<Example:>
      {my %i = setBits($c, 'i', $i);                                               # The number to convert
       my $s = $c->simulate(\%i, $i == 2 ? (svg=>"svg/integerToMontoneMask$B"):());
       is_deeply($s->steps, 4);
-      is_deeply($s->bInt('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);# Expected mask
+      is_deeply($s->bInt('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);         # Expected mask
      }
    }
 
@@ -3305,7 +3365,7 @@ B<Example:>
 
 =head2 Silicon::Chip::Simulation::value($simulation, $name, %options)
 
-Get the value of a gate as seen in a simulation
+Get the value of a gate as seen in a simulation.
 
      Parameter    Description
   1  $simulation  Chip
@@ -3350,7 +3410,7 @@ B<Example:>
    }
 
 
-=head2 Silicon::Chip::Simulation::bint ($simulation, $output, %options)
+=head2 Silicon::Chip::Simulation::bInt ($simulation, $output, %options)
 
 Represent the state of bits in the simulation results as an unsigned binary integer.
 
@@ -3388,7 +3448,7 @@ B<Example:>
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
 
 
-=head2 Silicon::Chip::Simulation::wordsToInteger   ($simulation, $output, %options)
+=head2 Silicon::Chip::Simulation::wInt ($simulation, $output, %options)
 
 Represent the state of words in the simulation results as an array of unsigned binary integer.
 
@@ -3491,13 +3551,25 @@ B<Example:>
 =head2 Silicon::Chip Definition
 
 
-Chip description
+Simulation results
 
 
 
 
 =head3 Output fields
 
+
+=head4 changed
+
+Last time this gate changed
+
+=head4 chip
+
+Chip being simulated
+
+=head4 gate
+
+Gate
 
 =head4 gateSeq
 
@@ -3507,13 +3579,33 @@ Gate sequence number - this allows us to display the gates in the order they wer
 
 Gates in chip
 
+=head4 inputs
+
+Outputs of outer chip to inputs of inner chip
+
 =head4 installs
 
 Chips installed within the chip
 
+=head4 io
+
+Whether an input/output gate or not
+
 =head4 name
 
 Name of chip
+
+=head4 output
+
+Output name which is used as the name of the gate as well
+
+=head4 outputs
+
+Outputs of inner chip to inputs of outer chip
+
+=head4 seq
+
+Sequence number for this gate
 
 =head4 sizeBits
 
@@ -3523,9 +3615,37 @@ Sizes of buses
 
 Sizes of buses
 
+=head4 steps
+
+Number of steps to reach stability
+
+=head4 svg
+
+Name of file containing svg drawing if requested
+
 =head4 title
 
 Title if known
+
+=head4 type
+
+Gate type
+
+=head4 values
+
+Values of every output at point of stability
+
+=head4 width
+
+Width of gate
+
+=head4 x
+
+X position of gate
+
+=head4 y
+
+Y position of gate
 
 
 
@@ -3565,83 +3685,87 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 11 L<connectBits|/connectBits> - Create a connection list connecting a set of output bits on the one chip to a set of input bits on another chip.
 
-12 L<connectInput|/connectInput> - Connect a previously defined input gate to the output of another previously gate on the same chip.
+12 L<connectInput|/connectInput> - Connect a previously defined input gate to the output of another gate on the same chip.
 
-13 L<connectWords|/connectWords> - Create a connection list connecting a set of words on the outer chip to a set of words on the inner chip.
+13 L<connectInputBits|/connectInputBits> - Connect a previously defined input bit bus to another bit bus provided the two buses have the same size.
 
-14 L<enableWord|/enableWord> - Output a word or zeros depending on a choice bit.
+14 L<connectInputWords|/connectInputWords> - Connect a previously defined input word bus to another word bus provided the two buses have the same size.
 
-15 L<findWord|/findWord> - Choose one of a specified number of words B<w>, each of a specified width, using a key B<k>.
+15 L<connectWords|/connectWords> - Create a connection list connecting a set of words on the outer chip to a set of words on the inner chip.
 
-16 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> chosen from B<and|continue|gt|input|lt|nand|nor|not|nxor|one|or|output|xor|zero>.
+16 L<enableWord|/enableWord> - Output a word or zeros depending on a choice bit.
 
-17 L<inputBits|/inputBits> - Create an B<input> bus made of bits.
+17 L<findWord|/findWord> - Choose one of a specified number of words B<w>, each of a specified width, using a key B<k>.
 
-18 L<inputWords|/inputWords> - Create an B<input> bus made of words.
+18 L<gate|/gate> - A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> chosen from B<and|continue|gt|input|lt|nand|nor|not|nxor|one|or|output|xor|zero>.
 
-19 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+19 L<inputBits|/inputBits> - Create an B<input> bus made of bits.
 
-20 L<integerToMonotoneMask|/integerToMonotoneMask> - Convert an integer B<i> of specified width to a monotone mask B<m>.
+20 L<inputWords|/inputWords> - Create an B<input> bus made of words.
 
-21 L<integerToPointMask|/integerToPointMask> - Convert an integer B<i> of specified width to a point mask B<m>.
+21 L<install|/install> - Install a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> within another L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> specifying the connections between the inner and outer L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-22 L<monotoneMaskToInteger|/monotoneMaskToInteger> - Convert a monotone mask B<i> to an output number B<r> representing the location in the mask of the bit set to B<1>.
+22 L<integerToMonotoneMask|/integerToMonotoneMask> - Convert an integer B<i> of specified width to a monotone mask B<m>.
 
-23 L<monotoneMaskToPointMask|/monotoneMaskToPointMask> - Convert a monotone mask B<i> to a point mask B<o> representing the location in the mask of the first bit set to B<1>.
+23 L<integerToPointMask|/integerToPointMask> - Convert an integer B<i> of specified width to a point mask B<m>.
 
-24 L<n|/n> - Gate name from single index.
+24 L<monotoneMaskToInteger|/monotoneMaskToInteger> - Convert a monotone mask B<i> to an output number B<r> representing the location in the mask of the bit set to B<1>.
 
-25 L<nandBits|/nandBits> - B<nand> a bus made of bits.
+25 L<monotoneMaskToPointMask|/monotoneMaskToPointMask> - Convert a monotone mask B<i> to a point mask B<o> representing the location in the mask of the first bit set to B<1>.
 
-26 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+26 L<n|/n> - Gate name from single index.
 
-27 L<nn|/nn> - Gate name from double index.
+27 L<nandBits|/nandBits> - B<nand> a bus made of bits.
 
-28 L<norBits|/norBits> - B<nor> a bus made of bits.
+28 L<newChip|/newChip> - Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-29 L<notBits|/notBits> - Create a B<not> bus made of bits.
+29 L<nn|/nn> - Gate name from double index.
 
-30 L<notWords|/notWords> - Create a B<not> bus made of words.
+30 L<norBits|/norBits> - B<nor> a bus made of bits.
 
-31 L<orBits|/orBits> - B<or> a bus made of bits.
+31 L<notBits|/notBits> - Create a B<not> bus made of bits.
 
-32 L<orWords|/orWords> - B<or> a bus made of words to produce a single word.
+32 L<notWords|/notWords> - Create a B<not> bus made of words.
 
-33 L<orWordsX|/orWordsX> - B<or> a bus made of words by or-ing the corresponding bits in each word to make a single word.
+33 L<orBits|/orBits> - B<or> a bus made of bits.
 
-34 L<outputBits|/outputBits> - Create an B<output> bus made of bits.
+34 L<orWords|/orWords> - B<or> a bus made of words to produce a single word.
 
-35 L<outputWords|/outputWords> - Create an B<output> bus made of words.
+35 L<orWordsX|/orWordsX> - B<or> a bus made of words by or-ing the corresponding bits in each word to make a single word.
 
-36 L<pointMaskToInteger|/pointMaskToInteger> - Convert a mask B<i> known to have at most a single bit on - also known as a B<point mask> - to an output number B<a> representing the location in the mask of the bit set to B<1>.
+36 L<outputBits|/outputBits> - Create an B<output> bus made of bits.
 
-37 L<print|/print> - Dump the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> present on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+37 L<outputWords|/outputWords> - Create an B<output> bus made of words.
 
-38 L<printSvg|/printSvg> - Dump the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> as an L<Scalar Vector Graphics|https://en.wikipedia.org/wiki/Scalable_Vector_Graphics> drawing to help visualize the structure of the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+38 L<pointMaskToInteger|/pointMaskToInteger> - Convert a mask B<i> known to have at most a single bit on - also known as a B<point mask> - to an output number B<a> representing the location in the mask of the bit set to B<1>.
 
-39 L<setBits|/setBits> - Set an array of input gates to a number prior to running a simulation.
+39 L<print|/print> - Dump the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> present on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-40 L<setSizeBits|/setSizeBits> - Set the size of a bits bus.
+40 L<printSvg|/printSvg> - Dump the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> as an L<Scalar Vector Graphics|https://en.wikipedia.org/wiki/Scalable_Vector_Graphics> drawing to help visualize the structure of the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-41 L<setSizeWords|/setSizeWords> - Set the size of a bits bus.
+41 L<setBits|/setBits> - Set an array of input gates to a number prior to running a simulation.
 
-42 L<setWords|/setWords> - Set an array of arrays of gates to an array of numbers prior to running a simulation.
+42 L<setSizeBits|/setSizeBits> - Set the size of a bits bus.
 
-43 L<Silicon::Chip::Simulation::bint|/Silicon::Chip::Simulation::bint> - Represent the state of bits in the simulation results as an unsigned binary integer.
+43 L<setSizeWords|/setSizeWords> - Set the size of a bits bus.
 
-44 L<Silicon::Chip::Simulation::print|/Silicon::Chip::Simulation::print> - Print simulation results as text.
+44 L<setWords|/setWords> - Set an array of arrays of gates to an array of numbers prior to running a simulation.
 
-45 L<Silicon::Chip::Simulation::printSvg|/Silicon::Chip::Simulation::printSvg> - Print simulation results as svg.
+45 L<Silicon::Chip::Simulation::bInt|/Silicon::Chip::Simulation::bInt> - Represent the state of bits in the simulation results as an unsigned binary integer.
 
-46 L<Silicon::Chip::Simulation::value|/Silicon::Chip::Simulation::value> - Get the value of a gate as seen in a simulation
+46 L<Silicon::Chip::Simulation::print|/Silicon::Chip::Simulation::print> - Print simulation results as text.
 
-47 L<Silicon::Chip::Simulation::wordsToInteger|/Silicon::Chip::Simulation::wordsToInteger> - Represent the state of words in the simulation results as an array of unsigned binary integer.
+47 L<Silicon::Chip::Simulation::printSvg|/Silicon::Chip::Simulation::printSvg> - Print simulation results as svg.
 
-48 L<Silicon::Chip::Simulation::wordXToInteger|/Silicon::Chip::Simulation::wordXToInteger> - Represent the state of words in the simulation results as an array of unsigned binary integer.
+48 L<Silicon::Chip::Simulation::value|/Silicon::Chip::Simulation::value> - Get the value of a gate as seen in a simulation.
 
-49 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output value of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilizes.
+49 L<Silicon::Chip::Simulation::wInt|/Silicon::Chip::Simulation::wInt> - Represent the state of words in the simulation results as an array of unsigned binary integer.
 
-50 L<words|/words> - Create a word bus set to specified numbers.
+50 L<Silicon::Chip::Simulation::wordXToInteger|/Silicon::Chip::Simulation::wordXToInteger> - Represent the state of words in the simulation results as an array of unsigned binary integer.
+
+51 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output value of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilizes.
+
+52 L<words|/words> - Create a word bus set to specified numbers.
 
 =head1 Installation
 
@@ -4203,7 +4327,7 @@ END
  }
 
 #latest:;
-if (1)                                                                          #TinputBits #ToutputBits #TnotBits #TSilicon::Chip::Simulation::bint
+if (1)                                                                          #TinputBits #ToutputBits #TnotBits #TSilicon::Chip::Simulation::bInt
  {my $W = 8;
   my $i = newChip(name=>"not");
      $i->inputBits('i',      $W);
@@ -4230,7 +4354,7 @@ if (1)                                                                          
  {my $W = 8;
 
   my $c = newChip();
-     $c-> inputBits('i',         $W);
+     $c-> inputBits('i', $W);
      $c->   andBits(qw(and  i));
      $c->    orBits(qw(or   i));
      $c->  nandBits(qw(nand i));
@@ -4277,7 +4401,7 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          #TandWords #TorWords #TSilicon::Chip::Simulation::wordXToInteger #TSilicon::Chip::Simulation::wordsToInteger  #TinputWords #ToutputWords
+if (1)                                                                          #TandWords #TorWords #TSilicon::Chip::Simulation::wordXToInteger #TSilicon::Chip::Simulation::wInt  #TinputWords #ToutputWords
  {my @b = ((my $W = 4), (my $B = 3));
 
   my $c = newChip();
@@ -4399,7 +4523,7 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          #TsetSizeBits #TsetSizeWords
+if (1)                                                                          #TconnectInputBits
  {my $N = 5; my $B = 5;
    my $c = newChip();
   $c->bits      ('a', $B, $N);
@@ -4412,7 +4536,7 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          #TsetSizeBits #TsetSizeWords
+if (1)                                                                          #TconnectInputWords
  {my $W = 6; my $B = 5;
   my $c = newChip();
   $c->words      ('a',     $B, 1..$W);
