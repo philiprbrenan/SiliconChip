@@ -11,6 +11,7 @@
 <circle cx="2" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="1" y="0"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="1" y="0">1</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="2" y="1">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="0.416666666666667">one</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="0.583333333333333">o</text>
 </svg>
