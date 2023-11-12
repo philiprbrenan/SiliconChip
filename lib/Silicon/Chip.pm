@@ -46,7 +46,7 @@ sub newChip(%)                                                                  
 my sub newGate($$$$)                                                            # Make a L<lg>.
  {my ($chip, $type, $output, $inputs) = @_;                                     # Chip, gate type, output name, input names to output from another gate
 
-  my $g = genHash("Silicon::Chip::Gate",                                        # Gate
+  my $g = genHash(__PACKAGE__."::Gate",                                         # Gate
    type     => $type,                                                           # Gate type
    output   => $output,                                                         # Output name which is used as the name of the gate as well
    inputs   => $inputs,                                                         # Input names to driving outputs
@@ -191,16 +191,6 @@ my sub renameGate($$$)                                                          
  {my ($chip, $gate, $name) = @_;                                                # Chip, gate, prefix name
   $gate->output = sprintf "(%s %s)", $name, $gate->output;
   $gate
- }
-
-sub connectInput($$$%)                                                          # Connect a previously defined input gate to the output of another previously gate on the same chip. This allows us to define a set of gates on the chip without having to know, first, all the names of the gates that will provide input to these gates.
- {my ($chip, $in, $to, %options) = @_;                                          # Chip, input gate, gate to connect input gate to, options
-  my $gates = $chip->gates;
-  my $i = $$gates{$in};
-  defined($i) or confess "No definition of input gate $in";
-  $i->type =~ m(\Ainput\Z) or confess "No definition of input gate $in";
-  $i->inputs = {1=>$to};
-  $chip
  }
 
 #D2 Buses                                                                       # A bus is an array of bits or an array of arrays of bits
@@ -399,12 +389,52 @@ sub orWordsX($$$%)                                                              
   setSizeBits($chip, $name, $bits);                                             # Record bus size
  }
 
+#D2 Connect                                                                     # Connect input buses to other buses.
+
+sub connectInput($$$%)                                                          # Connect a previously defined input gate to the output of another gate on the same chip. This allows us to define a set of gates on the chip without having to know, first, all the names of the gates that will provide input to these gates.
+ {my ($chip, $in, $to, %options) = @_;                                          # Chip, input gate, gate to connect input gate to, options
+  @_ >= 3 or confess "Three or more parameters";
+  my $gates = $chip->gates;
+  my $i = $$gates{$in};
+  defined($i) or confess "No definition of input gate $in";
+  $i->type =~ m(\Ainput\Z) or confess "No definition of input gate $in";
+  $i->inputs = {1=>$to};
+  $chip
+ }
+
+sub connectInputBits($$$%)                                                      # Connect a previously defined input bit bus to another bit bus provided the two buses have the same size.
+ {my ($chip, $in, $to, %options) = @_;                                          # Chip, input gate, gate to connect input gate to, options
+  @_ >= 3 or confess "Three or more parameters";
+  my $I = sizeBits($chip, $in);
+  my $T = sizeBits($chip, $to);
+  $I == $T or confess <<"END" =~ s/\n(.)/ $1/gsr;
+Mismatched bits bus width: input has $I bits but output has $T bits.
+END
+  connectInput($chip, n($in, $_), n($to, $_)) for 1..$I;
+  $chip
+ }
+
+sub connectInputWords($$$%)                                                     # Connect a previously defined input word bus to another word bus provided the two buses have the same size.
+ {my ($chip, $in, $to, %options) = @_;                                          # Chip, input gate, gate to connect input gate to, options
+  @_ >= 3 or confess "Three or more parameters";
+  my ($iw, $ib) = sizeWords($chip, $in);
+  my ($tw, $tb) = sizeWords($chip, $to);
+  $iw == $tw or confess <<"END" =~ s/\n(.)/ $1/gsr;
+Mismatched words bus: input has $iw words but output has $tw words
+END
+  $ib == $tb or confess <<"END" =~ s/\n(.)/ $1/gsr;
+Mismatched bits width of words bus: input has $ib bits but output has $tb bits
+END
+  connectInputBits($chip, n($in, $_), n($to, $_)) for 1..$iw;
+  $chip
+ }
+
 #D2 Install                                                                     # Install a chip within a chip as a sub chip.
 
 sub install($$$$%)                                                              # Install a L<chip> within another L<chip> specifying the connections between the inner and outer L<chip>.  The same L<chip> can be installed multiple times as each L<chip> description is read only.
  {my ($chip, $subChip, $inputs, $outputs, %options) = @_;                       # Outer chip, inner chip, inputs of inner chip to to outputs of outer chip, outputs of inner chip to inputs of outer chip, options
   @_ >= 4 or confess "Four or more parameters";
-  my $c = genHash("Silicon::Chip::Install",                                     # Installation of a chip within a chip
+  my $c = genHash(__PACKAGE__."::Install",                                      # Installation of a chip within a chip
     chip    => $subChip,                                                        # Chip being installed
     inputs  => $inputs,                                                         # Outputs of outer chip to inputs of inner chip
     outputs => $outputs,                                                        # Outputs of inner chip to inputs of outer chip
@@ -652,12 +682,12 @@ sub Silicon::Chip::Simulation::print($%)                                        
 my sub newGatePosition(%)                                                       # Specify the position of a L<lg> on a drawing of the containing L<chip>.
  {my (%options) = @_;                                                           # Options
 
-  genHash("Silicon::Chip::Gate::Position",                                      # Gate position
+  genHash(__PACKAGE__."::Position",                                             # Gate position
     gate  => $options{gate}  // undef,                                          # Gate
     x     => $options{x}     // undef,                                          # X position of gate
     y     => $options{y}     // undef,                                          # Y position of gate
     width => $options{width} // undef,                                          # Width of gate
-   )
+   );
  }
 
 sub printSvg($%)                                                                # Dump the L<lgs> on a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip>.
@@ -668,19 +698,19 @@ sub printSvg($%)                                                                
   my $values  = $options{values};                                               # Values of each gate if known
   my $steps   = $options{steps};                                                # Number of steps to equilibrium
 
-  my $fs = 0.2; my $fw = 0.02;                                                  # Font sizes
-  my $Fs = 0.4; my $Fw = 0.04;
-  my $op0 = q(transparent);
+  my sub fs {0.2} my sub fw {0.02}                                              # Font sizes
+  my sub Fs {0.4} my sub Fw {0.04}
+  my sub op0 {q(transparent)}
 
-  my $s = Svg::Simple::new(defaults=>{stroke_width=>$fw, font_size=>$fs});      # Draw each gate via Svg
+  my $s = Svg::Simple::new(defaults=>{stroke_width=>fw, font_size=>fs});        # Draw each gate via Svg
 
   my %p;                                                                        # Dimensions and drawing positions of gates
   my ($iG, $nG, $oG) = orderGates $chip, %options;                              # Gates by type
 
   for my $i(keys @$iG)                                                          # Index of each input gate
-   {my $G = $$iG[$i];                                                           # Gate name
-    my $g = $$gates{$G};                                                        # Gate
-    $p{$G} = newGatePosition(gate=>$g, x=>0, y=>$i, width=>1);                  # Position input gate
+   {my sub G {$$iG[$i]}                                                           # Gate name
+    my sub g {$$gates{&G}}                                                        # Gate
+    $p{&G} = newGatePosition(gate=>g, x=>0, y=>$i, width=>1);                  # Position input gate
    }
 
   my $W = 0;                                                                    # Number of inputs to all the non IO gates
@@ -706,13 +736,13 @@ sub printSvg($%)                                                                
 
   if (defined($title))                                                          # Title if known
    {$s->text(x=>$pageWidth, y=>0.5, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>$Fw, font_size=>$Fs,
+      stroke_width=>Fw, font_size=>Fs,
       cdata=>$title);
    }
 
   if (defined($steps))                                                          # Number of steps taken if known
    {$s->text(x=>$pageWidth, y=>1.5, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>$Fw, font_size=>$Fs,
+      stroke_width=>Fw, font_size=>Fs,
       cdata=>"$steps steps");
    }
 
@@ -730,10 +760,10 @@ sub printSvg($%)                                                                
      }->();
 
     if ($g->io)                                                                 # Circle for io pin
-     {$s->circle(cx=>$x+1/2, cy=>$y+1/2, r=>1/2,   fill=>$op0, stroke=>$color);
+     {$s->circle(cx=>$x+1/2, cy=>$y+1/2, r=>1/2,   fill=>op0, stroke=>$color);
      }
     else                                                                        # Rectangle for non io gate
-     {$s->rect(x=>$x, y=>$y, width=>$w, height=>1, fill=>$op0, stroke=>$color);
+     {$s->rect(x=>$x, y=>$y, width=>$w, height=>1, fill=>op0, stroke=>$color);
      }
 
     if (defined(my $v = $$values{$g->output}))                                  # Value of gate if known
@@ -741,7 +771,8 @@ sub printSvg($%)                                                                
        x                 => $g->io != gateOuterOutput ? $x : $x + 1,
        y                 => $y,
        fill              =>"black",
-       stroke_width      =>$Fw, font_size=>$Fs,
+       stroke_width      => Fw,
+       font_size         => Fs,
        text_anchor       => $g->io != gateOuterOutput ? "start": "end",
        dominant_baseline => "hanging",
        cdata             => $v ? "1" : "0");
@@ -797,12 +828,14 @@ END
 
         if (defined(my $v = $$values{$G->output}) and $g->io != gateOuterOutput)# Value of gate if known except for output gates written else where
          {$s->text(
-            x           => $cx,
-            y           => $y+$dy+($X < $x ? 0.1 : -0.1),
-            fill        => "black", stroke_width=>$fw, font_size=>$fs,
-            text_anchor => "middle",
+            x            => $cx,
+            y            => $y+$dy+($X < $x ? 0.1 : -0.1),
+            fill         => "black",
+            stroke_width => fw,
+            font_size    => fs,
+            text_anchor  => "middle",
             $X < $x ? (dominant_baseline=>"hanging") : (),
-            cdata       =>  $v ? "1" : "0");
+            cdata        =>  $v ? "1" : "0");
          }
        }
      }
@@ -1188,7 +1221,7 @@ my sub merge($%)                                                                
 my sub simulationResults($%)                                                    # Simulation results obtained by specifying the inputs to all the L<lgs> on the L<chip> and allowing its output L<lgs> to stabilize.
  {my ($chip, %options) = @_;                                                    # Chip, hash of final values for each gate, options
 
-  genHash("Silicon::Chip::Simulation",                                          # Simulation results
+  genHash(__PACKAGE__."::Simulation",                                           # Simulation results
     chip    => $chip,                                                           # Chip being simulated
     changed => $options{changed},                                               # Last time this gate changed
     steps   => $options{steps},                                                 # Number of steps to reach stability
@@ -1217,7 +1250,7 @@ my sub checkInputs($$%)                                                         
    }
  }
 
-sub Silicon::Chip::Simulation::bint($$%)                                        # Represent the state of bits in the simulation results as an unsigned binary integer.
+sub Silicon::Chip::Simulation::bInt($$%)                                        # Represent the state of bits in the simulation results as an unsigned binary integer.
  {my ($simulation, $output, %options) = @_;                                     # Chip, name of gates on bus, options
   @_ >= 2 or confess "Two or more parameters";
   my $B = sizeBits($simulation->chip, $output);
@@ -1230,7 +1263,7 @@ sub Silicon::Chip::Simulation::bint($$%)                                        
   eval join '', '0b', reverse @b;                                               # Convert to number
  }
 
-sub Silicon::Chip::Simulation::wordsToInteger($$%)                              # Represent the state of words in the simulation results as an array of unsigned binary integer.
+sub Silicon::Chip::Simulation::wInt($$%)                                        # Represent the state of words in the simulation results as an array of unsigned binary integer.
  {my ($simulation, $output, %options) = @_;                                     # Chip, name of gates on bus, options
   @_ >= 2 or confess "Two or more parameters";
   my ($words, $bits) = sizeWords($simulation->chip, $output);
@@ -1591,7 +1624,7 @@ B<Example:>
        $c->outputWords(qw(o i));                                                  # Output
     my $s = $c->simulate({});
     is_deeply($s->steps, 2);
-    is_deeply([$s->wordsToInteger("i")], [@n]);
+    is_deeply([$s->wInt("i")], [@n]);
    }
 
   if (1)                                                                           # Internal input gate
@@ -1601,7 +1634,7 @@ B<Example:>
        $c->outputWords(qw(o i));                                                  # Output
     my $s = $c->simulate({});
     is_deeply($s->steps, 2);
-    is_deeply([$s->wordsToInteger("i")], [@n]);
+    is_deeply([$s->wInt("i")], [@n]);
    }
 
 
@@ -1663,7 +1696,7 @@ B<Example:>
       my $s = $c->simulate({}, $i == 3 ? (svg=>q(svg/bits)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps, 2);
-      is_deeply($s->bint("o"), $i);
+      is_deeply($s->bInt("o"), $i);
      }
    }
 
@@ -1709,7 +1742,7 @@ B<Example:>
 
     my %d = setBits($o, 'a', 0b10110);
     my $s = $o->simulate({%d}, svg=>q(svg/not));
-    is_deeply($s->bint('B'), 0b11101001);
+    is_deeply($s->bInt('B'), 0b11101001);
    }
 
 
@@ -1754,7 +1787,7 @@ B<Example:>
 
     my %d = setBits($o, 'a', 0b10110);
     my $s = $o->simulate({%d}, svg=>q(svg/not));
-    is_deeply($s->bint('B'), 0b11101001);
+    is_deeply($s->bInt('B'), 0b11101001);
    }
 
 
@@ -1786,12 +1819,12 @@ B<Example:>
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-    is_deeply($s->bint('And'),  0b1000);
-    is_deeply($s->bint('AndX'), 0b0000);
+    is_deeply($s->bInt('And'),  0b1000);
+    is_deeply($s->bInt('AndX'), 0b0000);
 
-    is_deeply($s->bint('Or'),  0b1110);
-    is_deeply($s->bint('OrX'), 0b11);
-    is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+    is_deeply($s->bInt('Or'),  0b1110);
+    is_deeply($s->bInt('OrX'), 0b11);
+    is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
 
 
@@ -1829,7 +1862,7 @@ B<Example:>
 
     my %d = setBits($o, 'a', 0b10110);
     my $s = $o->simulate({%d}, svg=>q(svg/not));
-    is_deeply($s->bint('B'), 0b11101001);
+    is_deeply($s->bInt('B'), 0b11101001);
    }
 
 
@@ -2055,7 +2088,7 @@ B<Example:>
        $c->outputWords(qw(o i));                                                  # Output
     my $s = $c->simulate({});
     is_deeply($s->steps, 2);
-    is_deeply([$s->wordsToInteger("i")], [@n]);
+    is_deeply([$s->wInt("i")], [@n]);
    }
 
   if (1)                                                                           # Internal input gate
@@ -2067,7 +2100,7 @@ B<Example:>
        $c->outputWords(qw(o i));                                                  # Output
     my $s = $c->simulate({});
     is_deeply($s->steps, 2);
-    is_deeply([$s->wordsToInteger("i")], [@n]);
+    is_deeply([$s->wInt("i")], [@n]);
    }
 
 
@@ -2097,7 +2130,7 @@ B<Example:>
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-    is_deeply([$s->wordsToInteger('o')], [0..3]);
+    is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
 
@@ -2127,7 +2160,7 @@ B<Example:>
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-    is_deeply([$s->wordsToInteger('o')], [0..3]);
+    is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
 
@@ -2165,12 +2198,12 @@ B<Example:>
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-    is_deeply($s->bint('And'),  0b1000);
-    is_deeply($s->bint('AndX'), 0b0000);
+    is_deeply($s->bInt('And'),  0b1000);
+    is_deeply($s->bInt('AndX'), 0b0000);
 
-    is_deeply($s->bint('Or'),  0b1110);
-    is_deeply($s->bint('OrX'), 0b11);
-    is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+    is_deeply($s->bInt('Or'),  0b1110);
+    is_deeply($s->bInt('OrX'), 0b11);
+    is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
 
 
@@ -2207,12 +2240,12 @@ B<Example:>
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-    is_deeply($s->bint('And'),  0b1000);
-    is_deeply($s->bint('AndX'), 0b0000);
+    is_deeply($s->bInt('And'),  0b1000);
+    is_deeply($s->bInt('AndX'), 0b0000);
 
-    is_deeply($s->bint('Or'),  0b1110);
-    is_deeply($s->bint('OrX'), 0b11);
-    is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+    is_deeply($s->bInt('Or'),  0b1110);
+    is_deeply($s->bInt('OrX'), 0b11);
+    is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
 
   if (1)
@@ -2225,7 +2258,7 @@ B<Example:>
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-    is_deeply([$s->wordsToInteger('o')], [0..3]);
+    is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
 
@@ -2263,12 +2296,12 @@ B<Example:>
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-    is_deeply($s->bint('And'),  0b1000);
-    is_deeply($s->bint('AndX'), 0b0000);
+    is_deeply($s->bInt('And'),  0b1000);
+    is_deeply($s->bInt('AndX'), 0b0000);
 
-    is_deeply($s->bint('Or'),  0b1110);
-    is_deeply($s->bint('OrX'), 0b11);
-    is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+    is_deeply($s->bInt('Or'),  0b1110);
+    is_deeply($s->bInt('OrX'), 0b11);
+    is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
 
 
@@ -2305,12 +2338,12 @@ B<Example:>
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-    is_deeply($s->bint('And'),  0b1000);
-    is_deeply($s->bint('AndX'), 0b0000);
+    is_deeply($s->bInt('And'),  0b1000);
+    is_deeply($s->bInt('AndX'), 0b0000);
 
-    is_deeply($s->bint('Or'),  0b1110);
-    is_deeply($s->bint('OrX'), 0b11);
-    is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+    is_deeply($s->bInt('Or'),  0b1110);
+    is_deeply($s->bInt('OrX'), 0b11);
+    is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
 
   if (1)
@@ -2323,7 +2356,7 @@ B<Example:>
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-    is_deeply([$s->wordsToInteger('o')], [0..3]);
+    is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
 
@@ -2361,12 +2394,12 @@ B<Example:>
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-    is_deeply($s->bint('And'),  0b1000);
-    is_deeply($s->bint('AndX'), 0b0000);
+    is_deeply($s->bInt('And'),  0b1000);
+    is_deeply($s->bInt('AndX'), 0b0000);
 
-    is_deeply($s->bint('Or'),  0b1110);
-    is_deeply($s->bint('OrX'), 0b11);
-    is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+    is_deeply($s->bInt('Or'),  0b1110);
+    is_deeply($s->bInt('OrX'), 0b11);
+    is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
 
 
@@ -2766,11 +2799,11 @@ B<Example:>
     my $s = $c->simulate({%a, %b, c=>1}, svg=>q(svg/chooseFromTwoWords));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->steps,               4);
-    is_deeply($s->bint('out'), 0b1100);
+    is_deeply($s->bInt('out'), 0b1100);
 
     my $t = $c->simulate({%a, %b, c=>0});
     is_deeply($t->steps,               4);
-    is_deeply($t->bint('out'), 0b0011);
+    is_deeply($t->bInt('out'), 0b0011);
    }
 
 
@@ -2808,11 +2841,11 @@ B<Example:>
     my $s = $c->simulate({%a, c=>1}, svg=>q(svg/enableWord));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->steps,               4);
-    is_deeply($s->bint('out'), 3);
+    is_deeply($s->bInt('out'), 3);
 
     my $t = $c->simulate({%a, c=>0});
     is_deeply($t->steps,               4);
-    is_deeply($t->bint('out'), 0);
+    is_deeply($t->bInt('out'), 0);
    }
 
 
@@ -2890,7 +2923,7 @@ B<Example:>
       my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
       is_deeply($s->steps, 3);
 
-      my $r = $s->bint('o');                                                      # Mask values
+      my $r = $s->bInt('o');                                                      # Mask values
       is_deeply($r, $i ? 1<<($i-1) : 0);                                          # Expected mask
      }
    }
@@ -2930,7 +2963,7 @@ B<Example:>
 
 
       is_deeply($s->steps, 4);
-      is_deeply($s->bint('m'), $i);
+      is_deeply($s->bInt('m'), $i);
      }
    }
 
@@ -2962,7 +2995,7 @@ B<Example:>
      {my %m = $c->setBits('m', eval '0b'.(1 x $i).('0' x ($B-$i)));
       my $s = $c->simulate({%m});
       is_deeply($s->steps,                    2);
-      is_deeply($s->bint('out'), $i ? (1<<($B-1)) / (1<<($i-1)) : 0);
+      is_deeply($s->bInt('out'), $i ? (1<<($B-1)) / (1<<($i-1)) : 0);
      }
    }
 
@@ -2997,7 +3030,7 @@ B<Example:>
      {my %i = setBits($c, 'i', $i);                                               # The number to convert
       my $s = $c->simulate(\%i, $i == 2 ? (svg=>"svg/integerToMontoneMask$B"):());
       is_deeply($s->steps, 4);
-      is_deeply($s->bint('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);# Expected mask
+      is_deeply($s->bInt('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);# Expected mask
      }
    }
 
@@ -3035,7 +3068,7 @@ B<Example:>
     my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
     is_deeply($s->steps, 3);
-    is_deeply($s->bint('o'), 0b010);
+    is_deeply($s->bInt('o'), 0b010);
    }
 
 
@@ -3074,7 +3107,7 @@ B<Example:>
       my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps, 3);
-      is_deeply($s->bint('M'),$k ? 2**($W-$k) : 0);
+      is_deeply($s->bInt('M'),$k ? 2**($W-$k) : 0);
      }
    }
 
@@ -3151,7 +3184,7 @@ B<Example:>
     my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
     is_deeply($s->steps, 3);
-    is_deeply($s->bint('o'), 0b010);
+    is_deeply($s->bInt('o'), 0b010);
    }
 
 
@@ -3186,7 +3219,7 @@ B<Example:>
     my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
     is_deeply($s->steps, 3);
-    is_deeply($s->bint('o'), 0b010);
+    is_deeply($s->bInt('o'), 0b010);
    }
 
 
@@ -3303,7 +3336,7 @@ B<Example:>
        $c->outputWords(qw(o i));                                                  # Output
     my $s = $c->simulate({});
     is_deeply($s->steps, 2);
-    is_deeply([$s->wordsToInteger("i")], [@n]);
+    is_deeply([$s->wInt("i")], [@n]);
    }
 
   if (1)                                                                           # Internal input gate
@@ -3313,7 +3346,7 @@ B<Example:>
        $c->outputWords(qw(o i));                                                  # Output
     my $s = $c->simulate({});
     is_deeply($s->steps, 2);
-    is_deeply([$s->wordsToInteger("i")], [@n]);
+    is_deeply([$s->wInt("i")], [@n]);
    }
 
 
@@ -3348,7 +3381,7 @@ B<Example:>
 
     my %d = setBits($o, 'a', 0b10110);
     my $s = $o->simulate({%d}, svg=>q(svg/not));
-    is_deeply($s->bint('B'), 0b11101001);
+    is_deeply($s->bInt('B'), 0b11101001);
    }
 
 
@@ -3377,7 +3410,7 @@ B<Example:>
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-    is_deeply([$s->wordsToInteger('o')], [0..3]);
+    is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
 
@@ -3404,7 +3437,7 @@ B<Example:>
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-    is_deeply([$s->wordsToInteger('o')], [0..3]);
+    is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
 
@@ -3637,7 +3670,7 @@ under the same terms as Perl itself.
 #D0 Tests                                                                       # Tests and examples
 goto finish if caller;                                                          # Skip testing if we are being called as a module
 clearFolder(q(svg), 99);                                                        # Clear the output svg folder
-eval "use Test::More tests=>531";
+eval "use Test::More tests=>535";
 eval "Test::More->builder->output('/dev/null')" if -e q(/home/phil/);
 eval {goto latest};
 
@@ -3728,7 +3761,7 @@ if (1)                                                                          
     $c->outputBits("o", "c");
     my $s = $c->simulate({}, $i == 3 ? (svg=>q(svg/bits)) : ());
     is_deeply($s->steps, 2);
-    is_deeply($s->bint("o"), $i);
+    is_deeply($s->bInt("o"), $i);
    }
  }
 
@@ -4079,7 +4112,7 @@ END
     my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
     is_deeply($s->steps, 3);
 
-    my $r = $s->bint('o');                                                      # Mask values
+    my $r = $s->bInt('o');                                                      # Mask values
     is_deeply($r, $i ? 1<<($i-1) : 0);                                          # Expected mask
    }
  }
@@ -4102,7 +4135,7 @@ END
       $i == 5 ? (svg=>"svg/monotoneMaskToInteger$B") : ());
 
     is_deeply($s->steps, 4);
-    is_deeply($s->bint('m'), $i);
+    is_deeply($s->bInt('m'), $i);
    }
  }
 
@@ -4122,7 +4155,7 @@ END
    {my %i = setBits($c, 'i', $i);                                               # The number to convert
     my $s = $c->simulate(\%i, $i == 2 ? (svg=>"svg/integerToMontoneMask$B"):());
     is_deeply($s->steps, 4);
-    is_deeply($s->bint('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);         # Expected mask
+    is_deeply($s->bInt('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);         # Expected mask
    }
  }
 
@@ -4144,7 +4177,7 @@ END
   my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
 
   is_deeply($s->steps, 3);
-  is_deeply($s->bint('o'), 0b010);
+  is_deeply($s->bInt('o'), 0b010);
  }
 
 #latest:;
@@ -4165,7 +4198,7 @@ END
    {my %k = setBits($c, 'k', $k);
     my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());
     is_deeply($s->steps, 3);
-    is_deeply($s->bint('M'),$k ? 2**($W-$k) : 0);
+    is_deeply($s->bInt('M'),$k ? 2**($W-$k) : 0);
    }
  }
 
@@ -4189,7 +4222,7 @@ if (1)                                                                          
 
   my %d = setBits($o, 'a', 0b10110);
   my $s = $o->simulate({%d}, svg=>q(svg/not));
-  is_deeply($s->bint('B'), 0b11101001);
+  is_deeply($s->bInt('B'), 0b11101001);
  }
 
 #latest:;
@@ -4235,12 +4268,12 @@ if (1)                                                                          
   my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
   my $s = $c->simulate({%d}, svg=>"svg/andOrWords$W");
 
-  is_deeply($s->bint('And'),  0b1000);
-  is_deeply($s->bint('AndX'), 0b0000);
+  is_deeply($s->bInt('And'),  0b1000);
+  is_deeply($s->bInt('AndX'), 0b0000);
 
-  is_deeply($s->bint('Or'),  0b1110);
-  is_deeply($s->bint('OrX'), 0b11);
-  is_deeply([$s->wordsToInteger('N')], [3, 2, 1, 0]);
+  is_deeply($s->bInt('Or'),  0b1110);
+  is_deeply($s->bInt('OrX'), 0b11);
+  is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
  }
 
 #latest:;
@@ -4254,7 +4287,7 @@ if (1)                                                                          
   my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
   my $s = $c->simulate({%d}, svg=>"svg/words$W");
 
-  is_deeply([$s->wordsToInteger('o')], [0..3]);
+  is_deeply([$s->wInt('o')], [0..3]);
   is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
  }
 
@@ -4274,11 +4307,11 @@ if (1)                                                                          
 
   my $s = $c->simulate({%a, %b, c=>1}, svg=>q(svg/chooseFromTwoWords));
   is_deeply($s->steps,               4);
-  is_deeply($s->bint('out'), 0b1100);
+  is_deeply($s->bInt('out'), 0b1100);
 
   my $t = $c->simulate({%a, %b, c=>0});
   is_deeply($t->steps,               4);
-  is_deeply($t->bint('out'), 0b0011);
+  is_deeply($t->bInt('out'), 0b0011);
  }
 
 #latest:;
@@ -4295,11 +4328,11 @@ if (1)                                                                          
 
   my $s = $c->simulate({%a, c=>1}, svg=>q(svg/enableWord));
   is_deeply($s->steps,               4);
-  is_deeply($s->bint('out'), 3);
+  is_deeply($s->bInt('out'), 3);
 
   my $t = $c->simulate({%a, c=>0});
   is_deeply($t->steps,               4);
-  is_deeply($t->bint('out'), 0);
+  is_deeply($t->bInt('out'), 0);
  }
 
 #latest:;
@@ -4315,7 +4348,7 @@ if (1)                                                                          
    {my %m = $c->setBits('m', eval '0b'.(1 x $i).('0' x ($B-$i)));
     my $s = $c->simulate({%m});
     is_deeply($s->steps,                    2);
-    is_deeply($s->bint('out'), $i ? (1<<($B-1)) / (1<<($i-1)) : 0);
+    is_deeply($s->bInt('out'), $i ? (1<<($B-1)) / (1<<($i-1)) : 0);
    }
  }
 
@@ -4342,7 +4375,7 @@ if (1)                                                                          
      $c->outputWords(qw(o i));                                                  # Output
   my $s = $c->simulate({});
   is_deeply($s->steps, 2);
-  is_deeply([$s->wordsToInteger("i")], [@n]);
+  is_deeply([$s->wInt("i")], [@n]);
  }
 
 #latest:;
@@ -4353,7 +4386,7 @@ if (1)                                                                          
      $c->outputWords(qw(o i));                                                  # Output
   my $s = $c->simulate({});
   is_deeply($s->steps, 2);
-  is_deeply([$s->wordsToInteger("i")], [@n]);
+  is_deeply([$s->wInt("i")], [@n]);
  }
 
 #latest:;
@@ -4363,6 +4396,32 @@ if (1)                                                                          
   $c->setSizeWords('j', 3, 2);
   is_deeply($c->sizeBits,  {i => 2, j_1 => 2, j_2 => 2, j_3 => 2});
   is_deeply($c->sizeWords, {j => [3, 2]});
+ }
+
+#latest:;
+if (1)                                                                          #TsetSizeBits #TsetSizeWords
+ {my $N = 5; my $B = 5;
+   my $c = newChip();
+  $c->bits      ('a', $B, $N);
+  $c->inputBits ('i', $N);
+  $c->outputBits(qw(o i));
+  $c->connectInputBits(qw(i a));
+  my $s = $c->simulate({});
+  is_deeply($s->steps, 2);
+  is_deeply($s->bInt("o"), $N);
+ }
+
+#latest:;
+if (1)                                                                          #TsetSizeBits #TsetSizeWords
+ {my $W = 6; my $B = 5;
+  my $c = newChip();
+  $c->words      ('a',     $B, 1..$W);
+  $c->inputWords ('i', $W, $B);
+  $c->outputWords(qw(o i));
+  $c->connectInputWords(qw(i a));
+  my $s = $c->simulate({});
+  is_deeply($s->steps, 2);
+  is_deeply([$s->wInt("o")], [1..$W]);
  }
 
 #done_testing();
