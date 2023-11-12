@@ -163,54 +163,6 @@ A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) chosen from **and|conti
       ok($s->value("o")   == 0);
      }
 
-## connectInput($chip, $in, $to, %options)
-
-Connect a previously defined input gate to the output of another previously gate on the same chip. This allows us to define a set of gates on the chip without having to know, first, all the names of the gates that will provide input to these gates.
-
-       Parameter  Description
-    1  $chip      Chip
-    2  $in        Input gate
-    3  $to        Gate to connect input gate to
-    4  %options   Options
-
-**Example:**
-
-    if (1)                                                                          # Internal input gate
-     {my $c = newChip();
-         $c->input ('i');                                                           # Input
-         $c->input ('j');                                                           # Internal input which we will connect to later
-         $c->output(qw(o j));                                                       # Output
-
-
-         $c->connectInput(qw(j i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
-
-
-      my $s = $c->simulate({i=>1});
-      is_deeply($s->steps, 1);
-      is_deeply($s->value("j"), undef);
-      is_deeply($s->value("o"), 1);
-     }
-
-    if (1)                                                                           # Internal input gate
-     {my @n = qw(3 2 1 2 3);
-      my $c = newChip();
-         $c->words('i', 2, @n);                                                     # Input
-         $c->outputWords(qw(o i));                                                  # Output
-      my $s = $c->simulate({});
-      is_deeply($s->steps, 2);
-      is_deeply([$s->wInt("i")], [@n]);
-     }
-
-    if (1)                                                                           # Internal input gate
-     {my @n = qw(3 2 1 2 3);
-      my $c = newChip();
-         $c->words('i', 2, @n);                                                     # Input
-         $c->outputWords(qw(o i));                                                  # Output
-      my $s = $c->simulate({});
-      is_deeply($s->steps, 2);
-      is_deeply([$s->wInt("i")], [@n]);
-     }
-
 ## Buses
 
 A bus is an array of bits or an array of arrays of bits
@@ -948,6 +900,110 @@ Create a **not** bus made of words.
       is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
      }
 
+## Connect
+
+Connect input buses to other buses.
+
+### connectInput($chip, $in, $to, %options)
+
+Connect a previously defined input gate to the output of another gate on the same chip. This allows us to define a set of gates on the chip without having to know, first, all the names of the gates that will provide input to these gates.
+
+       Parameter  Description
+    1  $chip      Chip
+    2  $in        Input gate
+    3  $to        Gate to connect input gate to
+    4  %options   Options
+
+**Example:**
+
+    if (1)                                                                          # Internal input gate
+     {my $c = newChip();
+         $c->input ('i');                                                           # Input
+         $c->input ('j');                                                           # Internal input which we will connect to later
+         $c->output(qw(o j));                                                       # Output
+
+
+         $c->connectInput(qw(j i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+
+      my $s = $c->simulate({i=>1});
+      is_deeply($s->steps, 1);
+      is_deeply($s->value("j"), undef);
+      is_deeply($s->value("o"), 1);
+     }
+
+    if (1)                                                                           # Internal input gate
+     {my @n = qw(3 2 1 2 3);
+      my $c = newChip();
+         $c->words('i', 2, @n);                                                     # Input
+         $c->outputWords(qw(o i));                                                  # Output
+      my $s = $c->simulate({});
+      is_deeply($s->steps, 2);
+      is_deeply([$s->wInt("i")], [@n]);
+     }
+
+    if (1)                                                                           # Internal input gate
+     {my @n = qw(3 2 1 2 3);
+      my $c = newChip();
+         $c->words('i', 2, @n);                                                     # Input
+         $c->outputWords(qw(o i));                                                  # Output
+      my $s = $c->simulate({});
+      is_deeply($s->steps, 2);
+      is_deeply([$s->wInt("i")], [@n]);
+     }
+
+### connectInputBits($chip, $in, $to, %options)
+
+Connect a previously defined input bit bus to another bit bus provided the two buses have the same size.
+
+       Parameter  Description
+    1  $chip      Chip
+    2  $in        Input gate
+    3  $to        Gate to connect input gate to
+    4  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $N = 5; my $B = 5;
+       my $c = newChip();
+      $c->bits      ('a', $B, $N);
+      $c->inputBits ('i', $N);
+      $c->outputBits(qw(o i));
+
+      $c->connectInputBits(qw(i a));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+      my $s = $c->simulate({});
+      is_deeply($s->steps, 2);
+      is_deeply($s->bInt("o"), $N);
+     }
+
+### connectInputWords   ($chip, $in, $to, %options)
+
+Connect a previously defined input word bus to another word bus provided the two buses have the same size.
+
+       Parameter  Description
+    1  $chip      Chip
+    2  $in        Input gate
+    3  $to        Gate to connect input gate to
+    4  %options   Options
+
+**Example:**
+
+    if (1)
+     {my $W = 6; my $B = 5;
+      my $c = newChip();
+      $c->words      ('a',     $B, 1..$W);
+      $c->inputWords ('i', $W, $B);
+      $c->outputWords(qw(o i));
+
+      $c->connectInputWords(qw(i a));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+      my $s = $c->simulate({});
+      is_deeply($s->steps, 2);
+      is_deeply([$s->wInt("o")], [1..$W]);
+     }
+
 ## Install
 
 Install a chip within a chip as a sub chip.
@@ -1544,7 +1600,7 @@ Convert an integer **i** of specified width to a monotone mask **m**. If the inp
        {my %i = setBits($c, 'i', $i);                                               # The number to convert
         my $s = $c->simulate(\%i, $i == 2 ? (svg=>"svg/integerToMontoneMask$B"):());
         is_deeply($s->steps, 4);
-        is_deeply($s->bInt('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);# Expected mask
+        is_deeply($s->bInt('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);         # Expected mask
        }
      }
 
@@ -1808,7 +1864,7 @@ Create a connection list connecting a set of words on the outer chip to a set of
 
 ## Silicon::Chip::Simulation::value($simulation, $name, %options)
 
-Get the value of a gate as seen in a simulation
+Get the value of a gate as seen in a simulation.
 
        Parameter    Description
     1  $simulation  Chip
@@ -1851,7 +1907,7 @@ Get the value of a gate as seen in a simulation
       is_deeply([$s->wInt("i")], [@n]);
      }
 
-## Silicon::Chip::Simulation::bint ($simulation, $output, %options)
+## Silicon::Chip::Simulation::bInt ($simulation, $output, %options)
 
 Represent the state of bits in the simulation results as an unsigned binary integer.
 
@@ -1888,7 +1944,7 @@ Represent the state of bits in the simulation results as an unsigned binary inte
     <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
 </div>
 
-## Silicon::Chip::Simulation::wordsToInteger   ($simulation, $output, %options)
+## Silicon::Chip::Simulation::wInt ($simulation, $output, %options)
 
 Represent the state of words in the simulation results as an array of unsigned binary integer.
 
@@ -1980,9 +2036,21 @@ Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gat
 
 ## Silicon::Chip Definition
 
-Chip description
+Simulation results
 
 ### Output fields
+
+#### changed
+
+Last time this gate changed
+
+#### chip
+
+Chip being simulated
+
+#### gate
+
+Gate
 
 #### gateSeq
 
@@ -1992,13 +2060,33 @@ Gate sequence number - this allows us to display the gates in the order they wer
 
 Gates in chip
 
+#### inputs
+
+Outputs of outer chip to inputs of inner chip
+
 #### installs
 
 Chips installed within the chip
 
+#### io
+
+Whether an input/output gate or not
+
 #### name
 
 Name of chip
+
+#### output
+
+Output name which is used as the name of the gate as well
+
+#### outputs
+
+Outputs of inner chip to inputs of outer chip
+
+#### seq
+
+Sequence number for this gate
 
 #### sizeBits
 
@@ -2008,9 +2096,37 @@ Sizes of buses
 
 Sizes of buses
 
+#### steps
+
+Number of steps to reach stability
+
+#### svg
+
+Name of file containing svg drawing if requested
+
 #### title
 
 Title if known
+
+#### type
+
+Gate type
+
+#### values
+
+Values of every output at point of stability
+
+#### width
+
+Width of gate
+
+#### x
+
+X position of gate
+
+#### y
+
+Y position of gate
 
 # Private Methods
 
@@ -2046,83 +2162,87 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 11 [connectBits](#connectbits) - Create a connection list connecting a set of output bits on the one chip to a set of input bits on another chip.
 
-12 [connectInput](#connectinput) - Connect a previously defined input gate to the output of another previously gate on the same chip.
+12 [connectInput](#connectinput) - Connect a previously defined input gate to the output of another gate on the same chip.
 
-13 [connectWords](#connectwords) - Create a connection list connecting a set of words on the outer chip to a set of words on the inner chip.
+13 [connectInputBits](#connectinputbits) - Connect a previously defined input bit bus to another bit bus provided the two buses have the same size.
 
-14 [enableWord](#enableword) - Output a word or zeros depending on a choice bit.
+14 [connectInputWords](#connectinputwords) - Connect a previously defined input word bus to another word bus provided the two buses have the same size.
 
-15 [findWord](#findword) - Choose one of a specified number of words **w**, each of a specified width, using a key **k**.
+15 [connectWords](#connectwords) - Create a connection list connecting a set of words on the outer chip to a set of words on the inner chip.
 
-16 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) chosen from **and|continue|gt|input|lt|nand|nor|not|nxor|one|or|output|xor|zero**.
+16 [enableWord](#enableword) - Output a word or zeros depending on a choice bit.
 
-17 [inputBits](#inputbits) - Create an **input** bus made of bits.
+17 [findWord](#findword) - Choose one of a specified number of words **w**, each of a specified width, using a key **k**.
 
-18 [inputWords](#inputwords) - Create an **input** bus made of words.
+18 [gate](#gate) - A [logic gate](https://en.wikipedia.org/wiki/Logic_gate) chosen from **and|continue|gt|input|lt|nand|nor|not|nxor|one|or|output|xor|zero**.
 
-19 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+19 [inputBits](#inputbits) - Create an **input** bus made of bits.
 
-20 [integerToMonotoneMask](#integertomonotonemask) - Convert an integer **i** of specified width to a monotone mask **m**.
+20 [inputWords](#inputwords) - Create an **input** bus made of words.
 
-21 [integerToPointMask](#integertopointmask) - Convert an integer **i** of specified width to a point mask **m**.
+21 [install](#install) - Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within another [chip](https://en.wikipedia.org/wiki/Integrated_circuit) specifying the connections between the inner and outer [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-22 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask **i** to an output number **r** representing the location in the mask of the bit set to **1**.
+22 [integerToMonotoneMask](#integertomonotonemask) - Convert an integer **i** of specified width to a monotone mask **m**.
 
-23 [monotoneMaskToPointMask](#monotonemasktopointmask) - Convert a monotone mask **i** to a point mask **o** representing the location in the mask of the first bit set to **1**.
+23 [integerToPointMask](#integertopointmask) - Convert an integer **i** of specified width to a point mask **m**.
 
-24 [n](#n) - Gate name from single index.
+24 [monotoneMaskToInteger](#monotonemasktointeger) - Convert a monotone mask **i** to an output number **r** representing the location in the mask of the bit set to **1**.
 
-25 [nandBits](#nandbits) - **nand** a bus made of bits.
+25 [monotoneMaskToPointMask](#monotonemasktopointmask) - Convert a monotone mask **i** to a point mask **o** representing the location in the mask of the first bit set to **1**.
 
-26 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+26 [n](#n) - Gate name from single index.
 
-27 [nn](#nn) - Gate name from double index.
+27 [nandBits](#nandbits) - **nand** a bus made of bits.
 
-28 [norBits](#norbits) - **nor** a bus made of bits.
+28 [newChip](#newchip) - Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-29 [notBits](#notbits) - Create a **not** bus made of bits.
+29 [nn](#nn) - Gate name from double index.
 
-30 [notWords](#notwords) - Create a **not** bus made of words.
+30 [norBits](#norbits) - **nor** a bus made of bits.
 
-31 [orBits](#orbits) - **or** a bus made of bits.
+31 [notBits](#notbits) - Create a **not** bus made of bits.
 
-32 [orWords](#orwords) - **or** a bus made of words to produce a single word.
+32 [notWords](#notwords) - Create a **not** bus made of words.
 
-33 [orWordsX](#orwordsx) - **or** a bus made of words by or-ing the corresponding bits in each word to make a single word.
+33 [orBits](#orbits) - **or** a bus made of bits.
 
-34 [outputBits](#outputbits) - Create an **output** bus made of bits.
+34 [orWords](#orwords) - **or** a bus made of words to produce a single word.
 
-35 [outputWords](#outputwords) - Create an **output** bus made of words.
+35 [orWordsX](#orwordsx) - **or** a bus made of words by or-ing the corresponding bits in each word to make a single word.
 
-36 [pointMaskToInteger](#pointmasktointeger) - Convert a mask **i** known to have at most a single bit on - also known as a **point mask** - to an output number **a** representing the location in the mask of the bit set to **1**.
+36 [outputBits](#outputbits) - Create an **output** bus made of bits.
 
-37 [print](#print) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) present on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+37 [outputWords](#outputwords) - Create an **output** bus made of words.
 
-38 [printSvg](#printsvg) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+38 [pointMaskToInteger](#pointmasktointeger) - Convert a mask **i** known to have at most a single bit on - also known as a **point mask** - to an output number **a** representing the location in the mask of the bit set to **1**.
 
-39 [setBits](#setbits) - Set an array of input gates to a number prior to running a simulation.
+39 [print](#print) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) present on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-40 [setSizeBits](#setsizebits) - Set the size of a bits bus.
+40 [printSvg](#printsvg) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-41 [setSizeWords](#setsizewords) - Set the size of a bits bus.
+41 [setBits](#setbits) - Set an array of input gates to a number prior to running a simulation.
 
-42 [setWords](#setwords) - Set an array of arrays of gates to an array of numbers prior to running a simulation.
+42 [setSizeBits](#setsizebits) - Set the size of a bits bus.
 
-43 [Silicon::Chip::Simulation::bint](#silicon-chip-simulation-bint) - Represent the state of bits in the simulation results as an unsigned binary integer.
+43 [setSizeWords](#setsizewords) - Set the size of a bits bus.
 
-44 [Silicon::Chip::Simulation::print](#silicon-chip-simulation-print) - Print simulation results as text.
+44 [setWords](#setwords) - Set an array of arrays of gates to an array of numbers prior to running a simulation.
 
-45 [Silicon::Chip::Simulation::printSvg](#silicon-chip-simulation-printsvg) - Print simulation results as svg.
+45 [Silicon::Chip::Simulation::bInt](#silicon-chip-simulation-bint) - Represent the state of bits in the simulation results as an unsigned binary integer.
 
-46 [Silicon::Chip::Simulation::value](#silicon-chip-simulation-value) - Get the value of a gate as seen in a simulation
+46 [Silicon::Chip::Simulation::print](#silicon-chip-simulation-print) - Print simulation results as text.
 
-47 [Silicon::Chip::Simulation::wordsToInteger](#silicon-chip-simulation-wordstointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+47 [Silicon::Chip::Simulation::printSvg](#silicon-chip-simulation-printsvg) - Print simulation results as svg.
 
-48 [Silicon::Chip::Simulation::wordXToInteger](#silicon-chip-simulation-wordxtointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+48 [Silicon::Chip::Simulation::value](#silicon-chip-simulation-value) - Get the value of a gate as seen in a simulation.
 
-49 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output value of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilizes.
+49 [Silicon::Chip::Simulation::wInt](#silicon-chip-simulation-wint) - Represent the state of words in the simulation results as an array of unsigned binary integer.
 
-50 [words](#words) - Create a word bus set to specified numbers.
+50 [Silicon::Chip::Simulation::wordXToInteger](#silicon-chip-simulation-wordxtointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+
+51 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output value of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilizes.
+
+52 [words](#words) - Create a word bus set to specified numbers.
 
 # Installation
 
