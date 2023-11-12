@@ -4,6 +4,7 @@
 <text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="10" y="1.5">2 steps</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="1" y="8"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="1" y="8">1</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="2" y="9">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="8.41666666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="8.58333333333333">(not 1 n_1)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="1.5" y1="0.5" y2="0.5"/>
@@ -14,6 +15,7 @@
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="8.1">0</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="2" y="9"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="2" y="9">0</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="3" y="10">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="9.41666666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="9.58333333333333">(not 1 n_2)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="2.5" y1="1.5" y2="1.5"/>
@@ -24,6 +26,7 @@
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="9.1">1</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="3" y="10"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="3" y="10">0</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="4" y="11">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="10.4166666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="10.5833333333333">(not 1 n_3)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="3.5" y1="2.5" y2="2.5"/>
@@ -34,6 +37,7 @@
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="10.1">1</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="4" y="11"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="4" y="11">1</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="5" y="12">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="11.4166666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="11.5833333333333">(not 1 n_4)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="4.5" y1="3.5" y2="3.5"/>
@@ -44,6 +48,7 @@
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="11.1">0</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="5" y="12"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="5" y="12">0</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="6" y="13">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="12.4166666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="12.5833333333333">(not 1 n_5)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="5.5" y1="4.5" y2="4.5"/>
@@ -54,6 +59,7 @@
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="12.1">1</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="6" y="13"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="6" y="13">1</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="7" y="14">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="6.5" y="13.4166666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="6.5" y="13.5833333333333">(not 1 n_6)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="6.5" y1="5.5" y2="5.5"/>
@@ -64,6 +70,7 @@
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="6.5" y="13.1">0</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="7" y="14"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="7" y="14">1</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="8" y="15">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="7.5" y="14.4166666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="7.5" y="14.5833333333333">(not 1 n_7)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="7.5" y1="6.5" y2="6.5"/>
@@ -74,6 +81,7 @@
 <text dominant-baseline="hanging" fill="black" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="7.5" y="14.1">0</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="8" y="15"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="8" y="15">1</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="9" y="16">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="8.5" y="15.4166666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="8.5" y="15.5833333333333">(not 1 n_8)</text>
 <line font-size="0.2" stroke="black" stroke-width="0.02" x1="1" x2="8.5" y1="7.5" y2="7.5"/>
