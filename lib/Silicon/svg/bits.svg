@@ -1,53 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
-<svg height="100%" viewBox="0 0 7 5" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="6" y="1.5">2 steps</text>
-<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="1" y="0"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="1" y="0">1</text>
-<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="2" y="1">1</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="0.416666666666667">one</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="1.5" y="0.583333333333333">c_1</text>
-<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="2" y="1"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="2" y="1">1</text>
-<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="3" y="2">1</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="1.41666666666667">one</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="2.5" y="1.58333333333333">c_2</text>
-<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="3" y="2"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="3" y="2">0</text>
-<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="4" y="3">1</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="2.41666666666667">zero</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="3.5" y="2.58333333333333">c_3</text>
-<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="1" x="4" y="3"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="4" y="3">0</text>
-<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="5" y="4">1</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="3.41666666666667">zero</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="4.5" y="3.58333333333333">c_4</text>
-<circle cx="5.5" cy="0.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="6" y="0">1</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="0.416666666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="0.583333333333333">o_1</text>
-<line font-size="0.2" stroke="black" stroke-width="0.02" x1="2" x2="5" y1="0.5" y2="0.5"/>
-<circle cx="5" cy="0.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="2" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="5.5" cy="1.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="6" y="1">1</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="1.41666666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="1.58333333333333">o_2</text>
-<line font-size="0.2" stroke="black" stroke-width="0.02" x1="3" x2="5" y1="1.5" y2="1.5"/>
-<circle cx="5" cy="1.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="3" cy="1.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="5.5" cy="2.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="6" y="2">0</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="2.41666666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="2.58333333333333">o_3</text>
-<line font-size="0.2" stroke="black" stroke-width="0.02" x1="4" x2="5" y1="2.5" y2="2.5"/>
-<circle cx="5" cy="2.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="4" cy="2.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="5.5" cy="3.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="6" y="3">0</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="3.41666666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="5.5" y="3.58333333333333">o_4</text>
-<line font-size="0.2" stroke="black" stroke-width="0.02" x1="5" x2="5" y1="3.5" y2="3.5"/>
-<circle cx="5" cy="3.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="5" cy="3.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<svg height="100%" viewBox="0 0 5 5" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="1" y="1.5" z="-1">2 steps</text>
+<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="0" x="0" y="0"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="0">1</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="0" y="1">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="0.416666666666667">one</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="0.583333333333333">c_1</text>
+<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="0" x="0" y="1"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="1">1</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="0" y="2">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="1.41666666666667">one</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="1.58333333333333">c_2</text>
+<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="0" x="0" y="2"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="2">0</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="0" y="3">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="2.41666666666667">zero</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="2.58333333333333">c_3</text>
+<rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="0" x="0" y="3"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="3">0</text>
+<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="0" y="4">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="3.41666666666667">zero</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="3.58333333333333">c_4</text>
+<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="1" y="0">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.416666666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.583333333333333">o_1</text>
+<line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0" y1="0.5" y2="0.5"/>
+<circle cx="0" cy="0.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="0" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="0.5" cy="1.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="1" y="1">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.41666666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="1.58333333333333">o_2</text>
+<line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0" y1="1.5" y2="1.5"/>
+<circle cx="0" cy="1.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="0" cy="1.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="0.5" cy="2.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="1" y="2">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="2.41666666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="2.58333333333333">o_3</text>
+<line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0" y1="2.5" y2="2.5"/>
+<circle cx="0" cy="2.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="0" cy="2.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="0.5" cy="3.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="1" y="3">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="3.41666666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="3.58333333333333">o_4</text>
+<line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0" y1="3.5" y2="3.5"/>
+<circle cx="0" cy="3.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<circle cx="0" cy="3.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
 </svg>
