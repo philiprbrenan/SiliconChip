@@ -10,7 +10,7 @@ package Silicon::Chip;
 our $VERSION = 20231111;                                                        # Version
 use warnings FATAL => qw(all);
 use strict;
-use Carp;
+use Carp qw(confess carp);
 use Data::Dump qw(dump);
 use Data::Table::Text qw(:all);
 use Svg::Simple;
@@ -684,10 +684,13 @@ my sub newGatePosition(%)                                                       
  {my (%options) = @_;                                                           # Options
 
   genHash(__PACKAGE__."::Position",                                             # Gate position
-    gate  => $options{gate}  // undef,                                          # Gate
-    x     => $options{x}     // undef,                                          # X position of gate
-    y     => $options{y}     // undef,                                          # Y position of gate
-    width => $options{width} // undef,                                          # Width of gate
+    gate     => $options{gate}      // undef,                                   # Gate
+    x        => $options{x}         // undef,                                   # X position of gate
+    y        => $options{y}         // undef,                                   # Y position of gate
+    width    => $options{width}     // undef,                                   # Width of gate
+    busLine  => $options{busLine}   // undef,                                   # Bus line
+    busStart => $options{busStart}  // undef,                                   # Bus line start
+    busEnd   => $options{busEnd}    // undef,                                   # Bus Line end
    );
  }
 
@@ -695,15 +698,15 @@ my sub firstLastOne($)                                                          
  {my ($a) = @_;                                                                 # First string, second string
   my sub a($) {substr($a, $_[0]-1, 1)}                                          # Index to element of first  bit string array
 
-  my $f; my $l;                                                                 # Last B<1> in the first string and first B<1> in the second
+  my $f; my $l;                                                                 # First  B<1> and last B<1> in the string
   for my $i(1..length($a))
-   {$l = $i if a $i;
-    $f = $i if a($i) and !defined $f;
+   {$l = $i if a $i;                                                            # Later B<1>
+    $f = $i if a($i) and !defined $f;                                           # First B<1>
    }
   ($f, $l)
  }
 
-my sub layoutInputBus(@)                                                        # Given an array of bit strings lay them out from left to right in lines so that the B<1>s of each possible pairs of bit strings do not overlap per L<canBothFitOnSameLine>.  Returns an array mapping the strings to lines.
+my sub layoutInputBus(@)                                                        # Given an array of bit strings lay them out from left to right in lines so that the B<1>s of each possible pairs of bit strings do not overlap per L<canBothFitOnSameLine>.  Returns an array mapping the strings to lines.  There is no reason to suppose that the proposed layout is optimal - this is a packing problem with all the usual difficulties associated with such problems.  This layout requires three levels. 1: Down from input gate. 2: horizontal until vertically above a gate we wish to connect this input pin to.  3: down to the gate we wish to connect to.  Three levels is enough because in the worst case each input gate can have its oen horizontal wich we can reach because the gates are spaced  horizontally.  Each such horizontal can be connected vertically on level 3 to an input of a non input gate because no two input gates are connected to the same pin on any other gate.
  {my (@a) = @_;                                                                 # Array of bit strings to be laid out
 
   my @l;                                                                        # Proposed input bus lines
@@ -725,16 +728,16 @@ my sub layoutInputBus(@)                                                        
    }
 
   for(;keys %u;)                                                                # Unplaced inputs still
-   {my $p  = findFirst;                                                         # New bus line
-    delete $u{$p};
-    my $l  = $a[$p-1];
-    my ($s, $e) = firstLastOne($l);
+   {my $p  = findFirst;                                                         # New bus line with first remaining input gate
+    delete $u{$p};                                                              # Show placed
+    my $l  = $a[$p-1];                                                          # Places required
+    my ($s, $e) = firstLastOne($l);                                             # Placement range
     push @l, $l;                                                                # New bus line
-    $m[$p] = @l;
+    $m[$p] = @l;                                                                # Map gate to bus line
 
     for my $i(1..@a)                                                            # Possible inputs on this line
      {next unless $u{$i};                                                       # Skip inputs already placed
-      my $l = $a[$i-1];                                                         # Input line
+      my $l = $a[$i-1];                                                         # Places required
       my ($S, $F) = firstLastOne($l);                                           # Position requested on bus line
       if ($S > $e)                                                              # Can fit on the current line
        {$l[-1] = combine($l[-1], $l);                                           # Place latest addition to current line
@@ -744,10 +747,237 @@ my sub layoutInputBus(@)                                                        
        }
      }
    }
+  shift @m;                                                                     # Remove initial L<undef> to make result array zero based
   @m
  }
 
-sub printSvg($%)                                                                # Dump the L<lgs> on a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip>.
+sub printSvg($%)                                                                # Mask the L<lgs> onto a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip>.
+ {my ($chip, %options) = @_;                                                    # Chip, options
+  my $gates   = $chip->gates;                                                   # Gates on chip
+  my $title   = $chip->title;                                                   # Title of chip
+  my $changed = $options{changed};                                              # Step at which gate last changed in simulation
+  my $values  = $options{values};                                               # Values of each gate if known
+  my $steps   = $options{steps};                                                # Number of steps to equilibrium
+
+  my sub fs {0.2} my sub fw {0.02}                                              # Font sizes
+  my sub Fs {0.4} my sub Fw {0.04}
+  my sub op0 {q(transparent)}
+
+  my @defaults = (defaults=>{stroke_width=>fw, font_size=>fs});                 # Default values
+  my $s = Svg::Simple::new(@defaults, %options, grid=>0);                       # Draw each gate via Svg
+
+  my %p;                                                                        # Dimensions and drawing positions of gates
+  my ($iG, $nG, $oG) = orderGates $chip, %options;                              # Gates by type
+
+  for my $i(keys @$iG)                                                          # Position of each input gate
+   {my $G = $$iG[$i];                                                           # Gate name
+    my $g = $$gates{$G};                                                        # Gate
+    $p{$G} = newGatePosition(gate=>$g, x=>$i, y=>0, width=>1);                  # Position input gate. TRhe gates are drawn horizontally across the top with the input bus beneath them.
+   }
+
+  my $W = 0;                                                                    # Number of inputs to all the non IO gates
+  my @iBus;                                                                     # Input bus
+  my $miw = 0;                                                                  # Maximum width of input bus
+
+  for my $i(keys @$nG)                                                          # Position of each non io gate
+   {my $G = $$nG[$i];                                                           # Gate name
+    my $g = $$gates{$G};                                                        # Gate
+    my %i = $g->inputs->%*;                                                     # Gates driving this gate
+    my $w = 0;                                                                  # Input pin position on gate
+    for my $I(sort keys %i)                                                     # Each driver of this gate in pin order
+     {my $D = $i{$I};                                                           # Name of driving gate
+      my $d = $$gates{$D};                                                      # Details of driving gate
+      if ($d->io == gateOuterInput)
+       {my $ix = $p{$d->output}->x;                                             # Position of input gate in x
+        my $nx = $W+$w;                                                         # Position of driven gate in x
+        $iBus[$ix][$ix] = '1';                                                  # Mark position of driving input gate on input bus
+        $iBus[$ix][$nx] = '1';                                                  # Mark position of pin on driven gate on input bus
+        $miw = max($miw, $ix+1, $nx+1);                                         # Maximum width of input bus. Plus one because we must take into account the width of the input gate and the driven pins
+       }
+      $w++;                                                                     # Next driver position
+     }
+    $p{$G} = newGatePosition(gate => $g, x => $W, y => $i, width =>$w);         # Position non io gate
+    $W    += $w;                                                                # Width of area needed for non io gates
+   }
+
+  for my $b(@iBus)                                                              # Represent the input bus lines as strings as they are easier to visualize
+   {$b = pad join('', map {$_ ? '1' : '0'} @$b), $miw, '0';
+   }
+
+  my @iBusLayout = layoutInputBus(@iBus);                                       # Input bus line for each input gate
+
+  if (@iBusLayout)                                                              # Usually there are outer input pins - but not  always.
+   {my $iBusHeight = 1 + max(@iBusLayout);                                      # The height of the input bus area
+
+    for my $i(keys @$iG)                                                        # Position of each input gate
+     {my $G = $$iG[$i];                                                         # Gate name
+      my $L = $p{$G};                                                           # Layout for input gate
+      my $B = $L->busLine = $iBusLayout[$i];                                    # Bus line for this input gate
+      my ($f, $l) = firstLastOne($iBus[$i]);                                    # Limits on bus line for this input gate
+      $L->busStart = $f; $L->busEnd = $l;                                       # Save limits on bus line for this input gate
+      my $y = 1/2 + $B;                                                         # Vertical position of input bus line
+      my $c = q(#DC143C);                                                       # Spanish crimson for horizontal input bus lines
+      if ($f != $l)                                                             # Horizontal input bar required for this gate
+       {$s->line(x1 => $f-1/2, x2 => $l-1/2, y1 => $y, y2 => $y, stroke => $c); # Draw level 2 input bus line
+       }
+      my $Lx = $L->x+1/2; my $Ly = 1/2 + $B; my @o = (opacity=>0.3);
+      $s->line  (x1 => $Lx, x2 => $Lx, @o,    stroke_width => 2*Fw,             # Draw vertical level 1 input bus line
+                 y1 => 1,   y2 => $Ly,              stroke => "blue");
+      $s->circle(cx => $Lx, cy => $Ly, r => 3*Fw, @o, fill => "blue");          # Draw circle connecting vertical level 1 input bus line to horizontal level 2
+     }
+
+    for my $i(keys @$nG)                                                        # Reposition the non io gates a little further down to make room for the input bus area
+     {my $G = $$nG[$i];                                                         # Gate name
+      my $n = $p{$G};                                                           # Layout for input gate
+      $n->y += $iBusHeight;
+     }
+   }
+
+  for my $i(keys @$oG)                                                          # Position each output gate
+   {my $G = $$oG[$i];                                                           # Gate name
+    my $g = $$gates{$G};                                                        # Gate
+    my %i = $g->inputs ? $g->inputs->%* : ();                                   # Inputs to gate
+    my ($d) = values %i;                                                        # The one driver for this gate
+    next unless defined $p{$d};
+    my $y = $p{$d}->y;
+    $p{$G} = newGatePosition(gate=>$g, x=>$W, y=>$y, width=>1);                 # Position output gate
+   }
+
+  my $pageWidth = $W + 1;                                                       # Width of input, output and non io gates as laid out.
+
+  if (defined($title))                                                          # Title if known
+   {$s->text(x=>$pageWidth, y=>0.5, fill=>"darkGreen", text_anchor=>"end",
+      stroke_width=>Fw, font_size=>Fs, z=>-1,
+      cdata=>$title);
+   }
+
+  if (defined($steps))                                                          # Number of steps taken if known
+   {$s->text(x=>$pageWidth, y=>1.5, fill=>"darkGreen", text_anchor=>"end",
+      stroke_width=>Fw, font_size=>Fs, z=>-1,
+      cdata=>"$steps steps");
+   }
+
+  for my $P(sort keys %p)                                                       # Each gate with text describing it
+   {my $p = $p{$P};
+    my $x = $p->x;
+    my $y = $p->y;
+    my $w = $p->width;
+    my $g = $p->gate;
+
+    my $color = sub
+     {return "red"  if $g->io == gateOuterOutput;
+      return "blue" if $g->io == gateOuterInput;
+      "green"
+     }->();
+
+    if ($g->io)                                                                 # Circle for io pin
+     {$s->circle(cx=>$x+1/2, cy=>$y+1/2, r=>1/2,   fill=>op0, stroke=>$color);
+     }
+    else                                                                        # Rectangle for non io gate
+     {$s->rect(x=>$x, y=>$y, width=>$w, height=>1, fill=>op0, stroke=>$color);
+     }
+
+    if (defined(my $v = $$values{$g->output}))                                  # Value of gate if known
+     {$s->text(
+       x                 => $g->io != gateOuterOutput ? $x : $x + 1,
+       y                 => $y,
+       fill              =>"black",
+       stroke_width      => Fw,
+       font_size         => Fs,
+       text_anchor       => $g->io != gateOuterOutput ? "start": "end",
+       dominant_baseline => "hanging",
+       cdata             => $v ? "1" : "0");
+     }
+
+    if (defined(my $t = $$changed{$g->output}) and !$g->io)                     # Gate change time if known for a non io gate
+     {$s->text(
+       x                 => $w + ($g->io != gateOuterOutput ? $x : $x + 1),
+       y                 => 1 + $y,
+       fill              =>"black",
+       stroke_width      => fw,
+       font_size         => fs,
+       text_anchor       => "end",
+       cdata             => $t+1);
+     }
+
+    my sub ot($$$$)                                                             # Output svg text
+     {my ($dy, $fill, $pos, $text) = @_;
+      $s->text(x                 => $x+$w/2,
+               y                 => $y+$dy,
+               fill              => $fill,
+               text_anchor       => "middle",
+               dominant_baseline => $pos,
+               cdata             => $text);
+      }
+
+    ot(5/12, "red",      "auto",    $g->type);                                  # Type of gate
+    ot(7/12, "darkblue", "hanging", $g->output);
+
+    if ($g->io != gateOuterInput)                                               # Not an input pin
+     {my %i = $g->inputs ? $g->inputs->%* : ();
+      my @i = sort keys %i;                                                     # Connections to each gate
+      my $o = $g->output;
+
+      for my $i(keys @i)                                                        # Connections to each gate
+       {my $D = $i{$i[$i]};                                                     # Driving gate name
+        my $P = $p{$D};                                                         # Driving gate
+        defined($P) or confess <<"END";
+No such gate as: '$D' on gate $o
+END
+        my $X = $P->x; my $Y = $P->y; my $W = $P->width; my $G = $P->gate;      # Position of source gate
+        my $dx = $i + 1/2;
+        my $dy = $Y < $y ?  0 : 1;
+        my $dX = $X < $x ? $W : 0;
+        my $dY = $Y < $y ?  0 : 0;
+        my $cx = $x+$dx;                                                        # Horizontal line corner x
+        my $cy = $Y+$dY+1/2;                                                    # Horizontal line corner y
+
+        my $xc = $X < $x ? q(black) : q(darkBlue);                              # Horizontal line color
+        my $x2 = $g->io == gateOuterOutput ? $cx - 1/2 : $cx;
+
+        if ($P->gate->io != gateOuterInput)                                     # Not being driven by an outer input gate.
+         {$s->line(x1=>$X+$dX, x2=>$x2, y1=>$cy, y2=>$cy, stroke=>$xc);         # Outgoing value along horizontal lines
+         }
+
+        my $yc = $Y < $y ? q(purple) : q(darkRed);                              # Vertical lines
+
+        if ($g->io != gateOuterOutput)                                          # Not an output gate
+         {my $Cy = $cy;
+             $Cy = $P->busLine + 1/2 if $P->gate->io == gateOuterInput;         # Connect to input level 2 horizontal bar if connecting to an outer input gate
+          $s->line  (x1=>$cx, x2=>$cx, y1=>$Cy, y2=>$y+$dy, stroke=>$yc);       # Incoming value along vertical line - not needed for outer output gates
+          $s->circle(cx=>$cx, cy=>$Cy,    r=>0.06, fill=>"red");                # Line corner
+          $s->circle(cx=>$x2, cy=>$y+$dy, r=>0.04, fill=>"blue");               # Line entering gate
+         }
+        else                                                                    # External output gate
+         {$s->circle(cx=>$x2,   cy=>$y+$dy-1/2, r=>0.04, fill=>"blue");         # Line entering output
+         }
+
+        if ($P->gate->io != gateOuterInput)                                     # Not an outer input gate
+         {$s->circle(cx=>$X+$W, cy=>$cy, r=>0.04, fill=>"red");                 # Horizontal line exiting gate
+         }
+
+        if (defined(my $v = $$values{$G->output}) and $g->io != gateOuterOutput)# Value of gate if known except for output gates written else where
+         {my $bottom = $x > $X || $G->io == gateOuterInput;
+          my $Y = $y + $dy + fs;
+          $s->text(
+            x            => $cx,
+            y            => $Y,
+            fill         => "black",
+            stroke_width => fw,
+            font_size    => fs,
+            text_anchor  => "middle",
+            $bottom ? () : (dominant_baseline=>"hanging"),
+            cdata        =>  $v ? "1" : "0");
+         }
+       }
+     }
+   }
+  my $t = $s->print;
+  return owf(fpe($options{svg}, q(svg)), $t) if $options{svg};
+  $t
+ }
+
+sub printSvg2($%)                                                                # Dump the L<lgs> on a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip>.
  {my ($chip, %options) = @_;                                                    # Chip, options
   my $gates   = $chip->gates;                                                   # Gates on chip
   my $title   = $chip->title;                                                   # Title of chip
@@ -765,18 +995,18 @@ sub printSvg($%)                                                                
   my ($iG, $nG, $oG) = orderGates $chip, %options;                              # Gates by type
 
   for my $i(keys @$iG)                                                          # Index of each input gate
-   {my sub G {$$iG[$i]}                                                           # Gate name
-    my sub g {$$gates{&G}}                                                        # Gate
-    $p{&G} = newGatePosition(gate=>g, x=>0, y=>$i, width=>1);                  # Position input gate
+   {my sub G {$$iG[$i]}                                                         # Gate name
+    my sub g {$$gates{&G}}                                                      # Gate
+    $p{&G} = newGatePosition(gate=>g, x=>0, y=>$i, width=>1);                   # Position input gate
    }
 
   my $W = 0;                                                                    # Number of inputs to all the non IO gates
   for my $i(keys @$nG)                                                          # Index of each non IO gate
-   {my $G = $$nG[$i];                                                           # Gate name
-    my $g = $$gates{$G};                                                        # Gate
-    my $w = keys($g->inputs->%*) || 1;                                          # Width of gate has to be wide enough to accommodate all inputs
-    $p{$G} = newGatePosition(gate=>$g, x=>$W+1, y=>@$iG+$i, width=>$w);         # Position non io gate
-    $W   += $w;                                                                 # Width of area needed for non io gates
+   {my sub G {$$nG[$i]}                                                         # Gate name
+    my sub g {$$gates{&G}}                                                      # Gate
+    my sub w {keys(g->inputs->%*) || 1}                                         # Width of gate has to be wide enough to accommodate all inputs
+    $p{&G} = newGatePosition(gate => g, x => $W+1, y => @$iG+$i, width => w);   # Position non io gate
+    $W   += w;                                                                  # Width of area needed for non io gates
    }
 
   for my $i(keys @$oG)                                                          # Index of each output gate
@@ -1274,8 +1504,8 @@ my sub merge($%)                                                                
   removeExcessIO($chip, $gates);                                                # By pass and then remove all interior IO gates as they are no longer needed
 
   my $c = newChip %$chip, %options, gates=>$gates, installs=>[];                # Create the new chip with all installs expanded
-  print($c, %options)     if $options{print};                                   # Print the gates
-  printSvg ($c, %options) if $options{svg};                                     # Draw the gates using svg
+  #print($c, %options)     if $options{print};                                  # Print the gates
+  #printSvg ($c, %options) if $options{svg};                                    # Draw the gates using svg
   checkIO $c;                                                                   # Check all inputs are connected to valid gates and that all outputs are used
 
   $c
@@ -4294,14 +4524,14 @@ if (1)                                                                          
   my $N = 2**$B-1;
 
   my $c = Silicon::Chip::newChip(title=><<"END");
-$B bit integer to $N bits monotone mask.
+$B bit integer to $N bit monotone mask.
 END
      $c->inputBits         (qw(  i), $B);                                       # Input bus
      $c->integerToPointMask(qw(m i));
      $c->outputBits        (qw(o m));
   for my $i(0..$N)                                                              # Each position of mask
    {my %i = setBits($c, 'i', $i);
-    my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToMontoneMask$B"):());
+    my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToPointMask$B"):());
     is_deeply($s->steps, 3);
 
     my $r = $s->bInt('o');                                                      # Mask values
@@ -4315,7 +4545,7 @@ if (1)                                                                          
   my $N = 2**$B-1;
 
   my $c = Silicon::Chip::newChip(title=><<"END");
-$N bits monotone mask to $B bit integer
+$N bit monotone mask to $B bit integer
 END
      $c->inputBits            ('i',     $N);
      $c->monotoneMaskToInteger(qw(m i));
@@ -4398,14 +4628,14 @@ END
 if (1)                                                                          #TinputBits #ToutputBits #TnotBits #TSilicon::Chip::Simulation::bInt
  {my $W = 8;
   my $i = newChip(name=>"not");
-     $i->inputBits('i',      $W);
-     $i->notBits  (qw(n i));
+     $i->inputBits('i', $W);
+     $i->notBits   (qw(n i));
      $i->outputBits(qw(o n));
 
   my $o = newChip(name=>"outer");
-     $o->inputBits ('a',     $W);
+     $o->inputBits ('a', $W);
      $o->outputBits(qw(A a));
-     $o->inputBits ('b',     $W);
+     $o->inputBits ('b', $W);
      $o->outputBits(qw(B b));
 
   my %i = connectBits($i, 'i', $o, 'A');
@@ -4624,11 +4854,11 @@ if (1)                                                                          
 
 #latest:;
 if (1)                                                                          #TcanBothFitOnSameLine
- {is_deeply([layoutInputBus qw(1000 1100 0010 0001)],                 [undef, 1,2,1,1]);
-  is_deeply([layoutInputBus qw(1100 1100 0011 0011)],                 [undef, 1,2,1,2]);
-  is_deeply([layoutInputBus qw(11000 10100 01000 00011)],             [undef, 1,2,3,1]);
-  is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010)],       [undef, 1, 2, 3, 1, 2]);
-  is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010 00010)], [undef, 1, 2, 3, 1, 2, 3]);
+ {is_deeply([layoutInputBus qw(1000 1100 0010 0001)],                 [1,2,1,1]);
+  is_deeply([layoutInputBus qw(1100 1100 0011 0011)],                 [1,2,1,2]);
+  is_deeply([layoutInputBus qw(11000 10100 01000 00011)],             [1,2,3,1]);
+  is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010)],       [1, 2, 3, 1, 2]);
+  is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010 00010)], [1, 2, 3, 1, 2, 3]);
  }
 
 done_testing();
