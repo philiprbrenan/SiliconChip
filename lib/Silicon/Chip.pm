@@ -627,7 +627,7 @@ my sub removeExcessIO($$%)                                                      
 
 #D1 Visualize                                                                   # Visualize the L<chip> in various ways.
 
-my sub orderGates($%)                                                           # Order the L<lgs> on a L<chip> so that input L<lg> are first, the output L<lgs> are last and the non io L<lgs> are in between. All L<lgs> are first ordered alphabetically. The non io L<lgs> are then ordered by the step number at which they last changed during simulation of the L<chip>.
+my sub orderGates($%)                                                           # Order the L<lgs> on a L<chip> so that input L<lg> are first, the output L<lgs> are last and the non io L<lgs> are in between. All L<lgs> are first ordered alphabetically. The non io L<lgs> are then ordered by the step number at which they last changed during simulation of the L<chip>.  This has the effect of placing all the buses in the upper right corner as there are no loops.
  {my ($chip, %options) = @_;                                                    # Chip, options
 
   my $gates = $chip->gates;                                                     # Gates on chip
@@ -751,7 +751,7 @@ my sub layoutInputBus(@)                                                        
   @m
  }
 
-sub printSvg($%)                                                                # Mask the L<lgs> onto a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip>.
+sub printSvg($%)                                                                # Mask the L<lgs> onto a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip> using a condensed input bus.
  {my ($chip, %options) = @_;                                                    # Chip, options
   my $gates   = $chip->gates;                                                   # Gates on chip
   my $title   = $chip->title;                                                   # Title of chip
@@ -808,7 +808,7 @@ sub printSvg($%)                                                                
 
   if (@iBusLayout)                                                              # Usually there are outer input pins - but not  always.
    {my $iBusHeight = 1 + max(@iBusLayout);                                      # The height of the input bus area
-
+    #say STDERR "Improvement: ", scalar(@iBus) / $iBusHeight);
     for my $i(keys @$iG)                                                        # Position of each input gate
      {my $G = $$iG[$i];                                                         # Gate name
       my $L = $p{$G};                                                           # Layout for input gate
@@ -977,99 +977,248 @@ END
   $t
  }
 
-my sub printSvg2($%)  ## Probably obsolete - draws inputs down left hand side instead of across the top                                                          # Dump the L<lgs> on a L<chip> as an L<svg> drawing to help visualize the structure of the L<chip>.
+sub Silicon::Chip::Simulation::printSvg($%)                                     # Print simulation results as svg.
+ {my ($sim, %options) = @_;                                                     # Simulation, options
+  printSvg($sim->chip, %options, values=>$sim->values);
+ }
+
+sub layoutAsFiberBundle($%)                                                     # Layout the gates as a fiber bundle collapsed down to as close to the gates as possible.  The returned information is sufficient to draw an svg image of the fiber bundle.
  {my ($chip, %options) = @_;                                                    # Chip, options
-  my $gates   = $chip->gates;                                                   # Gates on chip
-  my $title   = $chip->title;                                                   # Title of chip
+  my %gates   = $chip->gates->%*;                                               # Gates on chip
   my $changed = $options{changed};                                              # Step at which gate last changed in simulation
   my $values  = $options{values};                                               # Values of each gate if known
-  my $steps   = $options{steps};                                                # Number of steps to equilibrium
 
-  my sub fs {0.2} my sub fw {0.02}                                              # Font sizes
-  my sub Fs {0.4} my sub Fw {0.04}
-  my sub op0 {q(transparent)}
-
-  my $s = Svg::Simple::new(defaults=>{stroke_width=>fw, font_size=>fs});        # Draw each gate via Svg
-
-  my %p;                                                                        # Dimensions and drawing positions of gates
-  my ($iG, $nG, $oG) = orderGates $chip, %options;                              # Gates by type
-
-  for my $i(keys @$iG)                                                          # Index of each input gate
-   {my sub G {$$iG[$i]}                                                         # Gate name
-    my sub g {$$gates{&G}}                                                      # Gate
-    $p{&G} = newGatePosition(gate=>g, x=>0, y=>$i, width=>1);                   # Position input gate
+  my @gates = sort {$gates{$a}->seq <=> $gates{$b}->seq} keys %gates;           # Gates in definition order
+  if (my $c = $options{changed})                                                # Order non IO gates by last change time during simulation if possible
+   {@gates = sort {($$c{$a}//0) <=> ($$c{$b}//0)} @gates;
    }
 
-  my $W = 0;                                                                    # Number of inputs to all the non IO gates
-  for my $i(keys @$nG)                                                          # Index of each non IO gate
-   {my sub G {$$nG[$i]}                                                         # Gate name
-    my sub g {$$gates{&G}}                                                      # Gate
-    my sub w {keys(g->inputs->%*) || 1}                                         # Width of gate has to be wide enough to accommodate all inputs
-    $p{&G} = newGatePosition(gate => g, x => $W+1, y => @$iG+$i, width => w);   # Position non io gate
-    $W   += w;                                                                  # Width of area needed for non io gates
-   }
+  my @fibers;                                                                   # Squares of the page, each of which can either be undefined or contain the name of the fiber crossing it from left to right or up and down
+  my @positions;                                                                # Position of each gate indexed by position in layout
+  my %positions;                                                                # Position of each gate indexed by gate name
+  my $width = 0;                                                                # Width of page consumed so far until it becomes the page width.
 
-  for my $i(keys @$oG)                                                          # Index of each output gate
-   {my $G = $$oG[$i];                                                           # Gate name
-    my $g = $$gates{$G};                                                        # Gate
-    my %i = $g->inputs ? $g->inputs->%* : ();                                   # Inputs to gate
-    my ($d) = values %i;                                                        # The one driver for this gate
-    next unless defined $p{$d};
-    my $y = $p{$d}->y;
-    $p{$G} = newGatePosition(gate=>$g, x=>1+$W, y=>$y, width=>1);               # Position output gate
-   }
+  for my $i(keys @gates)                                                        # Position each gate
+   {my $g = $gates{$gates[$i]};                                                 # Gate details
+    my %i = $g->inputs->%*;                                                     # Inputs hash for gate
+    my @i = sort keys %i;                                                       # Connections to each gate in pin order
+    my $w = scalar(@i);                                                         # Width of this gate
+    my $n = $g->output;                                                         # Name of gate
 
-  my $pageWidth = $W + 2;                                                       # Width of input, output and non io gates as laid out.
-
-  if (defined($title))                                                          # Title if known
-   {$s->text(x=>$pageWidth, y=>0.5, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>Fw, font_size=>Fs,
-      cdata=>$title);
-   }
-
-  if (defined($steps))                                                          # Number of steps taken if known
-   {$s->text(x=>$pageWidth, y=>1.5, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>Fw, font_size=>Fs,
-      cdata=>"$steps steps");
-   }
-
-  for my $P(sort keys %p)                                                       # Each gate with text describing it
-   {my $p = $p{$P};
-    my $x = $p->x;
-    my $y = $p->y;
-    my $w = $p->width;
-    my $g = $p->gate;
-
-    my $color = sub
+    my sub color()                                                              # Color of gate
      {return "red"  if $g->io == gateOuterOutput;
       return "blue" if $g->io == gateOuterInput;
       "green"
-     }->();
-
-    if ($g->io)                                                                 # Circle for io pin
-     {$s->circle(cx=>$x+1/2, cy=>$y+1/2, r=>1/2,   fill=>op0, stroke=>$color);
-     }
-    else                                                                        # Rectangle for non io gate
-     {$s->rect(x=>$x, y=>$y, width=>$w, height=>1, fill=>op0, stroke=>$color);
      }
 
-    if (defined(my $v = $$values{$g->output}))                                  # Value of gate if known
-     {$s->text(
-       x                 => $g->io != gateOuterOutput ? $x : $x + 1,
-       y                 => $y,
+    my $p = genHash(__PACKAGE__."::GatePosition",
+      output      => $g->output,                                                # Gate name
+      x           => (my $x = $width),                                          # Gate x position
+      y           => (my $y = $i),                                              # Gate y position
+      width       => $w,                                                        # Width of gate
+      fiber       => 0,                                                         # Number of fibers running past this gate
+      position    => $i,                                                        # Number of fibers running past this gate
+      type        => $g->type,                                                  # Type of gate
+      value       => $$values {$g->output},                                     # Value of gate if known
+      changed     => $$changed{$g->output},                                     # Last change time of gate if known
+      inputs      => [map {$i{$_}}       @i],                                   # Names of gates driving input pins on this gate
+      inputValues => [map {$$values{$i{$_}}} @i],                               # Values on input pins if known
+      color       => color,                                                     # Color of gate
+      inPin       => $g->io == gateOuterInput,                                  # Input pin for  chip
+      outPin      => $g->io == gateOuterOutput,                                 # Output pin for  chip
+     );
+    $positions[$i] = $p;  $positions{$p->output} = $p;                          # Index the gates
+    $width += $w unless $g->io == gateOuterInput and $i < $#gates and $gates{$gates[$i+1]}->io; # Pack input gates vertically as we never connect an input gate to another input gate                                                               # Start of next gate
+   }
+
+  for my $i(keys @positions)                                                    # Position output pins along bottom of mask
+   {my $p = $positions[$i];
+    next unless $p->outPin;
+    my ($D) = $p->inputs->@*;                                                   # An output gate only has one input so we can safe relocate it next to the single gate that produces that output
+    my  $d  = $positions{$D};                                                   # Driving gate
+    $p->x = $d->x - 1;                                                          # Reposition output gate
+    $p->y = $d->y;
+    --$width;                                                                   # Gate no longer occupies space on right
+   }
+
+  for my $i(keys @positions)                                                    # Connect gates loosely
+   {my $p = $positions[$i];
+    my $g = $gates{$p->output};
+    my %i = $g->inputs->%*;
+    my @i = sort keys %i;  ### Is this the correct order???                     # Connections to each gate
+    for my $i(keys @i)                                                          # Connections to each gate
+     {my $D = $i{$i[$i]};                                                       # Driving gate name
+      my $d = $positions{$D};                                                   # Driving gate position
+      $fibers[$_][$d->y][0] = $D for $d->x+$d->width..$p->x+$i;                 # Horizontal line
+      $fibers[$p->x+$i][$_][1] = $D for $d->y..$p->y-1;                            # Vertical line
+     }
+   }
+
+  my sub collapseFibers()                                                       # Perform one collapse pass of the fibers returning the number of collapses performed
+   {my $changes = 0;                                                            # Number of changes made in this pass
+    for my $i(keys @fibers)
+     {next unless $i;
+      for my $j(keys $fibers[$i]->@*)
+       {my sub i() {$i}
+        my sub j() {$j}
+        my sub h($$) :lvalue {my ($i, $j) = @_; $fibers[$i][$j][0]}             # A horizontal element relative to the current corner
+        my sub v($$) :lvalue {my ($i, $j) = @_; $fibers[$i][$j][1]}             # A vertical   element relative to the current corner
+
+        my $a = h(i-1, j+0); my sub a() {$a}
+        my $b = h(i+0, j+0);
+        my $B = v(i+0, j+0);
+        my $C = v(i+0, j+1);
+        next unless defined($a) and defined($b) and defined($B) and defined($C);# Possible corner
+        next unless $a eq $b and $b eq $B and $B eq $C;                         # Confirm corner
+
+        my $wentLeft;                                                           # If we collapsed left we made a change and so need to come around again before attempting to collapse down
+        if (1)                                                                  # Collapse left
+         {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going left
+
+          for my $I(reverse 0..i-1)                                             # Look for an opposite corner
+           {
+            last if $j+1 < $fibers[$I]->@*;
+            last   unless defined(h($I, j)) and h($I, j) eq $a;                 # Make sure horizontal is occupied with expected bus line
+            last   if  defined h($I, j+1);                                      # Horizontal is occupied so we will not be able to repurpose it
+            k = $I if !defined v($I, j+1);                                      # Possible opposite because it is not being used vertically
+           }
+
+          if (defined(k))                                                       # Reroute through new corner
+           {v(i, j)   = undef;                                                  # Remove old upper right corner vertical
+            v(k, j)   = a;                                                      # New upper left corner
+            h(k, j)   = undef unless k > 0                 and defined(h(k-1, j)) and h(k-1, j) eq a; # Situation x: we might, or might not be on a corner here
+            v(i, j+1) = undef unless j+1 < $fibers[i]->$#* and defined(v(i, j+2)) and v(i, j+2) eq a; # Situation y: we might, or might not be on a corner here
+            h(k, j+1) = a;                                                      # New lower left corner
+            v(k, j+1) = a;                                                      # New lower left corner
+            for my $I(k+1..i)                                                   # Route along lower side
+             {h($I, j  ) = undef;                                               # Remove upper side
+              h($I, j+1) = a;                                                   # Add lower side
+             }
+            ++$changes; $wentLeft = 1;
+           }
+         }
+#           |x           |
+# ab        +-+    =>    |
+# dc          |y         |
+#             +--        +---
+
+        if (!$wentLeft)                                                         # Collapse down
+         {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going down
+          for my $J(j+1..scalar($fibers[i]->$#*))                               # Look for an opposite corner
+           {last unless defined(v(i,   $J)) and v(i, $J) eq a;                  # Make sure vertical is occupied with expected fiber
+            last   if   defined v(i-1, $J);                                     # Vertical is occupied so we will not be able to repurpose it
+            k = $J if  !defined h(i-1, $J);                                     # Possible corner as horizontal is free
+           }
+          if (defined($k))                                                      # Reroute through new corner
+           {h(i,   j) = undef;                                                  # Remove old upper right corner horizontal
+            v(i,   j) = undef;                                                  # Remove old upper right corner vertical
+            v(i-1, j) = a;                                                      # New upper left corner
+            h(i-1, j) = undef unless i-1 > 0               and defined(h(i-2, j)) and h(i-2, j) eq a; # Situation x: we might, or might not be on a corner here
+            v(i,   k) = undef unless k   < $fibers[i]->$#* and defined(v(i, k+1)) and v(i, k+1) eq a; # Situation y: we might, or might not be on a corner here
+            h(i-1, k) = a;                                                      # New lower left corner
+            v(i-1, k) = a;                                                      # New lower left corner
+            h(i, k) = a;                                                        # Add lower right corner
+            for my $J(j..k-1)                                                   # Route down opposite side
+             {v(i  , $J) = undef;                                               # Remove right side
+              v(i-1, $J) = a;                                                   # Add left side
+             }
+            ++$changes;
+           }
+         }
+       }
+     }
+    $changes
+   }
+
+  for my $i(1..@positions) {last unless collapseFibers()}                       # Collapse fibers
+
+  my $t = 0;                                                                    # Size of thickest bundle
+  for   my $i(keys @fibers)
+   {my $c = 0;
+    for my $j(keys $fibers[$i]->@*)
+     {++$c if defined $fibers[$i][$j][0];                                       # Only horizontal fibers count to the total thickness
+     }
+   $t = $c if $c > $t;
+  }
+
+  genHash(__PACKAGE__."::Layout",                                               # Details of layout
+    chip           => $chip,                                                    # Chip being masked
+    positionsArray => \@positions,                                              # Position array
+    positionsHash  => \%positions,                                              # Position hash
+    fibers         => \@fibers,                                                 # Fibers after collapse
+    width          => $width,                                                   # Width of drawing
+    steps          => $options{steps},                                          # Steps in simulation
+    thickness      => $t,                                                       # Width of the thickest fiber bundle
+   );
+ }
+
+sub Silicon::Chip::Layout::draw($%)                                             # Draw a mask for the gates.
+ {my ($layout, %options) = @_;                                                  # Layout, options
+  my $chip      = $layout->chip;                                                # Chip being masked
+  my %gates     = $chip->gates->%*;                                             # Gates on chip
+  my $title     = $chip->title;                                                 # Title of chip
+  my @fibers    = $layout->fibers->@*;                                          # Squares of the page, each of which can either be undefined or contain the name of the fiber crossing it from left to right or up and down
+  my @positions = $layout->positionsArray->@*;                                  # Position of each gate indexed by position in layout
+  my %positions = $layout->positionsHash ->%*;                                  # Position of each gate indexed by gate name
+  my $width     = $layout->width;                                               # Width of page consumed so far until it becomes the page width.
+  my $steps     = $layout->steps;                                               # Number of steps to equilibrium
+  my $thickness = $layout->thickness;                                           # Thickness of fiber bundle
+
+  my sub fs {0.2} my sub fw {0.02}  my sub fl {0.25}                            # Font sizes
+  my sub Fs {0.4} my sub Fw {0.04}  my sub Fl {0.50}
+  my sub op0 {q(transparent)}
+
+  my @defaults = (defaults=>                                                    # Default values
+   {stroke_width => fw,
+    font_size    => fs,
+    fill         => q(transparent)});
+
+  my $svg = Svg::Simple::new(@defaults, %options, grid=>1);                     # Draw each gate via Svg
+
+  my $py = Fl;
+  if (defined($title))                                                          # Title if known
+   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
+      stroke_width=>Fw, font_size=>Fs, z=>-1,
+      cdata=>$title);
+   }
+
+  $py += Fl;
+  if (defined($steps))                                                          # Number of steps taken if known
+   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
+      stroke_width=>Fw, font_size=>Fs, z=>-1,
+      cdata=>"$steps steps");
+   }
+
+  $py += Fl;
+  if (defined($thickness))                                                      # Thickness of bundle
+   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
+      stroke_width=>Fw, font_size=>Fs, z=>-1,
+      cdata=>"$thickness thick");
+   }
+
+  for my $p(@positions)                                                         # Draw each gate
+   {my $x = $p->x; my $y = $p->y; my $w = $p->width; my $c = $p->color;
+    my $io = $p->inPin || $p->outPin;
+    $svg->circle(cx => $x+1/2, cy=>$y+1/2, r=>1/2, stroke=>$c) if  $io;         # Circle for io pin
+    $svg->rect(x=>$x, y=>$y, width=>$w, height=>1, stroke=>$c) if !$io;         # Rectangle for non io gate
+
+    if (defined(my $v = $p->value))                                             # Value of gate if known
+     {$svg->text(
+       x                 => $p->x,
+       y                 => $p->y,
        fill              =>"black",
        stroke_width      => Fw,
        font_size         => Fs,
-       text_anchor       => $g->io != gateOuterOutput ? "start": "end",
+       text_anchor       => !$p->outPin ? "start": "end",
        dominant_baseline => "hanging",
        cdata             => $v ? "1" : "0");
      }
 
-    if (defined(my $t = $$changed{$g->output}) and !$g->io)                     # Gate change time if known for a non io gate
-     {$s->text(
-       x                 => $w + ($g->io != gateOuterOutput ? $x : $x + 1),
-       y                 => 1 + $y,
-       fill              =>"black",
+    if (defined(my $t = $p->changed) and !$p->inPin and !$p->outPin)            # Gate change time if known for a non io gate
+     {$svg->text(
+       x                 => $p->x + $p->width,
+       y                 => $p->y + 1,
+       fill              => "darkBlue",
        stroke_width      => fw,
        font_size         => fs,
        text_anchor       => "end",
@@ -1078,74 +1227,122 @@ my sub printSvg2($%)  ## Probably obsolete - draws inputs down left hand side in
 
     my sub ot($$$$)                                                             # Output svg text
      {my ($dy, $fill, $pos, $text) = @_;
-      $s->text(x                 => $x+$w/2,
-               y                 => $y+$dy,
-               fill              => $fill,
-               text_anchor       => "middle",
-               dominant_baseline => $pos,
-               cdata             => $text);
+      $svg->text(x                 => $p->x+$p->width/2,
+                 y                 => $p->y+$dy,
+                 fill              => $fill,
+                 text_anchor       => "middle",
+                 dominant_baseline => $pos,
+                 cdata             => $text);
       }
 
-    ot(5/12, "red",      "auto",    $g->type);                                  # Type of gate
-    ot(7/12, "darkblue", "hanging", $g->output);
+    ot(5/12, "red",      "auto",    $p->type);                                  # Type of gate
+    ot(7/12, "darkblue", "hanging", $p->output);
 
-    if ($g->io != gateOuterInput)                                               # Not an input pin
-     {my %i = $g->inputs ? $g->inputs->%* : ();
-      my @i = sort values %i;                                                   # Connections to each gate
-      my $o = $g->output;
+    my @i = $p->inputValues->@*;
 
-      for my $i(keys @i)                                                        # Connections to each gate
-       {my $P = $p{$i[$i]};                                                     # Source gate
-        defined($P) or confess <<"END";
-No such gate as: '$i[$i]' on gate $o
-END
-        my $X = $P->x; my $Y = $P->y; my $W = $P->width; my $G = $P->gate;      # Position of gate
-        my $dx = $i + 1/2;
-        my $dy = $Y < $y ?  0 : 1;
-        my $dX = $X < $x ? $W : 0;
-        my $dY = $Y < $y ?  0 : 0;
-        my $cx = $x+$dx;                                                        # Horizontal line corner x
-        my $cy = $Y+$dY+1/2;                                                    # Horizontal line corner y
+    for my $i(keys @i)                                                          # Draw input values to each pin on the gate
+     {next if $p->inPin or $p->outPin;
+      my $v = $p->inputValues->[$i];
+      if (defined($v))
+       {$svg->text(
+          x                 => $p->x + $i + 1/2,
+          y                 => $p->y,
+          fill              => "darkRed",
+          stroke_width      => fw,
+          font_size         => fs,
+          text_anchor       => "middle",
+          dominant_baseline => "hanging",
+          cdata             => $v ? "1" : "0");
+       }
+     }
+   }
 
-        my $xc = $X < $x ? q(black) : q(darkBlue);                              # Horizontal line color
-        my $x2 = $g->io == gateOuterOutput ? $cx - 1/2 : $cx;
-        $s->line(x1=>$X+$dX, x2=>$x2, y1=>$cy, y2=>$cy,    stroke=>$xc);        # Outgoing value along horizontal lines
-
-        my $yc = $Y < $y ? q(purple) : q(darkRed);                              # Vertical lines
-
-        if ($g->io != gateOuterOutput)                                          # Incoming value along vertical line - not needed for outer output gates
-         {$s->line(x1=>$cx,   x2=>$cx, y1=>$cy, y2=>$y+$dy, stroke=>$yc);
-          $s->circle(cx=>$cx, cy=>$cy,    r=>0.06, fill=>"red");                # Line corner
-          $s->circle(cx=>$x2, cy=>$y+$dy, r=>0.04, fill=>"blue");               # Line entering gate
+  if (1)                                                                        # Show fiber names
+   {for my $i(keys @fibers)
+     {for my $j(keys $fibers[$i]->@*)
+       {if (defined(my $n = $fibers[$i][$j][0]))                                # Horizontal
+         {$svg->text(
+            x                 => $i+1/2,
+            y                 => $j+1/2,
+            fill              =>"black",
+            stroke_width      => fw,
+            font_size         => fs,
+            text_anchor       => 'middle',
+            dominant_baseline => 'auto',
+            cdata             => $n,
+           )# if $n eq "a4" || $n eq "a4";
          }
-        else                                                                    # External output gate
-         {$s->circle(cx=>$x2,   cy=>$y+$dy-1/2, r=>0.04, fill=>"blue");         # Line entering output
-         }
-
-        $s->circle(cx=>$X+$W, cy=>$cy,    r=>0.04, fill=>"red");                # Line exiting gate
-
-        if (defined(my $v = $$values{$G->output}) and $g->io != gateOuterOutput)# Value of gate if known except for output gates written else where
-         {$s->text(
-            x            => $cx,
-            y            => $y+$dy+($X < $x ? 0.1 : -0.1),
-            fill         => "black",
-            stroke_width => fw,
-            font_size    => fs,
-            text_anchor  => "middle",
-            $X < $x ? (dominant_baseline=>"hanging") : (),
-            cdata        =>  $v ? "1" : "0");
+        if (defined(my $n = $fibers[$i][$j][1]))                                # Vertical
+         {$svg->text(
+            x                 => $i+1/2,
+            y                 => $j+1/2,
+            fill              =>"red",
+            stroke_width      => fw,
+            font_size         => fs,
+            text_anchor       => 'middle',
+            dominant_baseline => 'hanging',
+            cdata             => $n,
+           )# if $n eq "a4" || $n eq "a4";
          }
        }
      }
    }
-  my $t = $s->print;
-  return owf(fpe($options{svg}, q(svg)), $t) if $options{svg};
+
+  if (1)                                                                        # Show fiber lines
+   {my @h = (stroke =>"darkgreen", stroke_width => Fw);                         # Fiber lines horizontal
+    my @v = (stroke =>"darkblue",  stroke_width => Fw);                         # Fiber lines vertical
+    for my $i(keys @fibers)
+     {for my $j(keys $fibers[$i]->@*)
+       {my $h = $fibers[$i][$j][0];                                             # Horizontal
+        my $v = $fibers[$i][$j][1];                                             # Vertical
+
+        if (defined($h) and defined($v) and $h eq $v)                           # Cross
+         {my $hl = $fibers[$i-1][$j][0] //'';                                   # Left horizontal
+          my $hr = $fibers[$i+1][$j][0] //'';                                   # Right horizontal
+          my $va = $fibers[$i][$j-1][1] //'';                                   # Vertically above
+          my $vb = $fibers[$i][$j+1][1] //'';                                   # Vertically below
+          if ($hl eq $h or $i == 1)                                             # Left horizontal
+           {$svg->line(x1=>$i,     y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1/2, @h);
+           }
+          if ($hr eq $h)                                                        # Right horizontal
+           {$svg->line(x1=>$i+1/2, y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
+           }
+          if ($va eq $v)                                                        # Vertical above
+           {$svg->line(x1=>$i+1/2, y1=>$j,     x2=>$i+1/2, y2=>$j+1/2, @v);
+           }
+          if ($vb eq $v or $j == $fibers[$i]->$#* - 1)                          # Vertical below
+           {$svg->line(x1=>$i+1/2, y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1,   @v);
+           }
+          $svg->circle(cx=>$i+1/2, cy=>$j+1/2, r=>1.5*Fw, fill=>"darkRed");     # Circle indicating change of direction in fiber
+         }
+        else                                                                    # Straight
+         {if (defined($h))                                                      # Horizontal
+           {$svg->line(x1=>$i, y1=>$j+1/2, x2=>$i+1, y2=>$j+1/2,
+              stroke            =>"darkgreen",
+              stroke_width      => Fw,
+             )# if $n eq "a4" || $n eq "a4";
+           }
+          if (defined($v))                                                      # Vertical
+           {$svg->line(x1=>$i+1/2, y1=>$j, x2=>$i+1/2, y2=>$j+1,
+              stroke            =>"darkblue",
+              stroke_width      => Fw,
+             )# if $n eq "a4" || $n eq "a4";
+           }
+         }
+       }
+     }
+   }
+
+  my $t = $svg->print;                                                          # Text of svg
+  my $f = $options{svg};                                                        # Svg file
+  return owf(fpe($f, q(svg)), $t) if $f;                                        # Draw bundle as an svg drawing
   $t
  }
 
-sub Silicon::Chip::Simulation::printSvg($%)                                     # Print simulation results as svg.
- {my ($sim, %options) = @_;                                                     # Simulation, options
-  printSvg($sim->chip, %options, values=>$sim->values);
+sub drawMask($%)                                                                # Draw a mask for the gates.
+ {my ($chip, %options) = @_;                                                    # Chip, options
+  my $layout    = layoutAsFiberBundle($chip, %options);                         # Gates on chip
+     $layout->draw(%options);
  }
 
 #D1 Basic Circuits                                                              # Some well known basic circuits.
@@ -1674,10 +1871,14 @@ sub simulate($$%)                                                               
    {my %changes = simulationStep $c, \%values;                                  # Changes made
 
     if (!keys %changes)                                                         # Keep going until nothing changes
-     {my $svg;
-      if ($options{svg})                                                        # Draw the gates using svg with the final values attached
-       {$svg = printSvg $c, values=>\%values, changed=>\%changed,
-                        steps=>$t, %options;
+     {my $svg;                                                                  # Svg drawing of chip if requested
+#      if ($options{svg})                                                        # Draw the gates using svg with the final values attached
+#       {$svg = printSvg $c, values=>\%values, changed=>\%changed,
+#                        steps=>$t, %options;
+#       }
+      if ($options{svg})                                                        # Layout the gates as a fiber bundle
+       {$svg = drawMask $c, values=>\%values, changed=>\%changed,
+          steps=>$t, %options;
        }
       return simulationResults $chip, values=>\%values, changed=>\%changed,     # Keep going until nothing changes
                steps=>$t, svg=>$svg;
@@ -1784,8 +1985,8 @@ Create a new L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 B<Example:>
 
 
-  if (1)                                                                          
-  
+  if (1)
+
    {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->one ("one");
@@ -1799,12 +2000,12 @@ B<Example:>
     is_deeply($s->value("o1"), 1);
     is_deeply($s->value("o2"), 0);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/oneZero.svg">
-  
+
   if (1)                                                                           # Single AND gate
-  
+
    {my $c = Silicon::Chip::newChip;  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->input ("i1");
@@ -1815,38 +2016,38 @@ B<Example:>
     ok($s->steps         == 2);
     ok($s->value("and1") == 1);
    }
-  
-  if (1)                                                                          # 4 bit equal 
+
+  if (1)                                                                          # 4 bit equal
    {my $B = 4;                                                                    # Number of bits
-  
-  
+
+
     my $c = Silicon::Chip::newChip(title=><<"END");                               # Create chip  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
   $B Bit Equals
   END
     $c->input ("a$_")                 for 1..$B;                                  # First number
     $c->input ("b$_")                 for 1..$B;                                  # Second number
-  
+
     $c->nxor  ("e$_", "a$_", "b$_")   for 1..$B;                                  # Test each bit for equality
     $c->and   ("and", {map{$_=>"e$_"}     1..$B});                                # And tests together to get total equality
-  
+
     $c->output("out", "and");                                                     # Output gate
-  
+
     my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                           b1=>1, b2=>0, b3=>1, b4=>0},
                           svg=>q(svg/Equals));                                    # Svg drawing of layout
-  
+
     is_deeply($s->steps,        3);                                               # Three steps
     is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
-  
+
     my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                           b1=>1, b2=>0, b3=>1, b4=>0});
     is_deeply($t->value("out"), 0);                                               # Out is 0 for not equals
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
-  
+
 
 =head2 gate($chip, $type, $output, $input1, $input2)
 
@@ -1862,7 +2063,7 @@ A L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> chosen from B<and|conti
 B<Example:>
 
 
-  
+
   if (1)                                                                           # Two AND gates driving an OR gate  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
    {my $c = newChip;
@@ -1884,7 +2085,7 @@ B<Example:>
     ok($s->steps        == 3);
     ok($s->value("o")   == 0);
    }
-  
+
 
 =head2 Buses
 
@@ -1907,16 +2108,16 @@ Set the size of a bits bus.
 B<Example:>
 
 
-  if (1)                                                                           
+  if (1)
    {my $c = newChip();
-  
+
     $c->setSizeBits ('i', 2);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->setSizeWords('j', 3, 2);
     is_deeply($c->sizeBits,  {i => 2, j_1 => 2, j_2 => 2, j_3 => 2});
     is_deeply($c->sizeWords, {j => [3, 2]});
    }
-  
+
 
 =head4 bits($chip, $name, $bits, $value, %options)
 
@@ -1932,25 +2133,25 @@ Create a bus set to a specified number.
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $N = 4;
     for my $i(0..2**$N-1)
      {my $c = Silicon::Chip::newChip;
-  
+
       $c->bits      ("c", $N, $i);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       $c->outputBits("o", "c");
-  
+
       my $s = $c->simulate({}, $i == 3 ? (svg=>q(svg/bits)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps, 2);
       is_deeply($s->bInt("o"), $i);
      }
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/bits.svg">
-  
+
 
 =head4 inputBits   ($chip, $name, $bits, %options)
 
@@ -1965,37 +2166,37 @@ Create an B<input> bus made of bits.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $W = 8;
     my $i = newChip(name=>"not");
-  
+
        $i->inputBits('i', $W);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $i->notBits   (qw(n i));
        $i->outputBits(qw(o n));
-  
+
     my $o = newChip(name=>"outer");
-  
+
        $o->inputBits ('a', $W);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $o->outputBits(qw(A a));
-  
+
        $o->inputBits ('b', $W);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $o->outputBits(qw(B b));
-  
+
     my %i = connectBits($i, 'i', $o, 'A');
     my %o = connectBits($i, 'o', $o, 'b');
     $o->install($i, {%i}, {%o});
-  
+
     my %d = setBits($o, 'a', 0b10110);
     my $s = $o->simulate({%d}, svg=>q(svg/not));
     is_deeply($s->bInt('B'), 0b11101001);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
-  
+
 
 =head4 outputBits  ($chip, $name, $input, %options)
 
@@ -2010,40 +2211,40 @@ Create an B<output> bus made of bits.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $W = 8;
     my $i = newChip(name=>"not");
        $i->inputBits('i', $W);
        $i->notBits   (qw(n i));
-  
+
        $i->outputBits(qw(o n));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my $o = newChip(name=>"outer");
        $o->inputBits ('a', $W);
-  
+
        $o->outputBits(qw(A a));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $o->inputBits ('b', $W);
-  
+
        $o->outputBits(qw(B b));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my %i = connectBits($i, 'i', $o, 'A');
     my %o = connectBits($i, 'o', $o, 'b');
     $o->install($i, {%i}, {%o});
-  
+
     my %d = setBits($o, 'a', 0b10110);
     my $s = $o->simulate({%d}, svg=>q(svg/not));
     is_deeply($s->bInt('B'), 0b11101001);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
-  
-  if (1)                                                                               
+
+  if (1)
    {my @B = ((my $W = 4), (my $B = 2));
-  
+
     my $c = newChip();
        $c->inputWords ('i', @B);
        $c->andWords   (qw(and  i));
@@ -2051,30 +2252,30 @@ B<Example:>
        $c-> orWords   (qw( or  i));
        $c-> orWordsX  (qw( orX i));
        $c->notWords   (qw(n    i));
-  
+
        $c->outputBits (qw(And  and));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
        $c->outputBits (qw(AndX andX));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
        $c->outputBits (qw(Or   or));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
        $c->outputBits (qw(OrX  orX));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputWords(qw(N    n));
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords");
-  
+
     is_deeply($s->bInt('And'),  0b1000);
     is_deeply($s->bInt('AndX'), 0b0000);
-  
+
     is_deeply($s->bInt('Or'),  0b1110);
     is_deeply($s->bInt('OrX'), 0b11);
     is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
-  
+
 
 =head4 notBits ($chip, $name, $input, %options)
 
@@ -2089,33 +2290,33 @@ Create a B<not> bus made of bits.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $W = 8;
     my $i = newChip(name=>"not");
        $i->inputBits('i', $W);
-  
+
        $i->notBits   (qw(n i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $i->outputBits(qw(o n));
-  
+
     my $o = newChip(name=>"outer");
        $o->inputBits ('a', $W);
        $o->outputBits(qw(A a));
        $o->inputBits ('b', $W);
        $o->outputBits(qw(B b));
-  
+
     my %i = connectBits($i, 'i', $o, 'A');
     my %o = connectBits($i, 'o', $o, 'b');
     $o->install($i, {%i}, {%o});
-  
+
     my %d = setBits($o, 'a', 0b10110);
     my $s = $o->simulate({%d}, svg=>q(svg/not));
     is_deeply($s->bInt('B'), 0b11101001);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
-  
+
 
 =head4 andBits ($chip, $name, $input, %options)
 
@@ -2130,12 +2331,12 @@ B<and> a bus made of bits.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $W = 8;
-  
+
     my $c = newChip();
        $c-> inputBits('i', $W);
-  
+
        $c->   andBits(qw(and  i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->    orBits(qw(or   i));
@@ -2145,19 +2346,19 @@ B<Example:>
        $c->output    (qw(Or   or));
        $c->output    (qw(nAnd nand));
        $c->output    (qw(nOr  nor));
-  
+
     my %d = setBits($c, 'i', 0b10110);
     my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
-  
+
     is_deeply($s->value("And"),  0);
     is_deeply($s->value("Or"),   1);
     is_deeply($s->value("nAnd"), 1);
     is_deeply($s->value("nOr"),  0);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/andOrBits.svg">
-  
+
 
 =head4 nandBits($chip, $name, $input, %options)
 
@@ -2172,14 +2373,14 @@ B<nand> a bus made of bits.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $W = 8;
-  
+
     my $c = newChip();
        $c-> inputBits('i', $W);
        $c->   andBits(qw(and  i));
        $c->    orBits(qw(or   i));
-  
+
        $c->  nandBits(qw(nand i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->   norBits(qw(nor  i));
@@ -2187,19 +2388,19 @@ B<Example:>
        $c->output    (qw(Or   or));
        $c->output    (qw(nAnd nand));
        $c->output    (qw(nOr  nor));
-  
+
     my %d = setBits($c, 'i', 0b10110);
     my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
-  
+
     is_deeply($s->value("And"),  0);
     is_deeply($s->value("Or"),   1);
     is_deeply($s->value("nAnd"), 1);
     is_deeply($s->value("nOr"),  0);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/andOrBits.svg">
-  
+
 
 =head4 orBits  ($chip, $name, $input, %options)
 
@@ -2214,13 +2415,13 @@ B<or> a bus made of bits.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $W = 8;
-  
+
     my $c = newChip();
        $c-> inputBits('i', $W);
        $c->   andBits(qw(and  i));
-  
+
        $c->    orBits(qw(or   i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->  nandBits(qw(nand i));
@@ -2229,19 +2430,19 @@ B<Example:>
        $c->output    (qw(Or   or));
        $c->output    (qw(nAnd nand));
        $c->output    (qw(nOr  nor));
-  
+
     my %d = setBits($c, 'i', 0b10110);
     my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
-  
+
     is_deeply($s->value("And"),  0);
     is_deeply($s->value("Or"),   1);
     is_deeply($s->value("nAnd"), 1);
     is_deeply($s->value("nOr"),  0);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/andOrBits.svg">
-  
+
 
 =head4 norBits ($chip, $name, $input, %options)
 
@@ -2256,34 +2457,34 @@ B<nor> a bus made of bits.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $W = 8;
-  
+
     my $c = newChip();
        $c-> inputBits('i', $W);
        $c->   andBits(qw(and  i));
        $c->    orBits(qw(or   i));
        $c->  nandBits(qw(nand i));
-  
+
        $c->   norBits(qw(nor  i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->output    (qw(And  and));
        $c->output    (qw(Or   or));
        $c->output    (qw(nAnd nand));
        $c->output    (qw(nOr  nor));
-  
+
     my %d = setBits($c, 'i', 0b10110);
     my $s = $c->simulate({%d}, svg=>q(svg/andOrBits));
-  
+
     is_deeply($s->value("And"),  0);
     is_deeply($s->value("Or"),   1);
     is_deeply($s->value("nAnd"), 1);
     is_deeply($s->value("nOr"),  0);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/andOrBits.svg">
-  
+
 
 =head3 Words
 
@@ -2303,16 +2504,16 @@ Set the size of a bits bus.
 B<Example:>
 
 
-  if (1)                                                                           
+  if (1)
    {my $c = newChip();
     $c->setSizeBits ('i', 2);
-  
+
     $c->setSizeWords('j', 3, 2);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($c->sizeBits,  {i => 2, j_1 => 2, j_2 => 2, j_3 => 2});
     is_deeply($c->sizeWords, {j => [3, 2]});
    }
-  
+
 
 =head4 words   ($chip, $name, $bits, @values)
 
@@ -2327,10 +2528,10 @@ Create a word bus set to specified numbers.
 B<Example:>
 
 
-  if (1)                                                                           # Internal input gate   
+  if (1)                                                                           # Internal input gate
    {my @n = qw(3 2 1 2 3);
     my $c = newChip();
-  
+
        $c->words('i', 2, @n);                                                     # Input  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputWords(qw(o i));                                                  # Output
@@ -2338,11 +2539,11 @@ B<Example:>
     is_deeply($s->steps, 2);
     is_deeply([$s->wInt("i")], [@n]);
    }
-  
-  if (1)                                                                           # Internal input gate   
+
+  if (1)                                                                           # Internal input gate
    {my @n = qw(3 2 1 2 3);
     my $c = newChip();
-  
+
        $c->words('i', 2, @n);                                                     # Input  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputWords(qw(o i));                                                  # Output
@@ -2350,7 +2551,7 @@ B<Example:>
     is_deeply($s->steps, 2);
     is_deeply([$s->wInt("i")], [@n]);
    }
-  
+
 
 =head4 inputWords  ($chip, $name, $words, $bits, %options)
 
@@ -2366,22 +2567,22 @@ Create an B<input> bus made of words.
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my @b = ((my $W = 4), (my $B = 3));
-  
+
     my $c = newChip();
-  
+
        $c->inputWords ('i',      @b);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputWords(qw(o i));
-  
+
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
-  
+
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
-  
+
 
 =head4 outputWords ($chip, $name, $input, %options)
 
@@ -2396,22 +2597,22 @@ Create an B<output> bus made of words.
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my @b = ((my $W = 4), (my $B = 3));
-  
+
     my $c = newChip();
        $c->inputWords ('i',      @b);
-  
+
        $c->outputWords(qw(o i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
-  
+
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
-  
+
 
 =head4 notWords($chip, $name, $input, %options)
 
@@ -2426,16 +2627,16 @@ Create a B<not> bus made of words.
 B<Example:>
 
 
-  if (1)                                                                               
+  if (1)
    {my @B = ((my $W = 4), (my $B = 2));
-  
+
     my $c = newChip();
        $c->inputWords ('i', @B);
        $c->andWords   (qw(and  i));
        $c->andWordsX  (qw(andX i));
        $c-> orWords   (qw( or  i));
        $c-> orWordsX  (qw( orX i));
-  
+
        $c->notWords   (qw(n    i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits (qw(And  and));
@@ -2445,15 +2646,15 @@ B<Example:>
        $c->outputWords(qw(N    n));
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords");
-  
+
     is_deeply($s->bInt('And'),  0b1000);
     is_deeply($s->bInt('AndX'), 0b0000);
-  
+
     is_deeply($s->bInt('Or'),  0b1110);
     is_deeply($s->bInt('OrX'), 0b11);
     is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
-  
+
 
 =head4 andWords($chip, $name, $input, %options)
 
@@ -2468,12 +2669,12 @@ B<and> a bus made of words to produce a single word.
 B<Example:>
 
 
-  if (1)                                                                               
+  if (1)
    {my @B = ((my $W = 4), (my $B = 2));
-  
+
     my $c = newChip();
        $c->inputWords ('i', @B);
-  
+
        $c->andWords   (qw(and  i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->andWordsX  (qw(andX i));
@@ -2487,29 +2688,29 @@ B<Example:>
        $c->outputWords(qw(N    n));
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords");
-  
+
     is_deeply($s->bInt('And'),  0b1000);
     is_deeply($s->bInt('AndX'), 0b0000);
-  
+
     is_deeply($s->bInt('Or'),  0b1110);
     is_deeply($s->bInt('OrX'), 0b11);
     is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
-  
-  if (1)                                                                                
+
+  if (1)
    {my @b = ((my $W = 4), (my $B = 3));
-  
+
     my $c = newChip();
        $c->inputWords ('i',      @b);
        $c->outputWords(qw(o i));
-  
+
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
-  
+
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
-  
+
 
 =head4 andWordsX   ($chip, $name, $input, %options)
 
@@ -2524,13 +2725,13 @@ B<and> a bus made of words by and-ing the corresponding bits in each word to mak
 B<Example:>
 
 
-  if (1)                                                                               
+  if (1)
    {my @B = ((my $W = 4), (my $B = 2));
-  
+
     my $c = newChip();
        $c->inputWords ('i', @B);
        $c->andWords   (qw(and  i));
-  
+
        $c->andWordsX  (qw(andX i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c-> orWords   (qw( or  i));
@@ -2543,15 +2744,15 @@ B<Example:>
        $c->outputWords(qw(N    n));
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords");
-  
+
     is_deeply($s->bInt('And'),  0b1000);
     is_deeply($s->bInt('AndX'), 0b0000);
-  
+
     is_deeply($s->bInt('Or'),  0b1110);
     is_deeply($s->bInt('OrX'), 0b11);
     is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
-  
+
 
 =head4 orWords ($chip, $name, $input, %options)
 
@@ -2566,14 +2767,14 @@ B<or> a bus made of words to produce a single word.
 B<Example:>
 
 
-  if (1)                                                                               
+  if (1)
    {my @B = ((my $W = 4), (my $B = 2));
-  
+
     my $c = newChip();
        $c->inputWords ('i', @B);
        $c->andWords   (qw(and  i));
        $c->andWordsX  (qw(andX i));
-  
+
        $c-> orWords   (qw( or  i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c-> orWordsX  (qw( orX i));
@@ -2585,29 +2786,29 @@ B<Example:>
        $c->outputWords(qw(N    n));
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords");
-  
+
     is_deeply($s->bInt('And'),  0b1000);
     is_deeply($s->bInt('AndX'), 0b0000);
-  
+
     is_deeply($s->bInt('Or'),  0b1110);
     is_deeply($s->bInt('OrX'), 0b11);
     is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
-  
-  if (1)                                                                                
+
+  if (1)
    {my @b = ((my $W = 4), (my $B = 3));
-  
+
     my $c = newChip();
        $c->inputWords ('i',      @b);
        $c->outputWords(qw(o i));
-  
+
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
-  
+
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
-  
+
 
 =head4 orWordsX($chip, $name, $input, %options)
 
@@ -2622,15 +2823,15 @@ B<or> a bus made of words by or-ing the corresponding bits in each word to make 
 B<Example:>
 
 
-  if (1)                                                                               
+  if (1)
    {my @B = ((my $W = 4), (my $B = 2));
-  
+
     my $c = newChip();
        $c->inputWords ('i', @B);
        $c->andWords   (qw(and  i));
        $c->andWordsX  (qw(andX i));
        $c-> orWords   (qw( or  i));
-  
+
        $c-> orWordsX  (qw( orX i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->notWords   (qw(n    i));
@@ -2641,15 +2842,15 @@ B<Example:>
        $c->outputWords(qw(N    n));
     my %d = setWords($c, 'i', 0b00, 0b01, 0b10, 0b11);
     my $s = $c->simulate({%d}, svg=>"svg/andOrWords");
-  
+
     is_deeply($s->bInt('And'),  0b1000);
     is_deeply($s->bInt('AndX'), 0b0000);
-  
+
     is_deeply($s->bInt('Or'),  0b1110);
     is_deeply($s->bInt('OrX'), 0b11);
     is_deeply([$s->wInt('N')], [3, 2, 1, 0]);
    }
-  
+
 
 =head2 Connect
 
@@ -2668,23 +2869,23 @@ Connect a previously defined input gate to the output of another gate on the sam
 B<Example:>
 
 
-  if (1)                                                                          # Internal input gate   
+  if (1)                                                                          # Internal input gate
    {my $c = newChip();
        $c->input ('i');                                                           # Input
        $c->input ('j');                                                           # Internal input which we will connect to later
        $c->output(qw(o j));                                                       # Output
-  
-  
+
+
        $c->connectInput(qw(j i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my $s = $c->simulate({i=>1});
     is_deeply($s->steps, 1);
     is_deeply($s->value("j"), undef);
     is_deeply($s->value("o"), 1);
    }
-  
-  if (1)                                                                           # Internal input gate   
+
+  if (1)                                                                           # Internal input gate
    {my @n = qw(3 2 1 2 3);
     my $c = newChip();
        $c->words('i', 2, @n);                                                     # Input
@@ -2693,8 +2894,8 @@ B<Example:>
     is_deeply($s->steps, 2);
     is_deeply([$s->wInt("i")], [@n]);
    }
-  
-  if (1)                                                                           # Internal input gate   
+
+  if (1)                                                                           # Internal input gate
    {my @n = qw(3 2 1 2 3);
     my $c = newChip();
        $c->words('i', 2, @n);                                                     # Input
@@ -2703,7 +2904,7 @@ B<Example:>
     is_deeply($s->steps, 2);
     is_deeply([$s->wInt("i")], [@n]);
    }
-  
+
 
 =head3 connectInputBits($chip, $in, $to, %options)
 
@@ -2718,20 +2919,20 @@ Connect a previously defined input bit bus to another bit bus provided the two b
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $N = 5; my $B = 5;
      my $c = newChip();
     $c->bits      ('a', $B, $N);
     $c->inputBits ('i', $N);
     $c->outputBits(qw(o i));
-  
+
     $c->connectInputBits(qw(i a));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $s = $c->simulate({});
     is_deeply($s->steps, 2);
     is_deeply($s->bInt("o"), $N);
    }
-  
+
 
 =head3 connectInputWords   ($chip, $in, $to, %options)
 
@@ -2746,20 +2947,20 @@ Connect a previously defined input word bus to another word bus provided the two
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $W = 6; my $B = 5;
     my $c = newChip();
     $c->words      ('a',     $B, 1..$W);
     $c->inputWords ('i', $W, $B);
     $c->outputWords(qw(o i));
-  
+
     $c->connectInputWords(qw(i a));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my $s = $c->simulate({});
     is_deeply($s->steps, 2);
     is_deeply([$s->wInt("o")], [1..$W]);
    }
-  
+
 
 =head2 Install
 
@@ -2784,23 +2985,23 @@ B<Example:>
        $i-> inputBits('i',     1);
        $i->   notBits(qw(n i));
        $i->outputBits(qw(o n));
-  
+
     my $o = newChip(name=>"outer");
        $o->inputBits('i', 1); $o->outputBits(qw(n i));
        $o->inputBits('I', 1); $o->outputBits(qw(N I));
-  
+
     my %i = connectBits($i, 'i', $o, 'n');
     my %o = connectBits($i, 'o', $o, 'I');
-  
+
     $o->install($i, {%i}, {%o});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my %d = $o->setBits('i', 1);
     my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
-  
+
     is_deeply($s->steps,  2);
     is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
    }
-  
+
 
 =head1 Visualize
 
@@ -2817,15 +3018,15 @@ Dump the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> present on a L<
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $c = Silicon::Chip::newChip(title=>"And gate");
     $c->input ("i1");
     $c->input ("i2");
     $c->and   ("and1", [qw(i1 i2)]);
     $c->output("o", "and1");
     my $s = $c->simulate({i1=>1, i2=>1});
-  
-  
+
+
     is_deeply($c->print, <<END);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
   i1                              :     input                           i1
@@ -2833,8 +3034,8 @@ B<Example:>
   and1                            :     and                             i1 i2
   o                               :     output                          and1
   END
-  
-  
+
+
     is_deeply($s->print, <<END);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
   i1                              :   1 input                           i1
@@ -2842,10 +3043,10 @@ B<Example:>
   and1                            :   1 and                             i1 i2
   o                               :   1 output                          and1
   END
-  
+
     ok($s->printSvg ne $c->printSvg);
    }
-  
+
 
 =head2 Silicon::Chip::Simulation::print($sim, %options)
 
@@ -2858,31 +3059,31 @@ Print simulation results as text.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $c = Silicon::Chip::newChip(title=>"And gate");
     $c->input ("i1");
     $c->input ("i2");
     $c->and   ("and1", [qw(i1 i2)]);
     $c->output("o", "and1");
     my $s = $c->simulate({i1=>1, i2=>1});
-  
+
     is_deeply($c->print, <<END);
   i1                              :     input                           i1
   i2                              :     input                           i2
   and1                            :     and                             i1 i2
   o                               :     output                          and1
   END
-  
+
     is_deeply($s->print, <<END);
   i1                              :   1 input                           i1
   i2                              :   1 input                           i2
   and1                            :   1 and                             i1 i2
   o                               :   1 output                          and1
   END
-  
+
     ok($s->printSvg ne $c->printSvg);
    }
-  
+
 
 =head2 printSvg($chip, %options)
 
@@ -2895,33 +3096,33 @@ Mask the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> onto a L<chip|h
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $c = Silicon::Chip::newChip(title=>"And gate");
     $c->input ("i1");
     $c->input ("i2");
     $c->and   ("and1", [qw(i1 i2)]);
     $c->output("o", "and1");
     my $s = $c->simulate({i1=>1, i2=>1});
-  
+
     is_deeply($c->print, <<END);
   i1                              :     input                           i1
   i2                              :     input                           i2
   and1                            :     and                             i1 i2
   o                               :     output                          and1
   END
-  
+
     is_deeply($s->print, <<END);
   i1                              :   1 input                           i1
   i2                              :   1 input                           i2
   and1                            :   1 and                             i1 i2
   o                               :   1 output                          and1
   END
-  
-  
+
+
     ok($s->printSvg ne $c->printSvg);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
    }
-  
+
 
 =head2 Silicon::Chip::Simulation::printSvg ($sim, %options)
 
@@ -2934,31 +3135,31 @@ Print simulation results as svg.
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $c = Silicon::Chip::newChip(title=>"And gate");
     $c->input ("i1");
     $c->input ("i2");
     $c->and   ("and1", [qw(i1 i2)]);
     $c->output("o", "and1");
     my $s = $c->simulate({i1=>1, i2=>1});
-  
+
     is_deeply($c->print, <<END);
   i1                              :     input                           i1
   i2                              :     input                           i2
   and1                            :     and                             i1 i2
   o                               :     output                          and1
   END
-  
+
     is_deeply($s->print, <<END);
   i1                              :   1 input                           i1
   i2                              :   1 input                           i2
   and1                            :   1 and                             i1 i2
   o                               :   1 output                          and1
   END
-  
+
     ok($s->printSvg ne $c->printSvg);
    }
-  
+
 
 =head1 Basic Circuits
 
@@ -2975,13 +3176,13 @@ Gate name from single index.
 B<Example:>
 
 
-  if (1)                                                                           
-  
+  if (1)
+
    {is_deeply( n(a,1),   "a_1");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply(nn(a,1,2), "a_1_2");
    }
-  
+
 
 =head2 nn  ($c, $i, $j)
 
@@ -2995,13 +3196,13 @@ Gate name from double index.
 B<Example:>
 
 
-  if (1)                                                                           
+  if (1)
    {is_deeply( n(a,1),   "a_1");
-  
+
     is_deeply(nn(a,1,2), "a_1_2");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
    }
-  
+
 
 =head2 Comparisons
 
@@ -3023,29 +3224,29 @@ B<Example:>
 
   if (1)                                                                           # Compare unsigned integers
    {my $B = 2;
-  
+
     my $c = Silicon::Chip::newChip(title=><<"END");
   $B Bit Compare Equal
   END
     $c->inputBits($_, $B) for qw(a b);                                            # First and second numbers
-  
+
     $c->compareEq(qw(o a b));                                                     # Compare equals  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->output   (qw(out o));                                                     # Comparison result
-  
+
     for   my $i(0..2**$B-1)                                                       # Each possible number
      {for my $j(0..2**$B-1)                                                       # Each possible number
        {my %a = $c->setBits('a', $i);                                             # Number a
         my %b = $c->setBits('b', $j);                                             # Number b
-  
+
         my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>"svg/CompareEq$B"):()); # Svg drawing of layout
-  
+
         is_deeply($s->value("out"), $i == $j ? 1 : 0);                            # Equal
         is_deeply($s->steps, 3);                                                  # Number of steps to stability
        }
      }
    }
-  
+
 
 =head3 compareGt   ($chip, $output, $a, $b, %options)
 
@@ -3067,23 +3268,23 @@ B<Example:>
   $B Bit Compare more than
   END
     $c->inputBits($_, $B) for qw(a b);                                            # First and second numbers
-  
+
     $c->compareGt(qw(o a b));                                                     # Compare more than  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->output   (qw(out o));                                                     # Comparison result
-  
+
     for   my $i(0..2**$B-1)                                                       # Each possible number
      {for my $j(0..2**$B-1)                                                       # Each possible number
        {my %a = $c->setBits('a', $i);                                             # Number a
         my %b = $c->setBits('b', $j);                                             # Number b
-  
+
         my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>"svg/CompareGt$B"):()); # Svg drawing of layout
         is_deeply($s->value("out"), $i > $j ? 1 : 0);                             # More than
         is_deeply($s->steps, 4);                                                  # Number of steps to stability
        }
      }
    }
-  
+
 
 =head3 compareLt   ($chip, $output, $a, $b, %options)
 
@@ -3105,23 +3306,23 @@ B<Example:>
   $B Bit Compare Less Than
   END
     $c->inputBits($_, $B) for qw(a b);                                            # First and second numbers
-  
+
     $c->compareLt(qw(o a b));                                                     # Compare less than  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->output   (qw(out o));                                                     # Comparison result
-  
+
     for   my $i(0..2**$B-1)                                                       # Each possible number
      {for my $j(0..2**$B-1)                                                       # Each possible number
        {my %a = $c->setBits('a', $i);                                             # Number a
         my %b = $c->setBits('b', $j);                                             # Number b
-  
+
         my $s = $c->simulate({%a, %b}, $i==1&&$j==2?(svg=>"svg/CompareLt$B"):()); # Svg drawing of layout
         is_deeply($s->value("out"), $i < $j ? 1 : 0);                             # More than
         is_deeply($s->steps, 4);                                                  # Number of steps to stability
        }
      }
    }
-  
+
 
 =head3 chooseFromTwoWords  ($chip, $output, $a, $b, $choose, %options)
 
@@ -3138,35 +3339,35 @@ Choose one of two words based on a bit.  The first word is chosen if the bit is 
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 4;
-  
+
     my $c = newChip();
        $c->inputBits('a', $B);                                                    # First word
        $c->inputBits('b', $B);                                                    # Second word
        $c->input    ('c');                                                        # Chooser
-  
+
        $c->chooseFromTwoWords(qw(o a b c));                                       # Generate gates  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits('out', 'o');                                                # Result
-  
+
     my %a = setBits($c, 'a', 0b0011);
     my %b = setBits($c, 'b', 0b1100);
-  
-  
+
+
     my $s = $c->simulate({%a, %b, c=>1}, svg=>q(svg/chooseFromTwoWords));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->steps,               4);
     is_deeply($s->bInt('out'), 0b1100);
-  
+
     my $t = $c->simulate({%a, %b, c=>0});
     is_deeply($t->steps,               4);
     is_deeply($t->bInt('out'), 0b0011);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/chooseFromTwoWords.svg">
-  
+
 
 =head3 enableWord  ($chip, $output, $a, $enable, %options)
 
@@ -3182,33 +3383,33 @@ Output a word or zeros depending on a choice bit.  The first word is chosen if t
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 4;
-  
+
     my $c = newChip();
        $c->inputBits ('a', $B);                                                   # Word
        $c->input     ('c');                                                       # Choice bit
-  
+
        $c->enableWord(qw(o a c));                                                 # Generate gates  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits(qw(out o));                                                 # Result
-  
+
     my %a = setBits($c, 'a', 3);
-  
-  
+
+
     my $s = $c->simulate({%a, c=>1}, svg=>q(svg/enableWord));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->steps,       2);
     is_deeply($s->bInt('out'), 3);
-  
+
     my $t = $c->simulate({%a, c=>0});
     is_deeply($t->steps,       2);
     is_deeply($t->bInt('out'), 0);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/enableWord.svg">
-  
+
 
 =head2 Masks
 
@@ -3227,19 +3428,19 @@ Convert a mask B<i> known to have at most a single bit on - also known as a B<po
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 4;
     my $N = 2**$B-1;
-  
+
     my $c = Silicon::Chip::newChip(title=><<"END");
   $B bits point mask to integer
   END
     $c->inputBits         (qw(    i), $N);                                        # Mask with no more than one bit on
-  
+
     $c->pointMaskToInteger(qw(o   i));                                            # Convert  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $c->outputBits        (qw(out o));                                            # Mask with no more than one bit on
-  
+
     for my $i(0..$N)                                                              # Each position of mask
      {my %i = setBits($c, 'i', $i ? 1<<($i-1) : 0);                               # Point in each position with zero representing no position
       my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/point$B") : ());
@@ -3249,7 +3450,7 @@ B<Example:>
       is_deeply($n, $i);
      }
    }
-  
+
 
 =head3 integerToPointMask  ($chip, $output, $input, %options)
 
@@ -3264,30 +3465,30 @@ Convert an integer B<i> of specified width to a point mask B<m>. If the input in
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 3;
     my $N = 2**$B-1;
-  
+
     my $c = Silicon::Chip::newChip(title=><<"END");
   $B bit integer to $N bit monotone mask.
   END
        $c->inputBits         (qw(  i), $B);                                       # Input bus
-  
+
        $c->integerToPointMask(qw(m i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits        (qw(o m));
     for my $i(0..$N)                                                              # Each position of mask
      {my %i = setBits($c, 'i', $i);
-  
+
       my $s = $c->simulate(\%i, $i == 5 ? (svg=>"svg/integerToPointMask$B"):());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps, 3);
-  
+
       my $r = $s->bInt('o');                                                      # Mask values
       is_deeply($r, $i ? 1<<($i-1) : 0);                                          # Expected mask
      }
    }
-  
+
 
 =head3 monotoneMaskToInteger   ($chip, $output, $input, %options)
 
@@ -3302,31 +3503,31 @@ Convert a monotone mask B<i> to an output number B<r> representing the location 
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 4;
     my $N = 2**$B-1;
-  
+
     my $c = Silicon::Chip::newChip(title=><<"END");
   $N bit monotone mask to $B bit integer
   END
        $c->inputBits            ('i',     $N);
-  
+
        $c->monotoneMaskToInteger(qw(m i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits           (qw(o m));
-  
+
     for my $i(0..$N-1)                                                            # Each monotone mask
      {my %i = setBits($c, 'i', $i > 0 ? 1<<$i-1 : 0);
       my $s = $c->simulate(\%i,
-  
+
         $i == 5 ? (svg=>"svg/monotoneMaskToInteger$B") : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
       is_deeply($s->steps, 4);
       is_deeply($s->bInt('m'), $i);
      }
    }
-  
+
 
 =head3 monotoneMaskToPointMask ($chip, $output, $input, %options)
 
@@ -3341,16 +3542,16 @@ Convert a monotone mask B<i> to a point mask B<o> representing the location in t
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 4;
-  
+
     my $c = newChip();
        $c->inputBits('m', $B);                                                    # Monotone mask
-  
+
        $c->monotoneMaskToPointMask(qw(o m));                                      # Generate gates  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits('out', 'o');                                                # Point mask
-  
+
     for my $i(0..$B)
      {my %m = $c->setBits('m', eval '0b'.(1 x $i).('0' x ($B-$i)));
       my $s = $c->simulate({%m});
@@ -3358,7 +3559,7 @@ B<Example:>
       is_deeply($s->bInt('out'), $i ? (1<<($B-1)) / (1<<($i-1)) : 0);
      }
    }
-  
+
 
 =head3 integerToMonotoneMask   ($chip, $output, $input, %options)
 
@@ -3373,19 +3574,19 @@ Convert an integer B<i> of specified width to a monotone mask B<m>. If the input
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 4;
     my $N = 2**$B-1;
-  
+
     my $c = Silicon::Chip::newChip(title=><<"END");
   Convert $B bit integer to $N bit monotone mask
   END
        $c->inputBits            ('i', $B);                                        # Input gates
-  
+
        $c->integerToMonotoneMask(qw(m i));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits           (qw(o m));                                        # Output gates
-  
+
     for my $i(0..$N)                                                              # Each position of mask
      {my %i = setBits($c, 'i', $i);                                               # The number to convert
       my $s = $c->simulate(\%i, $i == 2 ? (svg=>"svg/integerToMontoneMask$B"):());
@@ -3393,7 +3594,7 @@ B<Example:>
       is_deeply($s->bInt('o'), $i > 0 ? ((1<<$N)-1)>>($i-1)<<($i-1) : 0);         # Expected mask
      }
    }
-  
+
 
 =head3 chooseWordUnderMask ($chip, $output, $input, $mask, %options)
 
@@ -3409,28 +3610,28 @@ Choose one of a specified number of words B<w>, each of a specified width, using
 B<Example:>
 
 
-  if (1)                                                                            
+  if (1)
    {my $B = 3; my $W = 4;
-  
+
     my $c = Silicon::Chip::newChip(title=><<"END");
   Choose one of $W words of $B bits
   END
        $c->inputWords         ('w',       $W, $B);
        $c->inputBits          ('m',       $W);
-  
+
        $c->chooseWordUnderMask(qw(W w m));  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits         (qw(o W));
-  
+
     my %i = setWords($c, 'w', 0b000, 0b001, 0b010, 0b0100);
     my %m = setBits ($c, 'm', 1<<2);                                              # Choose the third word
-  
+
     my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
-  
+
     is_deeply($s->steps, 3);
     is_deeply($s->bInt('o'), 0b010);
    }
-  
+
 
 =head3 findWord($chip, $output, $key, $words, %options)
 
@@ -3446,34 +3647,34 @@ Choose one of a specified number of words B<w>, each of a specified width, using
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $B = 3; my $W = 2**$B-1;
-  
+
     my $c = Silicon::Chip::newChip(title=><<END);
   Search $W words of $B bits
   END
        $c->inputBits ('k',       $B);                                             # Search key
        $c->inputWords('w',       2**$B-1, $B);                                    # Words to search
-  
+
        $c->findWord  (qw(m k w));                                                 # Find the word  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
        $c->outputBits(qw(M m));                                                   # Output mask
-  
+
     my %w = setWords($c, 'w', reverse 1..$W);
-  
+
     for my $k(0..$W)                                                              # Each possible key
      {my %k = setBits($c, 'k', $k);
-  
+
       my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->steps, 3);
       is_deeply($s->bInt('M'),$k ? 2**($W-$k) : 0);
      }
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/findWord.svg">
-  
+
 
 =head1 Simulate
 
@@ -3501,33 +3702,33 @@ B<Example:>
     $c->inputBits("b", $B);                                                       # Second number
     $c->nxor (n(e,$_), n(a,$_), n(b,$_)) for 1..$B-1;                             # Test each bit for equality
     $c->gt   (n(g,$_), n(a,$_), n(b,$_)) for 1..$B;                               # Test each bit pair for greater
-  
+
     for my $b(2..$B)
      {$c->and(n(c,$b), [(map {n(e, $_)} 1..$b-1), n(g,$b)]);                      # Greater on one bit and all preceding bits are equal
      }
     $c->or    ("or",  [n(g,1), (map {n(c, $_)} 2..$B)]);                          # Any set bit indicates that 'a' is more than 'b'
     $c->output("out", "or");                                                      # Output 1 if a > b else 0
-  
-  
+
+
     my %a = $c->setBits('a', 0);                                                  # Number a  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my %b = $c->setBits('b', 0);                                                  # Number b  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my $s = $c->simulate({%a, %b, n(a,2)=>1, n(b,2)=>1});                         # Two equal numbers
     is_deeply($s->value("out"), 0);
-  
+
     my $t = $c->simulate({%a, %b, n(a,2)=>1}, svg=>q(svg/Compare));               # Svg drawing of layout
     is_deeply($t->value("out"), 1);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Compare.svg">
-  
-  if (1)                                                                            
+
+  if (1)
    {my $B = 3; my $W = 4;
-  
+
     my $c = Silicon::Chip::newChip(title=><<"END");
   Choose one of $W words of $B bits
   END
@@ -3535,18 +3736,18 @@ B<Example:>
        $c->inputBits          ('m',       $W);
        $c->chooseWordUnderMask(qw(W w m));
        $c->outputBits         (qw(o W));
-  
+
     my %i = setWords($c, 'w', 0b000, 0b001, 0b010, 0b0100);
-  
+
     my %m = setBits ($c, 'm', 1<<2);                                              # Choose the third word  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
-  
+
     is_deeply($s->steps, 3);
     is_deeply($s->bInt('o'), 0b010);
    }
-  
+
 
 =head2 setWords($chip, $name, @values)
 
@@ -3560,9 +3761,9 @@ Set an array of arrays of gates to an array of numbers prior to running a simula
 B<Example:>
 
 
-  if (1)                                                                            
+  if (1)
    {my $B = 3; my $W = 4;
-  
+
     my $c = Silicon::Chip::newChip(title=><<"END");
   Choose one of $W words of $B bits
   END
@@ -3570,18 +3771,18 @@ B<Example:>
        $c->inputBits          ('m',       $W);
        $c->chooseWordUnderMask(qw(W w m));
        $c->outputBits         (qw(o W));
-  
-  
+
+
     my %i = setWords($c, 'w', 0b000, 0b001, 0b010, 0b0100);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my %m = setBits ($c, 'm', 1<<2);                                              # Choose the third word
-  
+
     my $s = $c->simulate({%i, %m}, svg=>"svg/choose_${W}_$B");
-  
+
     is_deeply($s->steps, 3);
     is_deeply($s->bInt('o'), 0b010);
    }
-  
+
 
 =head2 connectBits ($oc, $o, $ic, $i, %options)
 
@@ -3602,25 +3803,25 @@ B<Example:>
        $i-> inputBits('i',     1);
        $i->   notBits(qw(n i));
        $i->outputBits(qw(o n));
-  
+
     my $o = newChip(name=>"outer");
        $o->inputBits('i', 1); $o->outputBits(qw(n i));
        $o->inputBits('I', 1); $o->outputBits(qw(N I));
-  
-  
+
+
     my %i = connectBits($i, 'i', $o, 'n');  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my %o = connectBits($i, 'o', $o, 'I');  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $o->install($i, {%i}, {%o});
     my %d = $o->setBits('i', 1);
     my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
-  
+
     is_deeply($s->steps,  2);
     is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
    }
-  
+
 
 =head2 connectWords($oc, $o, $ic, $i, $words, $bits, %options)
 
@@ -3643,25 +3844,25 @@ B<Example:>
        $i-> inputWords('i', 1, 1);
        $i->   notWords(qw(n i));
        $i->outputWords(qw(o n));
-  
+
     my $o = newChip(name=>"outer");
        $o->inputWords('i', 1, 1); $o->output(nn('n', 1, 1), nn('i', 1, 1));
        $o->inputWords('I', 1, 1); $o->output(nn('N', 1, 1), nn('I', 1, 1));
-  
-  
+
+
     my %i = connectWords($i, 'i', $o, 'n', 1, 1);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
-  
+
     my %o = connectWords($i, 'o', $o, 'I', 1, 1);  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     $o->install($i, {%i}, {%o});
     my %d = $o->setWords('i', 1);
     my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
-  
+
     is_deeply($s->steps,  2);
     is_deeply($s->values, { "(not 1 n_1_1)" => 0, "i_1_1" => 1, "N_1_1" => 0 });
    }
-  
+
 
 =head2 Silicon::Chip::Simulation::value($simulation, $name, %options)
 
@@ -3675,21 +3876,21 @@ Get the value of a gate as seen in a simulation.
 B<Example:>
 
 
-  if (1)                                                                          # Internal input gate   
+  if (1)                                                                          # Internal input gate
    {my $c = newChip();
        $c->input ('i');                                                           # Input
        $c->input ('j');                                                           # Internal input which we will connect to later
        $c->output(qw(o j));                                                       # Output
-  
+
        $c->connectInput(qw(j i));
-  
+
     my $s = $c->simulate({i=>1});
     is_deeply($s->steps, 1);
     is_deeply($s->value("j"), undef);
     is_deeply($s->value("o"), 1);
    }
-  
-  if (1)                                                                           # Internal input gate   
+
+  if (1)                                                                           # Internal input gate
    {my @n = qw(3 2 1 2 3);
     my $c = newChip();
        $c->words('i', 2, @n);                                                     # Input
@@ -3698,8 +3899,8 @@ B<Example:>
     is_deeply($s->steps, 2);
     is_deeply([$s->wInt("i")], [@n]);
    }
-  
-  if (1)                                                                           # Internal input gate   
+
+  if (1)                                                                           # Internal input gate
    {my @n = qw(3 2 1 2 3);
     my $c = newChip();
        $c->words('i', 2, @n);                                                     # Input
@@ -3708,7 +3909,7 @@ B<Example:>
     is_deeply($s->steps, 2);
     is_deeply([$s->wInt("i")], [@n]);
    }
-  
+
 
 =head2 Silicon::Chip::Simulation::bInt ($simulation, $output, %options)
 
@@ -3722,31 +3923,31 @@ Represent the state of bits in the simulation results as an unsigned binary inte
 B<Example:>
 
 
-  if (1)                                                                             
+  if (1)
    {my $W = 8;
     my $i = newChip(name=>"not");
        $i->inputBits('i', $W);
        $i->notBits   (qw(n i));
        $i->outputBits(qw(o n));
-  
+
     my $o = newChip(name=>"outer");
        $o->inputBits ('a', $W);
        $o->outputBits(qw(A a));
        $o->inputBits ('b', $W);
        $o->outputBits(qw(B b));
-  
+
     my %i = connectBits($i, 'i', $o, 'A');
     my %o = connectBits($i, 'o', $o, 'b');
     $o->install($i, {%i}, {%o});
-  
+
     my %d = setBits($o, 'a', 0b10110);
     my $s = $o->simulate({%d}, svg=>q(svg/not));
     is_deeply($s->bInt('B'), 0b11101001);
    }
-  
+
 
 =for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/not.svg">
-  
+
 
 =head2 Silicon::Chip::Simulation::wInt ($simulation, $output, %options)
 
@@ -3760,20 +3961,20 @@ Represent the state of words in the simulation results as an array of unsigned b
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my @b = ((my $W = 4), (my $B = 3));
-  
+
     my $c = newChip();
        $c->inputWords ('i',      @b);
        $c->outputWords(qw(o i));
-  
+
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
-  
+
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
-  
+
 
 =head2 Silicon::Chip::Simulation::wordXToInteger   ($simulation, $output, %options)
 
@@ -3787,20 +3988,20 @@ Represent the state of words in the simulation results as an array of unsigned b
 B<Example:>
 
 
-  if (1)                                                                                
+  if (1)
    {my @b = ((my $W = 4), (my $B = 3));
-  
+
     my $c = newChip();
        $c->inputWords ('i',      @b);
        $c->outputWords(qw(o i));
-  
+
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
     my $s = $c->simulate({%d}, svg=>"svg/words$W");
-  
+
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
-  
+
 
 =head2 simulate($chip, $inputs, %options)
 
@@ -3814,12 +4015,12 @@ Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gat
 B<Example:>
 
 
-  if (1)                                                                          
+  if (1)
    {my $i = newChip(name=>"inner");
        $i->input ("Ii");
        $i->not   ("In", "Ii");
        $i->output( "Io", "In");
-  
+
     my $o = newChip(name=>"outer");
        $o->input ("Oi1");
        $o->output("Oo1", "Oi1");
@@ -3829,18 +4030,18 @@ B<Example:>
        $o->output("Oo3", "Oi3");
        $o->input ("Oi4");
        $o->output("Oo",  "Oi4");
-  
+
     $o->install($i, {Ii=>"Oo1"}, {Io=>"Oi2"});
     $o->install($i, {Ii=>"Oo2"}, {Io=>"Oi3"});
     $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
-  
-  
+
+
     my $s = $o->simulate({Oi1=>1}, printOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->value("Oo"), 0);
     is_deeply($s->steps,       4);
    }
-  
+
 
 
 =head1 Hash Definitions
@@ -4297,7 +4498,8 @@ END
 
   my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                         b1=>1, b2=>0, b3=>1, b4=>0},
-                        svg=>q(svg/Equals));                                    # Svg drawing of layout
+                        svg=>q(svg/Equals),                                     # Svg drawing of layout
+                        collapse=>q(svg/EqualsCollapse));
 
   is_deeply($s->steps,        3);                                               # Three steps
   is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
@@ -4334,7 +4536,7 @@ END
   is_deeply($t->value("out"), 1);
  }
 
-#latest:;
+latest:;
 if (1)                                                                          #TcompareEq # Compare unsigned integers
  {my $B = 2;
 
@@ -4347,13 +4549,16 @@ END
 
   for   my $i(0..2**$B-1)                                                       # Each possible number
    {for my $j(0..2**$B-1)                                                       # Each possible number
-     {my %a = $c->setBits('a', $i);                                             # Number a
+     {
+my $i = 1; my $j = 1;
+      my %a = $c->setBits('a', $i);                                             # Number a
       my %b = $c->setBits('b', $j);                                             # Number b
 
       my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>"svg/CompareEq$B"):()); # Svg drawing of layout
 
       is_deeply($s->value("out"), $i == $j ? 1 : 0);                            # Equal
       is_deeply($s->steps, 3);                                                  # Number of steps to stability
+exit;
      }
    }
  }
@@ -4554,6 +4759,23 @@ END
  }
 
 #latest:;
+if (1)
+ {my $B = 4;
+  my $N = 2**$B-1;
+
+  my $c = Silicon::Chip::newChip(title=><<"END");
+$N bit monotone mask to $B bit integer
+END
+     $c->inputBits            ('i',     $N);
+     $c->monotoneMaskToInteger(qw(m i));
+     $c->outputBits           (qw(o m));
+
+  my $i = 11;
+  my %i = setBits($c, 'i', $i > 0 ? 1<<$i-1 : 0);
+  my $s = $c->simulate(\%i, svg=>"svg/monotoneMaskToInteger");
+ }
+
+#latest:;
 if (1)                                                                          #TmonotoneMaskToInteger
  {my $B = 4;
   my $N = 2**$B-1;
@@ -4725,6 +4947,23 @@ if (1)                                                                          
 
   is_deeply([$s->wInt('o')], [0..3]);
   is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
+ }
+
+#latest:;
+if (1)
+ {my $B = 4;
+
+  my $c = newChip();
+     $c->inputBits('i', 4);
+     $c->not   (n('n',  1), n('i', 2));  $c->output(n('o',  1), n('n', 1));
+     $c->not   (n('n',  2), n('i', 3));  $c->output(n('o',  2), n('n', 2));
+     $c->not   (n('n',  3), n('i', 4));  $c->output(n('o',  3), n('n', 3));
+     $c->not   (n('n',  4), n('i', 1));  $c->output(n('o',  4), n('n', 4));
+
+  my %a = setBits($c, 'i', 0b0011);
+
+  my $s = $c->simulate({%a}, svg=>q(svg/collapseLeft));
+  is_deeply($s->steps, 2);
  }
 
 #latest:;
