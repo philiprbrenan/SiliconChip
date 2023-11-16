@@ -1101,17 +1101,19 @@ sub layoutAsFiberBundle($%)                                                     
 # dc          |y         |
 #             +--        +---
 
-next unless $a eq "b_2";
+next unless $a eq "o.e_2";
         if (1 and !$wentLeft)                                                   # Collapse down
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going down
-lll "AAAA", dump($i, $j, $a);
           for my $J(j+1..scalar($fibers[i-1]->$#*))                             # Look for an opposite corner
            {last unless defined(v(i,   $J)) and v(i, $J) eq a;                  # Make sure vertical is occupied with expected fiber
             last   if   defined v(i-1, $J);                                     # Vertical is occupied so we will not be able to repurpose it
             k = $J if  !defined h(i-1, $J);                                     # Possible corner as horizontal is free
            }
-          if (defined($k))                                                      # Reroute through new corner
+lll "AAAA", dump($i, $j, $a, k);
+
+          if (defined(k))                                                       # Reroute through new corner
            {h(i,   j) = undef;                                                  # Remove old upper right corner horizontal
+lll "BBBB", dump($i, $j, $a, k);
             v(i,   j) = undef;                                                  # Remove old upper right corner vertical
             v(i-1, j) = a;                                                      # New upper left corner
             h(i-1, j) = undef unless i-1 > 0               and defined(h(i-2, j)) and h(i-2, j) eq a; # Situation x: we might, or might not be on a corner here
