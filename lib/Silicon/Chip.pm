@@ -1070,18 +1070,21 @@ sub layoutAsFiberBundle($%)                                                     
         my $C = v(i+0, j+1);
         next unless defined($a) and defined($b) and defined($B) and defined($C);# Possible corner
         next unless $a eq $b and $b eq $B and $B eq $C;                         # Confirm corner
-
+#next unless $a eq 'i_4';
         my $wentLeft;                                                           # If we collapsed left we made a change and so need to come around again before attempting to collapse down
-        if (0)                                                                  # Collapse left
+        if (1)                                                                  # Collapse left
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going left
 
           for my $I(reverse 0..i-1)                                             # Look for an opposite corner
-           {last if $j+1 < $fibers[$I]->@*;
+           {
+#lll "AAAA", dump($a, $k, $j+1, scalar($fibers[$I]->@*));
+            last if $j+2 >= $fibers[$I]->$#*;
+#lll "BBBB", dump($a, $k);
             last   unless defined(h($I, j)) and h($I, j) eq $a;                 # Make sure horizontal is occupied with expected bus line
+#lll "CCCC", dump($a, $k);
             last   if  defined h($I, j+1);                                      # Horizontal is occupied so we will not be able to repurpose it
             k = $I if !defined v($I, j+1);                                      # Possible opposite because it is not being used vertically
            }
-
           if (defined(k))                                                       # Reroute through new corner
            {v(i, j)   = undef;                                                  # Remove old upper right corner vertical
             v(k, j)   = a;                                                      # New upper left corner
@@ -1101,19 +1104,16 @@ sub layoutAsFiberBundle($%)                                                     
 # dc          |y         |
 #             +--        +---
 
-next unless $a eq "o.e_2";
         if (1 and !$wentLeft)                                                   # Collapse down
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going down
-          for my $J(j+1..scalar($fibers[i-1]->$#*))                             # Look for an opposite corner
+          for my $J(j..scalar($fibers[i-1]->$#*))                              # Look for an opposite corner
            {last unless defined(v(i,   $J)) and v(i, $J) eq a;                  # Make sure vertical is occupied with expected fiber
             last   if   defined v(i-1, $J);                                     # Vertical is occupied so we will not be able to repurpose it
             k = $J if  !defined h(i-1, $J);                                     # Possible corner as horizontal is free
            }
-lll "AAAA", dump($i, $j, $a, k);
 
           if (defined(k))                                                       # Reroute through new corner
            {h(i,   j) = undef;                                                  # Remove old upper right corner horizontal
-lll "BBBB", dump($i, $j, $a, k);
             v(i,   j) = undef;                                                  # Remove old upper right corner vertical
             v(i-1, j) = a;                                                      # New upper left corner
             h(i-1, j) = undef unless i-1 > 0               and defined(h(i-2, j)) and h(i-2, j) eq a; # Situation x: we might, or might not be on a corner here
@@ -4539,7 +4539,7 @@ END
   is_deeply($t->value("out"), 1);
  }
 
-latest:;
+#latest:;
 if (1)                                                                          #TcompareEq # Compare unsigned integers
  {my $B = 2;
 
@@ -4552,16 +4552,13 @@ END
 
   for   my $i(0..2**$B-1)                                                       # Each possible number
    {for my $j(0..2**$B-1)                                                       # Each possible number
-     {
-my $i = 1; my $j = 1;
-      my %a = $c->setBits('a', $i);                                             # Number a
+     {my %a = $c->setBits('a', $i);                                             # Number a
       my %b = $c->setBits('b', $j);                                             # Number b
 
       my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>"svg/CompareEq$B"):()); # Svg drawing of layout
 
       is_deeply($s->value("out"), $i == $j ? 1 : 0);                            # Equal
       is_deeply($s->steps, 3);                                                  # Number of steps to stability
-exit;
      }
    }
  }
@@ -4967,6 +4964,7 @@ if (1)
 
   my $s = $c->simulate({%a}, svg=>q(svg/collapseLeft));
   is_deeply($s->steps, 2);
+#exit;
  }
 
 #latest:;
@@ -5115,6 +5113,20 @@ if (1)                                                                          
   is_deeply([layoutInputBus qw(11000 10100 01000 00011)],             [1,2,3,1]);
   is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010)],       [1, 2, 3, 1, 2]);
   is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010 00010)], [1, 2, 3, 1, 2, 3]);
+ }
+
+latest:;
+if (1)                                                                          # Collapse left
+ {my $c = Silicon::Chip::newChip;
+  $c->input (             n('ia', $_)) for 1..8;
+  $c->and   ('aa',  [map {n('ia', $_)}     1..8]);
+  $c->output('oa', 'aa');
+  $c->input (             n('ib', $_)) for 1..8;
+  $c->and   ('ab',  [map {n('ib', $_)}     1..8]);
+  $c->output('ob', 'ab');
+  $c->input ('i1'); $c->not('n1', 'i1'); $c->output('o1', 'n1');
+  $c->input ('i2'); $c->not('n2', 'i2'); $c->output('o2', 'n2');
+  my $s = $c->simulate({}, svg=>q(svg/collapseLeft));
  }
 
 done_testing();
