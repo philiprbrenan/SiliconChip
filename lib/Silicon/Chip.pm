@@ -1072,12 +1072,11 @@ sub layoutAsFiberBundle($%)                                                     
         next unless $a eq $b and $b eq $B and $B eq $C;                         # Confirm corner
 
         my $wentLeft;                                                           # If we collapsed left we made a change and so need to come around again before attempting to collapse down
-        if (1)                                                                  # Collapse left
+        if (0)                                                                  # Collapse left
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going left
 
           for my $I(reverse 0..i-1)                                             # Look for an opposite corner
-           {
-            last if $j+1 < $fibers[$I]->@*;
+           {last if $j+1 < $fibers[$I]->@*;
             last   unless defined(h($I, j)) and h($I, j) eq $a;                 # Make sure horizontal is occupied with expected bus line
             last   if  defined h($I, j+1);                                      # Horizontal is occupied so we will not be able to repurpose it
             k = $I if !defined v($I, j+1);                                      # Possible opposite because it is not being used vertically
@@ -1102,9 +1101,11 @@ sub layoutAsFiberBundle($%)                                                     
 # dc          |y         |
 #             +--        +---
 
-        if (!$wentLeft)                                                         # Collapse down
+next unless $a eq "b_2";
+        if (1 and !$wentLeft)                                                   # Collapse down
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going down
-          for my $J(j+1..scalar($fibers[i]->$#*))                               # Look for an opposite corner
+lll "AAAA", dump($i, $j, $a);
+          for my $J(j+1..scalar($fibers[i-1]->$#*))                             # Look for an opposite corner
            {last unless defined(v(i,   $J)) and v(i, $J) eq a;                  # Make sure vertical is occupied with expected fiber
             last   if   defined v(i-1, $J);                                     # Vertical is occupied so we will not be able to repurpose it
             k = $J if  !defined h(i-1, $J);                                     # Possible corner as horizontal is free
