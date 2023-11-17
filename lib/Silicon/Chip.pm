@@ -994,9 +994,11 @@ sub layoutAsFiberBundle($%)                                                     
    }
 
   my @fibers;                                                                   # Squares of the page, each of which can either be undefined or contain the name of the fiber crossing it from left to right or up and down
+  my @inPlay;                                                                   # Squares of the page in play
   my @positions;                                                                # Position of each gate indexed by position in layout
   my %positions;                                                                # Position of each gate indexed by gate name
   my $width = 0;                                                                # Width of page consumed so far until it becomes the page width.
+  my $prevWidth;                                                                # Width of previous gate
 
   for my $i(keys @gates)                                                        # Position each gate
    {my $g = $gates{$gates[$i]};                                                 # Gate details
@@ -1010,6 +1012,8 @@ sub layoutAsFiberBundle($%)                                                     
       return "blue" if $g->io == gateOuterInput;
       "green"
      }
+
+    $width += $prevWidth if !$g->io;
 
     my $p = genHash(__PACKAGE__."::GatePosition",
       output      => $g->output,                                                # Gate name
@@ -1027,8 +1031,9 @@ sub layoutAsFiberBundle($%)                                                     
       inPin       => $g->io == gateOuterInput,                                  # Input pin for  chip
       outPin      => $g->io == gateOuterOutput,                                 # Output pin for  chip
      );
+
     $positions[$i] = $p;  $positions{$p->output} = $p;                          # Index the gates
-    $width += $w unless $g->io == gateOuterInput and $i < $#gates and $gates{$gates[$i+1]}->io; # Pack input gates vertically as we never connect an input gate to another input gate                                                               # Start of next gate
+    $prevWidth = $w;
    }
 
   for my $i(keys @positions)                                                    # Position output pins along bottom of mask
@@ -1041,47 +1046,52 @@ sub layoutAsFiberBundle($%)                                                     
     --$width;                                                                   # Gate no longer occupies space on right
    }
 
-  for my $i(keys @positions)                                                    # Connect gates loosely
-   {my $p = $positions[$i];
-    my $g = $gates{$p->output};
-    my %i = $g->inputs->%*;
-    my @i = sort keys %i;  ### Is this the correct order???                     # Connections to each gate
+  for my $p(@positions)                                                         # Connect gates loosely
+   {my $g = $gates{$p->output};                                                 # Detail for this gate
+    my @i = $p->inputs->@*;                                                     # Connections to each gate
     for my $i(keys @i)                                                          # Connections to each gate
-     {my $D = $i{$i[$i]};                                                       # Driving gate name
+     {my $D = $i[$i];                                                           # Driving gate name
       my $d = $positions{$D};                                                   # Driving gate position
-      $fibers[$_][$d->y][0] = $D for $d->x+$d->width..$p->x+$i;                 # Horizontal line
-      $fibers[$p->x+$i][$_][1] = $D for $d->y..$p->y-1;                            # Vertical line
+      my $X = $p->x+$i;                                                         # X position of input pin to gate
+      my $Y = $p->y;                                                            # Y position of input pin to gate
+      $fibers[$_][$d->y][0] = $D for $d->x+$d->width..$X;                       # Horizontal line
+      $fibers[$X][$_]   [1] = $D for $d->y..$Y-1;                               # Vertical line
+      if (!$g->io)                                                              # Mark column as in play
+       {for my $j(0..$Y-1)
+         {$inPlay[$X][$j] = 1;
+         }
+       }
      }
    }
 
   my sub collapseFibers()                                                       # Perform one collapse pass of the fibers returning the number of collapses performed
    {my $changes = 0;                                                            # Number of changes made in this pass
     for my $i(keys @fibers)
-     {next unless $i;
-      for my $j(keys $fibers[$i]->@*)
+     {for my $j(keys $fibers[$i]->@*)
        {my sub i() {$i}
         my sub j() {$j}
-        my sub h($$) :lvalue {my ($i, $j) = @_; $fibers[$i][$j][0]}             # A horizontal element relative to the current corner
-        my sub v($$) :lvalue {my ($i, $j) = @_; $fibers[$i][$j][1]}             # A vertical   element relative to the current corner
+        my sub h($$) :lvalue {my ($i, $j) = @_; return undef unless $i >= 0 and $j >= 0 and $inPlay[$i][$j]; $fibers[$i][$j][0]} # A horizontal element relative to the current corner
+        my sub v($$) :lvalue {my ($i, $j) = @_; return undef unless $i >= 0 and $j >= 0 and $inPlay[$i][$j]; $fibers[$i][$j][1]} # A vertical   element relative to the current corner
 
         my $a = h(i-1, j+0); my sub a() {$a}
         my $b = h(i+0, j+0);
         my $B = v(i+0, j+0);
         my $C = v(i+0, j+1);
+        my $D = v(i+0, j-1);
+        my $e = h(i+1, j+0);
+
         next unless defined($a) and defined($b) and defined($B) and defined($C);# Possible corner
         next unless $a eq $b and $b eq $B and $B eq $C;                         # Confirm corner
-#next unless $a eq 'i_4';
+        next if defined($D) and $D eq $a;                                       # If it is a corner it points north east.
+        next if defined($e) and $e eq $a;                                       # If it is a corner it points north east.
+
         my $wentLeft;                                                           # If we collapsed left we made a change and so need to come around again before attempting to collapse down
         if (1)                                                                  # Collapse left
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going left
 
           for my $I(reverse 0..i-1)                                             # Look for an opposite corner
-           {
-#lll "AAAA", dump($a, $k, $j+1, scalar($fibers[$I]->@*));
-            last if $j+2 >= $fibers[$I]->$#*;
-#lll "BBBB", dump($a, $k);
+           {last if $j+2 >= $fibers[$I]->$#*;
             last   unless defined(h($I, j)) and h($I, j) eq $a;                 # Make sure horizontal is occupied with expected bus line
-#lll "CCCC", dump($a, $k);
             last   if  defined h($I, j+1);                                      # Horizontal is occupied so we will not be able to repurpose it
             k = $I if !defined v($I, j+1);                                      # Possible opposite because it is not being used vertically
            }
@@ -1096,20 +1106,21 @@ sub layoutAsFiberBundle($%)                                                     
              {h($I, j  ) = undef;                                               # Remove upper side
               h($I, j+1) = a;                                                   # Add lower side
              }
-            ++$changes; $wentLeft = 1;
+            ++$changes; $wentLeft++;
            }
          }
-#           |x           |
-# ab        +-+    =>    |
-# dc          |y         |
+#  d        |x           |
+# abe       +-+    =>    |
+#  c          |y         |
 #             +--        +---
 
-        if (1 and !$wentLeft)                                                   # Collapse down
+        my $wentDown;
+        if (!$wentLeft)                                                         # Collapse down
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going down
-          for my $J(j..scalar($fibers[i-1]->$#*))                              # Look for an opposite corner
-           {last unless defined(v(i,   $J)) and v(i, $J) eq a;                  # Make sure vertical is occupied with expected fiber
-            last   if   defined v(i-1, $J);                                     # Vertical is occupied so we will not be able to repurpose it
-            k = $J if  !defined h(i-1, $J);                                     # Possible corner as horizontal is free
+          for my $J(j..scalar($fibers[i-1]->$#*))                               # Look for an opposite corner
+           {last unless defined(v(i,   $J)) and v(i,   $J) eq a;                # Make sure vertical is occupied with expected fiber
+            last   if   defined(v(i-1, $J)) and v(i-1, $J) ne a;                # Vertical is occupied so we will not be able to repurpose it
+            k = $J if  !defined(h(i-1, $J));                                    # Possible corner as horizontal is free
            }
 
           if (defined(k))                                                       # Reroute through new corner
@@ -1125,7 +1136,19 @@ sub layoutAsFiberBundle($%)                                                     
              {v(i  , $J) = undef;                                               # Remove right side
               v(i-1, $J) = a;                                                   # Add left side
              }
-            ++$changes;
+            ++$changes; $wentDown++;
+           }
+         }
+
+        if ($wentDown)                                                          # Remove any unattached vertical elements at the start of this column
+         {my $I = i - 1;                                                        # Previous column that we might have joined at a vertical
+          for my $J(0..scalar($fibers[$I]->@*))                                 # From next bus line up to the top
+           {my $v = v($I, $J);                                                  # Vertical line
+            my $h = h($I, $J);                                                  # Vertical line
+            last if defined($h) and $h eq a;                                    # Found the vertical so we can stop
+            if (defined($v) and $v eq a)                                        # Found the corresponding horizontal
+             {v($I, $J) = undef;                                                # Remove vertical as it never meets a corresponding horizontal and so is of no use
+             }
            }
          }
        }
@@ -1149,6 +1172,7 @@ sub layoutAsFiberBundle($%)                                                     
     positionsArray => \@positions,                                              # Position array
     positionsHash  => \%positions,                                              # Position hash
     fibers         => \@fibers,                                                 # Fibers after collapse
+    inPlay         => \@inPlay,                                                 # Squares in play for collapsing
     width          => $width,                                                   # Width of drawing
     steps          => $options{steps},                                          # Steps in simulation
     thickness      => $t,                                                       # Width of the thickest fiber bundle
@@ -1161,6 +1185,7 @@ sub Silicon::Chip::Layout::draw($%)                                             
   my %gates     = $chip->gates->%*;                                             # Gates on chip
   my $title     = $chip->title;                                                 # Title of chip
   my @fibers    = $layout->fibers->@*;                                          # Squares of the page, each of which can either be undefined or contain the name of the fiber crossing it from left to right or up and down
+  my @inPlay    = $layout->inPlay->@*;                                          # Squares available for collapsing
   my @positions = $layout->positionsArray->@*;                                  # Position of each gate indexed by position in layout
   my %positions = $layout->positionsHash ->%*;                                  # Position of each gate indexed by gate name
   my $width     = $layout->width;                                               # Width of page consumed so far until it becomes the page width.
@@ -1177,6 +1202,14 @@ sub Silicon::Chip::Layout::draw($%)                                             
     fill         => q(transparent)});
 
   my $svg = Svg::Simple::new(@defaults, %options, grid=>1);                     # Draw each gate via Svg
+
+  if (1)                                                                        # Squares in play
+   {for   my $i(keys @inPlay)
+     {for my $j(keys $inPlay[$i]->@*)
+       {$svg->rect(x=>$i, y=>$j, width=>1, height=>1, fill=>"mistyrose", stroke=>"transparent");
+       }
+     }
+   }
 
   my $py = Fl;
   if (defined($title))                                                          # Title if known
@@ -1260,7 +1293,7 @@ sub Silicon::Chip::Layout::draw($%)                                             
      }
    }
 
-  if (1)                                                                        # Show fiber names
+  if (0)                                                                        # Show fiber names - useful when debugging bus lines
    {for my $i(keys @fibers)
      {for my $j(keys $fibers[$i]->@*)
        {if (defined(my $n = $fibers[$i][$j][0]))                                # Horizontal
@@ -1268,8 +1301,8 @@ sub Silicon::Chip::Layout::draw($%)                                             
             x                 => $i+1/2,
             y                 => $j+1/2,
             fill              =>"black",
-            stroke_width      => fw,
-            font_size         => fs,
+            stroke_width      => Fw,
+            font_size         => Fs,
             text_anchor       => 'middle',
             dominant_baseline => 'auto',
             cdata             => $n,
@@ -1280,8 +1313,8 @@ sub Silicon::Chip::Layout::draw($%)                                             
             x                 => $i+1/2,
             y                 => $j+1/2,
             fill              =>"red",
-            stroke_width      => fw,
-            font_size         => fs,
+            stroke_width      => Fw,
+            font_size         => Fs,
             text_anchor       => 'middle',
             dominant_baseline => 'hanging',
             cdata             => $n,
@@ -5118,15 +5151,18 @@ if (1)                                                                          
 latest:;
 if (1)                                                                          # Collapse left
  {my $c = Silicon::Chip::newChip;
+  $c->input ('a');
   $c->input (             n('ia', $_)) for 1..8;
   $c->and   ('aa',  [map {n('ia', $_)}     1..8]);
   $c->output('oa', 'aa');
+  $c->not   ('n1', 'a'); $c->output('o1', 'n1');
   $c->input (             n('ib', $_)) for 1..8;
   $c->and   ('ab',  [map {n('ib', $_)}     1..8]);
   $c->output('ob', 'ab');
-  $c->input ('i1'); $c->not('n1', 'i1'); $c->output('o1', 'n1');
-  $c->input ('i2'); $c->not('n2', 'i2'); $c->output('o2', 'n2');
-  my $s = $c->simulate({}, svg=>q(svg/collapseLeft));
+  $c->not   ('n2', 'a'); $c->output('o2', 'n2');
+  my %a = map {(n('ia', $_)=>1)} 1..8;
+  my %b = map {(n('ib', $_)=>1)} 1..8;
+  my $s = $c->simulate({%a, %b, a=>0}, svg=>q(svg/collapseLeft));
  }
 
 done_testing();
