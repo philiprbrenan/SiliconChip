@@ -114,7 +114,8 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
       my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                             b1=>1, b2=>0, b3=>1, b4=>0},
-                            svg=>q(svg/Equals));                                    # Svg drawing of layout
+                            svg=>q(svg/Equals),                                     # Svg drawing of layout
+                            collapse=>q(svg/EqualsCollapse));
 
       is_deeply($s->steps,        3);                                               # Three steps
       is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
@@ -1123,7 +1124,7 @@ Print simulation results as text.
 
 ## printSvg($chip, %options)
 
-Mask the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) onto a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+Mask the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) onto a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit) using a condensed input bus.
 
        Parameter  Description
     1  $chip      Chip
@@ -2062,6 +2063,10 @@ Last time this gate changed
 
 Chip being simulated
 
+#### fibers
+
+Fibers after collapse
+
 #### gate
 
 Gate
@@ -2073,6 +2078,10 @@ Gate sequence number - this allows us to display the gates in the order they wer
 #### gates
 
 Gates in chip
+
+#### inPlay
+
+Squares in play for collapsing
 
 #### inputs
 
@@ -2098,6 +2107,14 @@ Output name which is used as the name of the gate as well
 
 Outputs of inner chip to inputs of outer chip
 
+#### positionsArray
+
+Position array
+
+#### positionsHash
+
+Position hash
+
 #### seq
 
 Sequence number for this gate
@@ -2118,6 +2135,10 @@ Number of steps to reach stability
 
 Name of file containing svg drawing if requested
 
+#### thickness
+
+Width of the thickest fiber bundle
+
 #### title
 
 Title if known
@@ -2132,7 +2153,7 @@ Values of every output at point of stability
 
 #### width
 
-Width of gate
+Width of drawing
 
 #### x
 
@@ -2151,6 +2172,14 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
        Parameter  Description
     1  $chip      Chip
     2  @options   Options
+
+## Silicon::Chip::Layout::draw ($layout, %options)
+
+Draw a mask for the gates.
+
+       Parameter  Description
+    1  $layout    Layout
+    2  %options   Options
 
 # Index
 
@@ -2232,7 +2261,7 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 39 [print](#print) - Dump the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) present on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-40 [printSvg](#printsvg) - Mask the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) onto a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
+40 [printSvg](#printsvg) - Mask the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) onto a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) as an [Scalar Vector Graphics](https://en.wikipedia.org/wiki/Scalable_Vector_Graphics) drawing to help visualize the structure of the [chip](https://en.wikipedia.org/wiki/Integrated_circuit) using a condensed input bus.
 
 41 [setBits](#setbits) - Set an array of input gates to a number prior to running a simulation.
 
@@ -2242,21 +2271,23 @@ Autoload by [logic gate](https://en.wikipedia.org/wiki/Logic_gate) name to provi
 
 44 [setWords](#setwords) - Set an array of arrays of gates to an array of numbers prior to running a simulation.
 
-45 [Silicon::Chip::Simulation::bInt](#silicon-chip-simulation-bint) - Represent the state of bits in the simulation results as an unsigned binary integer.
+45 [Silicon::Chip::Layout::draw](#silicon-chip-layout-draw) - Draw a mask for the gates.
 
-46 [Silicon::Chip::Simulation::print](#silicon-chip-simulation-print) - Print simulation results as text.
+46 [Silicon::Chip::Simulation::bInt](#silicon-chip-simulation-bint) - Represent the state of bits in the simulation results as an unsigned binary integer.
 
-47 [Silicon::Chip::Simulation::printSvg](#silicon-chip-simulation-printsvg) - Print simulation results as svg.
+47 [Silicon::Chip::Simulation::print](#silicon-chip-simulation-print) - Print simulation results as text.
 
-48 [Silicon::Chip::Simulation::value](#silicon-chip-simulation-value) - Get the value of a gate as seen in a simulation.
+48 [Silicon::Chip::Simulation::printSvg](#silicon-chip-simulation-printsvg) - Print simulation results as svg.
 
-49 [Silicon::Chip::Simulation::wInt](#silicon-chip-simulation-wint) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+49 [Silicon::Chip::Simulation::value](#silicon-chip-simulation-value) - Get the value of a gate as seen in a simulation.
 
-50 [Silicon::Chip::Simulation::wordXToInteger](#silicon-chip-simulation-wordxtointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
+50 [Silicon::Chip::Simulation::wInt](#silicon-chip-simulation-wint) - Represent the state of words in the simulation results as an array of unsigned binary integer.
 
-51 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output value of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilizes.
+51 [Silicon::Chip::Simulation::wordXToInteger](#silicon-chip-simulation-wordxtointeger) - Represent the state of words in the simulation results as an array of unsigned binary integer.
 
-52 [words](#words) - Create a word bus set to specified numbers.
+52 [simulate](#simulate) - Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gate) on a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) for a given set of inputs until the output value of each [logic gate](https://en.wikipedia.org/wiki/Logic_gate) stabilizes.
+
+53 [words](#words) - Create a word bus set to specified numbers.
 
 # Installation
 
