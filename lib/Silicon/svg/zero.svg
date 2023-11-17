@@ -2,17 +2,21 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 <svg height="100%" viewBox="0 0 2 2" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
-<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="1" y="1.5" z="-1">2 steps</text>
-<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="1" y="0">0</text>
-<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.416666666666667">output</text>
-<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0.5" y="0.583333333333333">o</text>
-<line font-size="0.2" stroke="darkBlue" stroke-width="0.02" x1="0" x2="0" y1="0.5" y2="0.5"/>
-<circle cx="0" cy="0.5" fill="blue" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<circle cx="0" cy="0.5" fill="red" font-size="0.2" r="0.04" stroke-width="0.02"/>
+<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="-1" y="1" z="-1">2 steps</text>
+<text fill="darkGreen" font-size="0.4" stroke-width="0.04" text-anchor="end" x="-1" y="1.5" z="-1">0 thick</text>
 <rect fill="transparent" font-size="0.2" height="1" stroke="green" stroke-width="0.02" width="0" x="0" y="0"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="start" x="0" y="0">0</text>
-<text fill="black" font-size="0.2" stroke-width="0.02" text-anchor="end" x="0" y="1">1</text>
+<text fill="darkBlue" font-size="0.2" stroke-width="0.02" text-anchor="end" x="0" y="1">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="0.416666666666667">zero</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="0" y="0.583333333333333">z</text>
+<circle cx="-0.5" cy="0.5" fill="transparent" font-size="0.2" r="0.5" stroke="red" stroke-width="0.02"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="-1" y="0">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="-0.5" y="0.416666666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="-0.5" y="0.583333333333333">o</text>
+<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="0" x2="0" y1="0" y2="2"/>
+<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="1" x2="1" y1="0" y2="2"/>
+<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="2" x2="2" y1="0" y2="2"/>
+<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="0" x2="2" y1="0" y2="0"/>
+<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="0" x2="2" y1="1" y2="1"/>
+<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="0" x2="2" y1="2" y2="2"/>
 </svg>
