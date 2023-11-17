@@ -1067,6 +1067,17 @@ my sub layoutAsFiberBundle($%)                                                  
 
   my sub collapseFibers()                                                       # Perform one collapse pass of the fibers returning the number of collapses performed
    {my $changes = 0;                                                            # Number of changes made in this pass
+
+    my sub removeOrphans($)                                                     # Remove any vertical orphans in the specified column
+     {my ($i) = @_;                                                             # Column to check
+      for my $j(keys $fibers[$i]->@*)
+       {my $h = $fibers[$i][$j][0];                                             # Horizontal line
+        my $v = $fibers[$i][$j][1];                                             # Vertical line
+        last if defined($h) and defined($v) and $h eq $v;                       # Found the vertical so we can stop
+        $fibers[$i][$j][1] = undef;                                             # Remove vertical as it never meets a corresponding horizontal and so is of no use
+       }
+     }
+
     for my $i(keys @fibers)
      {for my $j(keys $fibers[$i]->@*)
        {my sub i() {$i}
@@ -1108,6 +1119,8 @@ my sub layoutAsFiberBundle($%)                                                  
               h($I, j+1) = a;                                                   # Add lower side
              }
             ++$changes; $wentLeft++;
+            #removeOrphans(k)   if k;
+            removeOrphans(k-1) if k;
            }
          }
 #  d        |x           |
@@ -1115,7 +1128,6 @@ my sub layoutAsFiberBundle($%)                                                  
 #  c          |y         |
 #             +--        +---
 
-        my $wentDown;
         if (!$wentLeft)                                                         # Collapse down
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going down
           for my $J(j..scalar($fibers[i-1]->$#*))                               # Look for an opposite corner
@@ -1137,18 +1149,11 @@ my sub layoutAsFiberBundle($%)                                                  
              {v(i  , $J) = undef;                                               # Remove right side
               v(i-1, $J) = a;                                                   # Add left side
              }
-            ++$changes; $wentDown++;
+            ++$changes;
+            removeOrphans(i+1);
+            #removeOrphans(i);
            }
          }
-       }
-     }
-###  THIS IS TOO SLOW
-    for my $i(keys @fibers)                                                     # Remove any vertical orphans
-     {for my $j(keys $fibers[$i]->@*)
-       {my $h = $fibers[$i][$j][0];                                             # Horizontal line
-        my $v = $fibers[$i][$j][1];                                             # Vertical line
-        last if defined($h) and defined($v) and $h eq $v;                       # Found the vertical so we can stop
-        $fibers[$i][$j][1] = undef;                                             # Remove vertical as it never meets a corresponding horizontal and so is of no use
        }
      }
 
