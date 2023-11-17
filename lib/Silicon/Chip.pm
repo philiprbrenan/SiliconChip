@@ -13,6 +13,7 @@ use strict;
 use Carp qw(confess carp);
 use Data::Dump qw(dump);
 use Data::Table::Text qw(:all);
+use Digest::MD5 qw(md5_hex);
 use Svg::Simple;
 
 makeDieConfess;
@@ -1013,7 +1014,7 @@ sub layoutAsFiberBundle($%)                                                     
       "green"
      }
 
-    $width += $prevWidth if !$g->io;
+    $width += $prevWidth if defined($prevWidth) and !$g->io;
 
     my $p = genHash(__PACKAGE__."::GatePosition",
       output      => $g->output,                                                # Gate name
@@ -4343,7 +4344,7 @@ under the same terms as Perl itself.
 #D0 Tests                                                                       # Tests and examples
 goto finish if caller;                                                          # Skip testing if we are being called as a module
 clearFolder(q(svg), 99);                                                        # Clear the output svg folder
-eval "use Test::More tests=>542";
+eval "use Test::More tests=>544";
 eval "Test::More->builder->output('/dev/null')" if -e q(/home/phil/);
 eval {goto latest};
 
@@ -5148,7 +5149,7 @@ if (1)                                                                          
   is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010 00010)], [1, 2, 3, 1, 2, 3]);
  }
 
-latest:;
+#latest:;
 if (1)                                                                          # Collapse left
  {my $c = Silicon::Chip::newChip;
   $c->input ('a');
@@ -5163,6 +5164,7 @@ if (1)                                                                          
   my %a = map {(n('ia', $_)=>1)} 1..8;
   my %b = map {(n('ib', $_)=>1)} 1..8;
   my $s = $c->simulate({%a, %b, a=>0}, svg=>q(svg/collapseLeft));
+  is_deeply(md5_hex(readFile($s->svg)), "d635872b71923db9d40035a1ef503b74");
  }
 
 done_testing();
