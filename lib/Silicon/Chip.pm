@@ -1078,7 +1078,7 @@ my sub layoutAsFiberBundle($%)                                                  
        }
      }
 
-    for my $i(keys @fibers)
+    for my $i(keys @fibers)                                                     # Examine each cell for a corner that we can collapse either left or down
      {for my $j(keys $fibers[$i]->@*)
        {my sub i() {$i}
         my sub j() {$j}
@@ -1104,6 +1104,7 @@ my sub layoutAsFiberBundle($%)                                                  
           for my $I(reverse 0..i-1)                                             # Look for an opposite corner
            {last if $j+2 >= $fibers[$I]->$#*;
             last   unless defined(h($I, j)) and h($I, j) eq $a;                 # Make sure horizontal is occupied with expected bus line
+            last   if  defined(v($I, j))    and v($I, j) eq $a;                 # Do not cross an incoming vertical of the same type
             last   if  defined h($I, j+1);                                      # Horizontal is occupied so we will not be able to repurpose it
             k = $I if !defined v($I, j+1);                                      # Possible opposite because it is not being used vertically
            }
@@ -1120,7 +1121,7 @@ my sub layoutAsFiberBundle($%)                                                  
              }
             ++$changes; $wentLeft++;
             #removeOrphans(k)   if k;
-            removeOrphans(k-1) if k;
+            #removeOrphans(k-1) if k;
            }
          }
 #  d        |x           |
@@ -1150,7 +1151,7 @@ my sub layoutAsFiberBundle($%)                                                  
               v(i-1, $J) = a;                                                   # Add left side
              }
             ++$changes;
-            removeOrphans(i+1);
+            #removeOrphans(i+1);
             #removeOrphans(i);
            }
          }
@@ -1297,7 +1298,7 @@ sub Silicon::Chip::Layout::draw($%)                                             
      }
    }
 
-  if (0)                                                                        # Show fiber names - useful when debugging bus lines
+  if (1)                                                                        # Show fiber names - useful when debugging bus lines
    {for my $i(keys @fibers)
      {for my $j(keys $fibers[$i]->@*)
        {if (defined(my $n = $fibers[$i][$j][0]))                                # Horizontal
@@ -4927,7 +4928,7 @@ END
   is_deeply($s->bInt('o'), 0b010);
  }
 
-#latest:;
+latest:;
 if (1)                                                                          #TfindWord
  {my $B = 3; my $W = 2**$B-1;
 
@@ -4943,10 +4944,11 @@ END
 
   for my $k(0..$W)                                                              # Each possible key
    {my $k = 3;
-     my %k = setBits($c, 'k', $k);
+    my %k = setBits($c, 'k', $k);
     my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());
     is_deeply($s->steps, 3);
     is_deeply($s->bInt('M'),$k ? 2**($W-$k) : 0);
+exit;
    }
  }
 
