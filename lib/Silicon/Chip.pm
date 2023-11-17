@@ -983,7 +983,7 @@ sub Silicon::Chip::Simulation::printSvg($%)                                     
   printSvg($sim->chip, %options, values=>$sim->values);
  }
 
-sub layoutAsFiberBundle($%)                                                     # Layout the gates as a fiber bundle collapsed down to as close to the gates as possible.  The returned information is sufficient to draw an svg image of the fiber bundle.
+my sub layoutAsFiberBundle($%)                                                  # Layout the gates as a fiber bundle collapsed down to as close to the gates as possible.  The returned information is sufficient to draw an svg image of the fiber bundle.
  {my ($chip, %options) = @_;                                                    # Chip, options
   my %gates   = $chip->gates->%*;                                               # Gates on chip
   my $changed = $options{changed};                                              # Step at which gate last changed in simulation
@@ -1180,7 +1180,7 @@ sub layoutAsFiberBundle($%)                                                     
    );
  }
 
-sub Silicon::Chip::Layout::draw($%)                                             # Draw a mask for the gates.
+sub Silicon::Chip::Layout::draw($%)                                             #P Draw a mask for the gates.
  {my ($layout, %options) = @_;                                                  # Layout, options
   my $chip      = $layout->chip;                                                # Chip being masked
   my %gates     = $chip->gates->%*;                                             # Gates on chip
@@ -1202,7 +1202,208 @@ sub Silicon::Chip::Layout::draw($%)                                             
     font_size    => fs,
     fill         => q(transparent)});
 
-  my $svg = Svg::Simple::new(@defaults, %options, grid=>1);                     # Draw each gate via Svg
+  my $svg = Svg::Simple::new(@defaults, %options, grid=>0);                     # Draw each gate via Svg. Grid set to 1 produces a grid that can be helfpul debugging layout problems
+
+  if (1)                                                                        # Squares in play
+   {for   my $i(keys @inPlay)
+     {for my $j(keys $inPlay[$i]->@*)
+       {$svg->rect(x=>$i, y=>$j, width=>1, height=>1, fill=>"mistyrose", stroke=>"transparent");
+       }
+     }
+   }
+
+  my $py = Fl;
+  if (defined($title))                                                          # Title if known
+   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
+      stroke_width=>Fw, font_size=>Fs, z=>-1,
+      cdata=>$title);
+   }
+
+  $py += Fl;
+  if (defined($steps))                                                          # Number of steps taken if known
+   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
+      stroke_width=>Fw, font_size=>Fs, z=>-1,
+      cdata=>"$steps steps");
+   }
+
+  $py += Fl;
+  if (defined($thickness))                                                      # Thickness of bundle
+   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
+      stroke_width=>Fw, font_size=>Fs, z=>-1,
+      cdata=>"$thickness thick");
+   }
+
+  for my $p(@positions)                                                         # Draw each gate
+   {my $x = $p->x; my $y = $p->y; my $w = $p->width; my $c = $p->color;
+    my $io = $p->inPin || $p->outPin;
+    $svg->circle(cx => $x+1/2, cy=>$y+1/2, r=>1/2, stroke=>$c) if  $io;         # Circle for io pin
+    $svg->rect(x=>$x, y=>$y, width=>$w, height=>1, stroke=>$c) if !$io;         # Rectangle for non io gate
+
+    if (defined(my $v = $p->value))                                             # Value of gate if known
+     {$svg->text(
+       x                 => $p->x,
+       y                 => $p->y,
+       fill              =>"black",
+       stroke_width      => Fw,
+       font_size         => Fs,
+       text_anchor       => !$p->outPin ? "start": "end",
+       dominant_baseline => "hanging",
+       cdata             => $v ? "1" : "0");
+     }
+
+    if (defined(my $t = $p->changed) and !$p->inPin and !$p->outPin)            # Gate change time if known for a non io gate
+     {$svg->text(
+       x                 => $p->x + $p->width,
+       y                 => $p->y + 1,
+       fill              => "darkBlue",
+       stroke_width      => fw,
+       font_size         => fs,
+       text_anchor       => "end",
+       cdata             => $t+1);
+     }
+
+    my sub ot($$$$)                                                             # Output svg text
+     {my ($dy, $fill, $pos, $text) = @_;
+      $svg->text(x                 => $p->x+$p->width/2,
+                 y                 => $p->y+$dy,
+                 fill              => $fill,
+                 text_anchor       => "middle",
+                 dominant_baseline => $pos,
+                 cdata             => $text);
+      }
+
+    ot(5/12, "red",      "auto",    $p->type);                                  # Type of gate
+    ot(7/12, "darkblue", "hanging", $p->output);
+
+    my @i = $p->inputValues->@*;
+
+    for my $i(keys @i)                                                          # Draw input values to each pin on the gate
+     {next if $p->inPin or $p->outPin;
+      my $v = $p->inputValues->[$i];
+      if (defined($v))
+       {$svg->text(
+          x                 => $p->x + $i + 1/2,
+          y                 => $p->y,
+          fill              => "darkRed",
+          stroke_width      => fw,
+          font_size         => fs,
+          text_anchor       => "middle",
+          dominant_baseline => "hanging",
+          cdata             => $v ? "1" : "0");
+       }
+     }
+   }
+
+  if (0)                                                                        # Show fiber names - useful when debugging bus lines
+   {for my $i(keys @fibers)
+     {for my $j(keys $fibers[$i]->@*)
+       {if (defined(my $n = $fibers[$i][$j][0]))                                # Horizontal
+         {$svg->text(
+            x                 => $i+1/2,
+            y                 => $j+1/2,
+            fill              =>"black",
+            stroke_width      => Fw,
+            font_size         => Fs,
+            text_anchor       => 'middle',
+            dominant_baseline => 'auto',
+            cdata             => $n,
+           )# if $n eq "a4" || $n eq "a4";
+         }
+        if (defined(my $n = $fibers[$i][$j][1]))                                # Vertical
+         {$svg->text(
+            x                 => $i+1/2,
+            y                 => $j+1/2,
+            fill              =>"red",
+            stroke_width      => Fw,
+            font_size         => Fs,
+            text_anchor       => 'middle',
+            dominant_baseline => 'hanging',
+            cdata             => $n,
+           )# if $n eq "a4" || $n eq "a4";
+         }
+       }
+     }
+   }
+
+  if (1)                                                                        # Show fiber lines
+   {my @h = (stroke =>"darkgreen", stroke_width => Fw);                         # Fiber lines horizontal
+    my @v = (stroke =>"darkblue",  stroke_width => Fw);                         # Fiber lines vertical
+    for my $i(keys @fibers)
+     {for my $j(keys $fibers[$i]->@*)
+       {my $h = $fibers[$i][$j][0];                                             # Horizontal
+        my $v = $fibers[$i][$j][1];                                             # Vertical
+        if (defined($h) and defined($v) and $h eq $v)                           # Cross
+         {my $l = $i == 0 || !$inPlay[$i-1][$j] || ($fibers[$i-1][$j][0] // '') eq $h;  # Left horizontal
+          my $r = $i == @fibers         || ($fibers[$i+1][$j][0] // '') eq $h;  # Right horizontal
+          my $a = $j >  0               && ($fibers[$i][$j-1][1] // '') eq $h;  # Vertically above
+          my $b = !$inPlay[$i][$j+1]    || ($fibers[$i][$j+1][1] // '') eq $h;  # Vertically below
+
+#     | A     --+   |C
+#     +--     B |   +--
+#                   |
+
+          my $C = $a && $r && $b;
+          my $A = $a && $r && !$b;
+          my $B = $l && $b && !$A;
+          if ($A)
+           {$svg->line(x1=>$i+1/2, y1=>$j,     x2=>$i+1,   y2=>$j+1/2, @h);
+           }
+          if ($C)
+           {#$svg->line(x1=>$i+1/2, y1=>$j,     x2=>$i+1/2, y2=>$j+1, @h);
+            #$svg->line(x1=>$i+1/2, y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
+            #$svg->circle(cx=>$i+1/2, cy=>$j+1/2, r=>1.5*Fw, fill=>"darkRed");   # Circle indicating change of direction in fiber
+           }
+          if ($B)
+           {$svg->line(x1=>$i,     y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1, @h);
+           }
+         }
+        else                                                                    # Straight
+         {if (defined($h))                                                      # Horizontal
+           {$svg->line(x1=>$i, y1=>$j+1/2, x2=>$i+1, y2=>$j+1/2,
+              stroke            =>"darkgreen",
+              stroke_width      => Fw,
+             )# if $n eq "a4" || $n eq "a4";
+           }
+          if (defined($v))                                                      # Vertical
+           {$svg->line(x1=>$i+1/2, y1=>$j, x2=>$i+1/2, y2=>$j+1,
+              stroke            =>"darkblue",
+              stroke_width      => Fw,
+             )# if $n eq "a4" || $n eq "a4";
+           }
+         }
+       }
+     }
+   }
+
+  my $t = $svg->print;                                                          # Text of svg
+  my $f = $options{svg};                                                        # Svg file
+  return owf(fpe($f, q(svg)), $t) if $f;                                        # Draw bundle as an svg drawing
+  $t
+ }
+
+sub Silicon::Chip::Layout::draw22($%)                                             #P Draw a mask for the gates.
+ {my ($layout, %options) = @_;                                                  # Layout, options
+  my $chip      = $layout->chip;                                                # Chip being masked
+  my %gates     = $chip->gates->%*;                                             # Gates on chip
+  my $title     = $chip->title;                                                 # Title of chip
+  my @fibers    = $layout->fibers->@*;                                          # Squares of the page, each of which can either be undefined or contain the name of the fiber crossing it from left to right or up and down
+  my @inPlay    = $layout->inPlay->@*;                                          # Squares available for collapsing
+  my @positions = $layout->positionsArray->@*;                                  # Position of each gate indexed by position in layout
+  my %positions = $layout->positionsHash ->%*;                                  # Position of each gate indexed by gate name
+  my $width     = $layout->width;                                               # Width of page consumed so far until it becomes the page width.
+  my $steps     = $layout->steps;                                               # Number of steps to equilibrium
+  my $thickness = $layout->thickness;                                           # Thickness of fiber bundle
+
+  my sub fs {0.2} my sub fw {0.02}  my sub fl {0.25}                            # Font sizes
+  my sub Fs {0.4} my sub Fw {0.04}  my sub Fl {0.50}
+  my sub op0 {q(transparent)}
+
+  my @defaults = (defaults=>                                                    # Default values
+   {stroke_width => fw,
+    font_size    => fs,
+    fill         => q(transparent)});
+
+  my $svg = Svg::Simple::new(@defaults, %options, grid=>0);                     # Draw each gate via Svg. Grid set to 1 produces a grid that can be helfpul debugging layout problems
 
   if (1)                                                                        # Squares in play
    {for   my $i(keys @inPlay)
@@ -1334,21 +1535,21 @@ sub Silicon::Chip::Layout::draw($%)                                             
         my $v = $fibers[$i][$j][1];                                             # Vertical
 
         if (defined($h) and defined($v) and $h eq $v)                           # Cross
-         {my $hl = $fibers[$i-1][$j][0] //'';                                   # Left horizontal
-          my $hr = $fibers[$i+1][$j][0] //'';                                   # Right horizontal
-          my $va = $fibers[$i][$j-1][1] //'';                                   # Vertically above
-          my $vb = $fibers[$i][$j+1][1] //'';                                   # Vertically below
-          if ($hl eq $h or $i == 1)                                             # Left horizontal
+         {my $hl = $i > 0 && ($fibers[$i-1][$j][0] // '');                      # Left horizontal
+          my $hr =           ($fibers[$i+1][$j][0] // '');                      # Right horizontal
+          my $va = $j > 0 && ($fibers[$i][$j-1][1] // '');                      # Vertically above
+          my $vb =           ($fibers[$i][$j+1][1] // '');                      # Vertically below
+          if ($hl eq $h or $hr ne $h)                                           # Left horizontal
            {$svg->line(x1=>$i,     y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1/2, @h);
            }
-          if ($hr eq $h)                                                        # Right horizontal
+          else                                                                  # Right horizontal
            {$svg->line(x1=>$i+1/2, y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
            }
-          if ($va eq $v)                                                        # Vertical above
-           {$svg->line(x1=>$i+1/2, y1=>$j,     x2=>$i+1/2, y2=>$j+1/2, @v);
-           }
-          if ($vb eq $v or $j == $fibers[$i]->$#* - 1)                          # Vertical below
+          if ($vb eq $v or $va ne $v)                                           # Vertical below
            {$svg->line(x1=>$i+1/2, y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1,   @v);
+           }
+          else                                                                  # Vertical above
+           {$svg->line(x1=>$i+1/2, y1=>$j,     x2=>$i+1/2, y2=>$j+1/2, @v);
            }
           $svg->circle(cx=>$i+1/2, cy=>$j+1/2, r=>1.5*Fw, fill=>"darkRed");     # Circle indicating change of direction in fiber
          }
@@ -1376,7 +1577,7 @@ sub Silicon::Chip::Layout::draw($%)                                             
   $t
  }
 
-sub drawMask($%)                                                                # Draw a mask for the gates.
+my sub drawMask($%)                                                             # Draw a mask for the gates.
  {my ($chip, %options) = @_;                                                    # Chip, options
   my $layout    = layoutAsFiberBundle($chip, %options);                         # Gates on chip
      $layout->draw(%options);
@@ -2072,7 +2273,8 @@ B<Example:>
 
     my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                           b1=>1, b2=>0, b3=>1, b4=>0},
-                          svg=>q(svg/Equals));                                    # Svg drawing of layout
+                          svg=>q(svg/Equals),                                     # Svg drawing of layout
+                          collapse=>q(svg/EqualsCollapse));
 
     is_deeply($s->steps,        3);                                               # Three steps
     is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
@@ -3124,7 +3326,7 @@ B<Example:>
 
 =head2 printSvg($chip, %options)
 
-Mask the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> onto a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> as an L<Scalar Vector Graphics|https://en.wikipedia.org/wiki/Scalable_Vector_Graphics> drawing to help visualize the structure of the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+Mask the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> onto a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> as an L<Scalar Vector Graphics|https://en.wikipedia.org/wiki/Scalable_Vector_Graphics> drawing to help visualize the structure of the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> using a condensed input bus.
 
      Parameter  Description
   1  $chip      Chip
@@ -4117,6 +4319,10 @@ Last time this gate changed
 
 Chip being simulated
 
+=head4 fibers
+
+Fibers after collapse
+
 =head4 gate
 
 Gate
@@ -4128,6 +4334,10 @@ Gate sequence number - this allows us to display the gates in the order they wer
 =head4 gates
 
 Gates in chip
+
+=head4 inPlay
+
+Squares in play for collapsing
 
 =head4 inputs
 
@@ -4153,6 +4363,14 @@ Output name which is used as the name of the gate as well
 
 Outputs of inner chip to inputs of outer chip
 
+=head4 positionsArray
+
+Position array
+
+=head4 positionsHash
+
+Position hash
+
 =head4 seq
 
 Sequence number for this gate
@@ -4173,6 +4391,10 @@ Number of steps to reach stability
 
 Name of file containing svg drawing if requested
 
+=head4 thickness
+
+Width of the thickest fiber bundle
+
 =head4 title
 
 Title if known
@@ -4187,7 +4409,7 @@ Values of every output at point of stability
 
 =head4 width
 
-Width of gate
+Width of drawing
 
 =head4 x
 
@@ -4208,6 +4430,14 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
      Parameter  Description
   1  $chip      Chip
   2  @options   Options
+
+=head2 Silicon::Chip::Layout::draw ($layout, %options)
+
+Draw a mask for the gates.
+
+     Parameter  Description
+  1  $layout    Layout
+  2  %options   Options
 
 
 =head1 Index
@@ -4291,7 +4521,7 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 39 L<print|/print> - Dump the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> present on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
-40 L<printSvg|/printSvg> - Mask the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> onto a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> as an L<Scalar Vector Graphics|https://en.wikipedia.org/wiki/Scalable_Vector_Graphics> drawing to help visualize the structure of the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit>.
+40 L<printSvg|/printSvg> - Mask the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> onto a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> as an L<Scalar Vector Graphics|https://en.wikipedia.org/wiki/Scalable_Vector_Graphics> drawing to help visualize the structure of the L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> using a condensed input bus.
 
 41 L<setBits|/setBits> - Set an array of input gates to a number prior to running a simulation.
 
@@ -4301,21 +4531,23 @@ Autoload by L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> name to provi
 
 44 L<setWords|/setWords> - Set an array of arrays of gates to an array of numbers prior to running a simulation.
 
-45 L<Silicon::Chip::Simulation::bInt|/Silicon::Chip::Simulation::bInt> - Represent the state of bits in the simulation results as an unsigned binary integer.
+45 L<Silicon::Chip::Layout::draw|/Silicon::Chip::Layout::draw> - Draw a mask for the gates.
 
-46 L<Silicon::Chip::Simulation::print|/Silicon::Chip::Simulation::print> - Print simulation results as text.
+46 L<Silicon::Chip::Simulation::bInt|/Silicon::Chip::Simulation::bInt> - Represent the state of bits in the simulation results as an unsigned binary integer.
 
-47 L<Silicon::Chip::Simulation::printSvg|/Silicon::Chip::Simulation::printSvg> - Print simulation results as svg.
+47 L<Silicon::Chip::Simulation::print|/Silicon::Chip::Simulation::print> - Print simulation results as text.
 
-48 L<Silicon::Chip::Simulation::value|/Silicon::Chip::Simulation::value> - Get the value of a gate as seen in a simulation.
+48 L<Silicon::Chip::Simulation::printSvg|/Silicon::Chip::Simulation::printSvg> - Print simulation results as svg.
 
-49 L<Silicon::Chip::Simulation::wInt|/Silicon::Chip::Simulation::wInt> - Represent the state of words in the simulation results as an array of unsigned binary integer.
+49 L<Silicon::Chip::Simulation::value|/Silicon::Chip::Simulation::value> - Get the value of a gate as seen in a simulation.
 
-50 L<Silicon::Chip::Simulation::wordXToInteger|/Silicon::Chip::Simulation::wordXToInteger> - Represent the state of words in the simulation results as an array of unsigned binary integer.
+50 L<Silicon::Chip::Simulation::wInt|/Silicon::Chip::Simulation::wInt> - Represent the state of words in the simulation results as an array of unsigned binary integer.
 
-51 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output value of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilizes.
+51 L<Silicon::Chip::Simulation::wordXToInteger|/Silicon::Chip::Simulation::wordXToInteger> - Represent the state of words in the simulation results as an array of unsigned binary integer.
 
-52 L<words|/words> - Create a word bus set to specified numbers.
+52 L<simulate|/simulate> - Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> on a L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> for a given set of inputs until the output value of each L<logic gate|https://en.wikipedia.org/wiki/Logic_gate> stabilizes.
+
+53 L<words|/words> - Create a word bus set to specified numbers.
 
 =head1 Installation
 
@@ -5149,7 +5381,7 @@ if (1)                                                                          
   is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010 00010)], [1, 2, 3, 1, 2, 3]);
  }
 
-#latest:;
+latest:;
 if (1)                                                                          # Collapse left
  {my $c = Silicon::Chip::newChip;
   $c->input ('a');
@@ -5164,7 +5396,8 @@ if (1)                                                                          
   my %a = map {(n('ia', $_)=>1)} 1..8;
   my %b = map {(n('ib', $_)=>1)} 1..8;
   my $s = $c->simulate({%a, %b, a=>0}, svg=>q(svg/collapseLeft));
-  is_deeply(md5_hex(readFile($s->svg)), "d635872b71923db9d40035a1ef503b74");
+  #say STDERR md5_hex(readFile $s->svg);
+  is_deeply(md5_hex(readFile($s->svg)), "254b91a000da79353d507ebf938314a9");
  }
 
 done_testing();
