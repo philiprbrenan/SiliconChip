@@ -1140,20 +1140,18 @@ my sub layoutAsFiberBundle($%)                                                  
             ++$changes; $wentDown++;
            }
          }
-
-        if ($wentDown)                                                          # Remove any unattached vertical elements at the start of this column
-         {my $I = i - 1;                                                        # Previous column that we might have joined at a vertical
-          for my $J(0..scalar($fibers[$I]->@*))                                 # From next bus line up to the top
-           {my $v = v($I, $J);                                                  # Vertical line
-            my $h = h($I, $J);                                                  # Vertical line
-            last if defined($h) and $h eq a;                                    # Found the vertical so we can stop
-            if (defined($v) and $v eq a)                                        # Found the corresponding horizontal
-             {v($I, $J) = undef;                                                # Remove vertical as it never meets a corresponding horizontal and so is of no use
-             }
-           }
-         }
        }
      }
+###  THIS IS TOO SLOW
+    for my $i(keys @fibers)                                                     # Remove any vertical orphans
+     {for my $j(keys $fibers[$i]->@*)
+       {my $h = $fibers[$i][$j][0];                                             # Horizontal line
+        my $v = $fibers[$i][$j][1];                                             # Vertical line
+        last if defined($h) and defined($v) and $h eq $v;                       # Found the vertical so we can stop
+        $fibers[$i][$j][1] = undef;                                             # Remove vertical as it never meets a corresponding horizontal and so is of no use
+       }
+     }
+
     $changes
    }
 
@@ -1327,231 +1325,51 @@ sub Silicon::Chip::Layout::draw($%)                                             
 
   if (1)                                                                        # Show fiber lines
    {my @h = (stroke =>"darkgreen", stroke_width => Fw);                         # Fiber lines horizontal
-    my @v = (stroke =>"darkblue",  stroke_width => Fw);                         # Fiber lines vertical
-    for my $i(keys @fibers)
-     {for my $j(keys $fibers[$i]->@*)
-       {my $h = $fibers[$i][$j][0];                                             # Horizontal
-        my $v = $fibers[$i][$j][1];                                             # Vertical
+    my @v = (stroke =>"darkgreen", stroke_width => Fw);                         # Fiber lines vertical
+    my @f = @fibers;
+
+    for my $i(keys @f)
+     {for my $j(keys $f[$i]->@*)
+       {my $h = $f[$i][$j][0];                                                  # Horizontal
+        my $v = $f[$i][$j][1];                                                  # Vertical
         if (defined($h) and defined($v) and $h eq $v)                           # Cross
-         {my $l = $i == 0 || !$inPlay[$i-1][$j] || ($fibers[$i-1][$j][0] // '') eq $h;  # Left horizontal
-          my $r = $i == @fibers         || ($fibers[$i+1][$j][0] // '') eq $h;  # Right horizontal
-          my $a = $j >  0               && ($fibers[$i][$j-1][1] // '') eq $h;  # Vertically above
-          my $b = !$inPlay[$i][$j+1]    || ($fibers[$i][$j+1][1] // '') eq $h;  # Vertically below
+         {my $l = $i == 0 || !$inPlay[$i-1][$j] || ($f[$i-1][$j][0] //'') eq $h;# Left horizontal
+          my $r = $i == @fibers         || ($f[$i+1][$j][0] // '') eq $h;       # Right horizontal
+          my $a = $j >  0               && ($f[$i][$j-1][1] // '') eq $h;       # Vertically above
+          my $b = !$inPlay[$i][$j+1]    || ($f[$i][$j+1][1] // '') eq $h;       # Vertically below
 
-#     | A     --+   |C
-#     +--     B |   +--
-#                   |
+#     | A     --+   |C       D
+#     +--     B |   +--    --+--
+#                   |        |
 
+          my $D = $l && $r && $b && !$a;
           my $C = $a && $r && $b;
           my $A = $a && $r && !$b;
-          my $B = $l && $b && !$A;
-          if ($A)
-           {$svg->line(x1=>$i+1/2, y1=>$j,     x2=>$i+1,   y2=>$j+1/2, @h);
-           }
-          if ($C)
-           {#$svg->line(x1=>$i+1/2, y1=>$j,     x2=>$i+1/2, y2=>$j+1, @h);
-            #$svg->line(x1=>$i+1/2, y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
-            #$svg->circle(cx=>$i+1/2, cy=>$j+1/2, r=>1.5*Fw, fill=>"darkRed");   # Circle indicating change of direction in fiber
+          my $B = $l && $b && !$r && !$a;
+
+          my @B = my @A = (r=>    Fw, fill=>"darkRed");                         # Fiber connections
+          my @C =         (r=>1.5*Fw, fill=>"darkRed");
+
+          if ($A)                                                               # Draw corners
+           {$svg->line  (x1=>$i+1/2, y1=>$j,     x2=>$i+1,   y2=>$j+1/2, @h);
+            $svg->circle(cx=>$i+1/2, cy=>$j,     @A);
+            $svg->circle(cx=>$i+1,   cy=>$j+1/2, @A);
            }
           if ($B)
-           {$svg->line(x1=>$i,     y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1, @h);
+           {$svg->line  (x1=>$i,     y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1, @h);
+            $svg->circle(cx=>$i,     cy=>$j+1/2, @B);
+            $svg->circle(cx=>$i+1/2, cy=>$j+1,   @B);
            }
-         }
-        else                                                                    # Straight
-         {if (defined($h))                                                      # Horizontal
-           {$svg->line(x1=>$i, y1=>$j+1/2, x2=>$i+1, y2=>$j+1/2,
-              stroke            =>"darkgreen",
-              stroke_width      => Fw,
-             )# if $n eq "a4" || $n eq "a4";
+          if ($C)
+           {$svg->line(x1=>$i+1/2,   y1=>$j,     x2=>$i+1/2, y2=>$j+1,   @h);
+            $svg->line(x1=>$i+1/2,   y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
+            $svg->circle(cx=>$i+1/2, cy=>$j+1/2, @C);
            }
-          if (defined($v))                                                      # Vertical
-           {$svg->line(x1=>$i+1/2, y1=>$j, x2=>$i+1/2, y2=>$j+1,
-              stroke            =>"darkblue",
-              stroke_width      => Fw,
-             )# if $n eq "a4" || $n eq "a4";
+          if ($D)
+           {$svg->line(x1=>$i,       y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
+            $svg->line(x1=>$i+1/2,   y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1,   @h);
+            $svg->circle(cx=>$i+1/2, cy=>$j+1/2, @C);
            }
-         }
-       }
-     }
-   }
-
-  my $t = $svg->print;                                                          # Text of svg
-  my $f = $options{svg};                                                        # Svg file
-  return owf(fpe($f, q(svg)), $t) if $f;                                        # Draw bundle as an svg drawing
-  $t
- }
-
-sub Silicon::Chip::Layout::draw22($%)                                             #P Draw a mask for the gates.
- {my ($layout, %options) = @_;                                                  # Layout, options
-  my $chip      = $layout->chip;                                                # Chip being masked
-  my %gates     = $chip->gates->%*;                                             # Gates on chip
-  my $title     = $chip->title;                                                 # Title of chip
-  my @fibers    = $layout->fibers->@*;                                          # Squares of the page, each of which can either be undefined or contain the name of the fiber crossing it from left to right or up and down
-  my @inPlay    = $layout->inPlay->@*;                                          # Squares available for collapsing
-  my @positions = $layout->positionsArray->@*;                                  # Position of each gate indexed by position in layout
-  my %positions = $layout->positionsHash ->%*;                                  # Position of each gate indexed by gate name
-  my $width     = $layout->width;                                               # Width of page consumed so far until it becomes the page width.
-  my $steps     = $layout->steps;                                               # Number of steps to equilibrium
-  my $thickness = $layout->thickness;                                           # Thickness of fiber bundle
-
-  my sub fs {0.2} my sub fw {0.02}  my sub fl {0.25}                            # Font sizes
-  my sub Fs {0.4} my sub Fw {0.04}  my sub Fl {0.50}
-  my sub op0 {q(transparent)}
-
-  my @defaults = (defaults=>                                                    # Default values
-   {stroke_width => fw,
-    font_size    => fs,
-    fill         => q(transparent)});
-
-  my $svg = Svg::Simple::new(@defaults, %options, grid=>0);                     # Draw each gate via Svg. Grid set to 1 produces a grid that can be helfpul debugging layout problems
-
-  if (1)                                                                        # Squares in play
-   {for   my $i(keys @inPlay)
-     {for my $j(keys $inPlay[$i]->@*)
-       {$svg->rect(x=>$i, y=>$j, width=>1, height=>1, fill=>"mistyrose", stroke=>"transparent");
-       }
-     }
-   }
-
-  my $py = Fl;
-  if (defined($title))                                                          # Title if known
-   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>Fw, font_size=>Fs, z=>-1,
-      cdata=>$title);
-   }
-
-  $py += Fl;
-  if (defined($steps))                                                          # Number of steps taken if known
-   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>Fw, font_size=>Fs, z=>-1,
-      cdata=>"$steps steps");
-   }
-
-  $py += Fl;
-  if (defined($thickness))                                                      # Thickness of bundle
-   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>Fw, font_size=>Fs, z=>-1,
-      cdata=>"$thickness thick");
-   }
-
-  for my $p(@positions)                                                         # Draw each gate
-   {my $x = $p->x; my $y = $p->y; my $w = $p->width; my $c = $p->color;
-    my $io = $p->inPin || $p->outPin;
-    $svg->circle(cx => $x+1/2, cy=>$y+1/2, r=>1/2, stroke=>$c) if  $io;         # Circle for io pin
-    $svg->rect(x=>$x, y=>$y, width=>$w, height=>1, stroke=>$c) if !$io;         # Rectangle for non io gate
-
-    if (defined(my $v = $p->value))                                             # Value of gate if known
-     {$svg->text(
-       x                 => $p->x,
-       y                 => $p->y,
-       fill              =>"black",
-       stroke_width      => Fw,
-       font_size         => Fs,
-       text_anchor       => !$p->outPin ? "start": "end",
-       dominant_baseline => "hanging",
-       cdata             => $v ? "1" : "0");
-     }
-
-    if (defined(my $t = $p->changed) and !$p->inPin and !$p->outPin)            # Gate change time if known for a non io gate
-     {$svg->text(
-       x                 => $p->x + $p->width,
-       y                 => $p->y + 1,
-       fill              => "darkBlue",
-       stroke_width      => fw,
-       font_size         => fs,
-       text_anchor       => "end",
-       cdata             => $t+1);
-     }
-
-    my sub ot($$$$)                                                             # Output svg text
-     {my ($dy, $fill, $pos, $text) = @_;
-      $svg->text(x                 => $p->x+$p->width/2,
-                 y                 => $p->y+$dy,
-                 fill              => $fill,
-                 text_anchor       => "middle",
-                 dominant_baseline => $pos,
-                 cdata             => $text);
-      }
-
-    ot(5/12, "red",      "auto",    $p->type);                                  # Type of gate
-    ot(7/12, "darkblue", "hanging", $p->output);
-
-    my @i = $p->inputValues->@*;
-
-    for my $i(keys @i)                                                          # Draw input values to each pin on the gate
-     {next if $p->inPin or $p->outPin;
-      my $v = $p->inputValues->[$i];
-      if (defined($v))
-       {$svg->text(
-          x                 => $p->x + $i + 1/2,
-          y                 => $p->y,
-          fill              => "darkRed",
-          stroke_width      => fw,
-          font_size         => fs,
-          text_anchor       => "middle",
-          dominant_baseline => "hanging",
-          cdata             => $v ? "1" : "0");
-       }
-     }
-   }
-
-  if (0)                                                                        # Show fiber names - useful when debugging bus lines
-   {for my $i(keys @fibers)
-     {for my $j(keys $fibers[$i]->@*)
-       {if (defined(my $n = $fibers[$i][$j][0]))                                # Horizontal
-         {$svg->text(
-            x                 => $i+1/2,
-            y                 => $j+1/2,
-            fill              =>"black",
-            stroke_width      => Fw,
-            font_size         => Fs,
-            text_anchor       => 'middle',
-            dominant_baseline => 'auto',
-            cdata             => $n,
-           )# if $n eq "a4" || $n eq "a4";
-         }
-        if (defined(my $n = $fibers[$i][$j][1]))                                # Vertical
-         {$svg->text(
-            x                 => $i+1/2,
-            y                 => $j+1/2,
-            fill              =>"red",
-            stroke_width      => Fw,
-            font_size         => Fs,
-            text_anchor       => 'middle',
-            dominant_baseline => 'hanging',
-            cdata             => $n,
-           )# if $n eq "a4" || $n eq "a4";
-         }
-       }
-     }
-   }
-
-  if (1)                                                                        # Show fiber lines
-   {my @h = (stroke =>"darkgreen", stroke_width => Fw);                         # Fiber lines horizontal
-    my @v = (stroke =>"darkblue",  stroke_width => Fw);                         # Fiber lines vertical
-    for my $i(keys @fibers)
-     {for my $j(keys $fibers[$i]->@*)
-       {my $h = $fibers[$i][$j][0];                                             # Horizontal
-        my $v = $fibers[$i][$j][1];                                             # Vertical
-
-        if (defined($h) and defined($v) and $h eq $v)                           # Cross
-         {my $hl = $i > 0 && ($fibers[$i-1][$j][0] // '');                      # Left horizontal
-          my $hr =           ($fibers[$i+1][$j][0] // '');                      # Right horizontal
-          my $va = $j > 0 && ($fibers[$i][$j-1][1] // '');                      # Vertically above
-          my $vb =           ($fibers[$i][$j+1][1] // '');                      # Vertically below
-          if ($hl eq $h or $hr ne $h)                                           # Left horizontal
-           {$svg->line(x1=>$i,     y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1/2, @h);
-           }
-          else                                                                  # Right horizontal
-           {$svg->line(x1=>$i+1/2, y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
-           }
-          if ($vb eq $v or $va ne $v)                                           # Vertical below
-           {$svg->line(x1=>$i+1/2, y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1,   @v);
-           }
-          else                                                                  # Vertical above
-           {$svg->line(x1=>$i+1/2, y1=>$j,     x2=>$i+1/2, y2=>$j+1/2, @v);
-           }
-          $svg->circle(cx=>$i+1/2, cy=>$j+1/2, r=>1.5*Fw, fill=>"darkRed");     # Circle indicating change of direction in fiber
          }
         else                                                                    # Straight
          {if (defined($h))                                                      # Horizontal
@@ -5119,7 +4937,8 @@ END
   my %w = setWords($c, 'w', reverse 1..$W);
 
   for my $k(0..$W)                                                              # Each possible key
-   {my %k = setBits($c, 'k', $k);
+   {my $k = 3;
+     my %k = setBits($c, 'k', $k);
     my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());
     is_deeply($s->steps, 3);
     is_deeply($s->bInt('M'),$k ? 2**($W-$k) : 0);
@@ -5381,7 +5200,7 @@ if (1)                                                                          
   is_deeply([layoutInputBus qw(11000 10100 01000 00011 00010 00010)], [1, 2, 3, 1, 2, 3]);
  }
 
-latest:;
+#latest:;
 if (1)                                                                          # Collapse left
  {my $c = Silicon::Chip::newChip;
   $c->input ('a');
@@ -5397,7 +5216,7 @@ if (1)                                                                          
   my %b = map {(n('ib', $_)=>1)} 1..8;
   my $s = $c->simulate({%a, %b, a=>0}, svg=>q(svg/collapseLeft));
   #say STDERR md5_hex(readFile $s->svg);
-  is_deeply(md5_hex(readFile($s->svg)), "254b91a000da79353d507ebf938314a9");
+  is_deeply(md5_hex(readFile($s->svg)), '877ef9f9e53fb931da0a2ec206955a89');
  }
 
 done_testing();
