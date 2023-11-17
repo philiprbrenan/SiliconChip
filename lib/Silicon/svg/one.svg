@@ -13,10 +13,4 @@
 <text dominant-baseline="hanging" fill="black" font-size="0.4" stroke-width="0.04" text-anchor="end" x="-1" y="0">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="-0.5" y="0.416666666666667">output</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.2" stroke-width="0.02" text-anchor="middle" x="-0.5" y="0.583333333333333">O</text>
-<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="0" x2="0" y1="0" y2="2"/>
-<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="1" x2="1" y1="0" y2="2"/>
-<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="2" x2="2" y1="0" y2="2"/>
-<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="0" x2="2" y1="0" y2="0"/>
-<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="0" x2="2" y1="1" y2="1"/>
-<line fill="transparent" font-size="0.2" opacity="0.2" stroke="black" stroke-width="0.002" x1="0" x2="2" y1="2" y2="2"/>
 </svg>
