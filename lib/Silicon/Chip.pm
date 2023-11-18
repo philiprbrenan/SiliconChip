@@ -5,9 +5,10 @@
 #-------------------------------------------------------------------------------
 # Update sizes from sub chips
 # Forward propogation of constants from bits()
+# Speed up left/down collapse by tracking the positions of corners we wish to collapse
 use v5.34;
 package Silicon::Chip;
-our $VERSION = 20231111;                                                        # Version
+our $VERSION = 20231118;                                                        # Version
 use warnings FATAL => qw(all);
 use strict;
 use Carp qw(confess carp);
@@ -1000,14 +1001,15 @@ my sub layoutAsFiberBundle($%)                                                  
   my @inPlay;                                                                   # Squares of the page in play
   my @positions;                                                                # Position of each gate indexed by position in layout
   my %positions;                                                                # Position of each gate indexed by gate name
-  my $width = 0;                                                                # Width of page consumed so far until it becomes the page width.
-  my $prevWidth;                                                                # Width of previous gate
+  my $width  = 1;                                                               # Width of page consumed so far until it becomes the page width.
+  my $height = 0;                                                               # Height of page consumed so far until it becomes the page height
 
   for my $i(keys @gates)                                                        # Position each gate
    {my $g = $gates{$gates[$i]};                                                 # Gate details
+    my $s = $g->type =~ m(\A(input|one|output|zero)\Z);                         # These gates can be positioned without consuming more horizontal space
     my %i = $g->inputs->%*;                                                     # Inputs hash for gate
     my @i = sort keys %i;                                                       # Connections to each gate in pin order
-    my $w = scalar(@i);                                                         # Width of this gate
+    my $w = $s ? 1 : scalar(@i);                                                # Width of this gate
     my $n = $g->output;                                                         # Name of gate
 
     my sub color()                                                              # Color of gate
@@ -1016,12 +1018,13 @@ my sub layoutAsFiberBundle($%)                                                  
       "green"
      }
 
-    $width += $prevWidth if defined($prevWidth) and !$g->io;
+    my $x = $width; $x-- if $s;                                                 # Position of gate
+    my $y = $i;
 
     my $p = genHash(__PACKAGE__."::GatePosition",
       output      => $g->output,                                                # Gate name
-      x           => (my $x = $width),                                          # Gate x position
-      y           => (my $y = $i),                                              # Gate y position
+      x           => $x,                                                        # Gate x position
+      y           => $y,                                                        # Gate y position
       width       => $w,                                                        # Width of gate
       fiber       => 0,                                                         # Number of fibers running past this gate
       position    => $i,                                                        # Number of fibers running past this gate
@@ -1036,7 +1039,8 @@ my sub layoutAsFiberBundle($%)                                                  
      );
 
     $positions[$i] = $p;  $positions{$p->output} = $p;                          # Index the gates
-    $prevWidth = $w;
+    $width += $w unless $s;                                                     # Io gates are tucked in in such way that they do not contribute to the width
+    $height++    unless $g->io == gateOuterOutput;                              # Output gates do not contribute to the height of the mask
    }
 
   for my $i(keys @positions)                                                    # Position output pins along bottom of mask
@@ -1046,7 +1050,6 @@ my sub layoutAsFiberBundle($%)                                                  
     my  $d  = $positions{$D};                                                   # Driving gate
     $p->x = $d->x - 1;                                                          # Reposition output gate
     $p->y = $d->y;
-    --$width;                                                                   # Gate no longer occupies space on right
    }
 
   for my $p(@positions)                                                         # Connect gates loosely
@@ -1182,6 +1185,7 @@ my sub layoutAsFiberBundle($%)                                                  
     positionsHash  => \%positions,                                              # Position hash
     fibers         => \@fibers,                                                 # Fibers after collapse
     inPlay         => \@inPlay,                                                 # Squares in play for collapsing
+    height         => $height,                                                  # Height of drawing
     width          => $width,                                                   # Width of drawing
     steps          => $options{steps},                                          # Steps in simulation
     thickness      => $t,                                                       # Width of the thickest fiber bundle
@@ -1192,17 +1196,20 @@ sub Silicon::Chip::Layout::draw($%)                                             
  {my ($layout, %options) = @_;                                                  # Layout, options
   my $chip      = $layout->chip;                                                # Chip being masked
   my %gates     = $chip->gates->%*;                                             # Gates on chip
-  my $title     = $chip->title;                                                 # Title of chip
   my @fibers    = $layout->fibers->@*;                                          # Squares of the page, each of which can either be undefined or contain the name of the fiber crossing it from left to right or up and down
   my @inPlay    = $layout->inPlay->@*;                                          # Squares available for collapsing
   my @positions = $layout->positionsArray->@*;                                  # Position of each gate indexed by position in layout
   my %positions = $layout->positionsHash ->%*;                                  # Position of each gate indexed by gate name
-  my $width     = $layout->width;                                               # Width of page consumed so far until it becomes the page width.
+  my $width     = $layout->width;                                               # Width of mask
+  my $height    = $layout->height;                                              # Height of mask
   my $steps     = $layout->steps;                                               # Number of steps to equilibrium
   my $thickness = $layout->thickness;                                           # Thickness of fiber bundle
 
-  my sub fs {0.2} my sub fw {0.02}  my sub fl {0.25}                            # Font sizes
-  my sub Fs {0.4} my sub Fw {0.04}  my sub Fl {0.50}
+  my sub ts() {$height/64} my sub tw() {ts/16}  my sub tl() {1.25 * ts}         # Font sizes for titles
+  my sub Ts() {2*ts}       my sub Tw() {2*tw}   my sub Tl() {2*tl}
+
+  my sub fs() {1/6}        my sub fw() {fs/16}  my sub fl() {1.25 * fs}         # Font sizes for gates
+  my sub Fs() {2*fs}       my sub Fw() {2*fw}   my sub Fl() {2*fl}
 
   my @defaults = (defaults=>                                                    # Default values
    {stroke_width => fw,
@@ -1211,34 +1218,40 @@ sub Silicon::Chip::Layout::draw($%)                                             
 
   my $svg = Svg::Simple::new(@defaults, %options, grid=>debugMask ? 1 : 0);     # Draw each gate via Svg. Grid set to 1 produces a grid that can be helfpul debugging layout problems
 
-  if (1)                                                                        # Squares in play
-   {for   my $i(keys @inPlay)
-     {for my $j(keys $inPlay[$i]->@*)
-       {$svg->rect(x=>$i, y=>$j, width=>1, height=>1, fill=>"mistyrose", stroke=>"transparent");
+  if (1)                                                                        # Show squares in play with a small number of rectangles
+   {my @i = map {$_ ? [@$_] : $_} @inPlay;                                      # Deep copy
+    for   my $i(keys @i)                                                        # Each row
+     {for my $j(keys $i[$i]->@*)                                                # Each column
+       {if ($i[$i][$j])                                                         # Found a square in play
+         {my $w = 1;                                                            # Width of rectangle
+          for my $I($i+1..$#inPlay)                                             # Extend as far as possible to the right
+           {if ($i[$I][$j])
+             {++$w;
+              $i[$I][$j] = undef;                                               # Show that this square has been written - safe because we did a deep copy earlier
+             }
+           }
+          $svg->rect(x=>$i, y=>$j, width=>$w, height=>1,
+            fill=>"mistyrose", stroke=>"transparent");
+         }
        }
      }
    }
 
-  my $py = Fl;
-  if (defined($title))                                                          # Title if known
-   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>Fw, font_size=>Fs, z=>-1,
-      cdata=>$title);
+  my $py = 0;
+  my sub wt($;$)                                                                # Write titles on following lines
+   {my ($t, $T) = @_;                                                           # Value, title to write
+    if (defined($t))                                                            # Value to write
+     {$py += Tl;                                                                # Position to write at
+      my $s = $t; $s .= " $T" if $T;                                            # Text to write
+      $svg->text(x => $width, y => $py, cdata => $s,                            # Write text
+        fill=>"darkGreen", text_anchor=>"end", stroke_width=>Tw, font_size=>Ts);
+     }
    }
 
-  $py += Fl;
-  if (defined($steps))                                                          # Number of steps taken if known
-   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>Fw, font_size=>Fs, z=>-1,
-      cdata=>"$steps steps");
-   }
-
-  $py += Fl;
-  if (defined($thickness))                                                      # Thickness of bundle
-   {$svg->text(x=>$width, y=>$py, fill=>"darkGreen", text_anchor=>"end",
-      stroke_width=>Fw, font_size=>Fs, z=>-1,
-      cdata=>"$thickness thick");
-   }
+  wt($chip->title);                                                             # Title if known
+  wt($steps,     "steps");                                                      # Number of steps taken if known
+  wt($thickness, "thick");                                                      # Thickness of bundle
+  wt($width,     "wide");                                                       # Width of page
 
   for my $p(@positions)                                                         # Draw each gate
    {my $x = $p->x; my $y = $p->y; my $w = $p->width; my $c = $p->color;
@@ -1253,7 +1266,7 @@ sub Silicon::Chip::Layout::draw($%)                                             
        fill              =>"black",
        stroke_width      => Fw,
        font_size         => Fs,
-       text_anchor       => !$p->outPin ? "start": "end",
+       text_anchor       => "start",
        dominant_baseline => "hanging",
        cdata             => $v ? "1" : "0");
      }
@@ -1309,8 +1322,8 @@ sub Silicon::Chip::Layout::draw($%)                                             
             x                 => $i+1/2,
             y                 => $j+1/2,
             fill              =>"black",
-            stroke_width      => Fw,
-            font_size         => Fs,
+            stroke_width      => fw,
+            font_size         => fs,
             text_anchor       => 'middle',
             dominant_baseline => 'auto',
             cdata             => $n,
@@ -1321,8 +1334,8 @@ sub Silicon::Chip::Layout::draw($%)                                             
             x                 => $i+1/2,
             y                 => $j+1/2,
             fill              =>"red",
-            stroke_width      => Fw,
-            font_size         => Fs,
+            stroke_width      => fw,
+            font_size         => fs,
             text_anchor       => 'middle',
             dominant_baseline => 'hanging',
             cdata             => $n,
@@ -1336,49 +1349,51 @@ sub Silicon::Chip::Layout::draw($%)                                             
    {my @h = (stroke =>"darkgreen", stroke_width => Fw);                         # Fiber lines horizontal
     my @v = (stroke =>"darkgreen", stroke_width => Fw);                         # Fiber lines vertical
     my @f = @fibers;
+    my @i = @inPlay;
     my @H; my @V;                                                               # Straight line cells
 
     for my $i(keys @f)
      {for my $j(keys $f[$i]->@*)
        {my $h = $f[$i][$j][0];                                                  # Horizontal
         my $v = $f[$i][$j][1];                                                  # Vertical
+
         if (defined($h) and defined($v) and $h eq $v)                           # Cross
-         {my $l = $i == 0 || !$inPlay[$i-1][$j] || ($f[$i-1][$j][0] //'') eq $h;# Left horizontal
-          my $r = $i == @fibers         || ($f[$i+1][$j][0] // '') eq $h;       # Right horizontal
-          my $a = $j >  0               && ($f[$i][$j-1][1] // '') eq $h;       # Vertically above
-          my $b = !$inPlay[$i][$j+1]    || ($f[$i][$j+1][1] // '') eq $h;       # Vertically below
+         {my $l = !$i[$i-1][$j] || ($i[$i-1][$j] && ($f[$i-1][$j][0]//'') eq $h);     # Left horizontal
+          my $r =             $i[$i+1][$j] && ($f[$i+1][$j][0]//'') eq $h;      # Right horizontal
+          my $a = $j >  0 &&  $i[$i][$j-1] && ($f[$i][$j-1][1]//'') eq $h;      # Vertically above
+          my $b = $j >= $f[$i]->$#* || ($i[$i][$j+1] && ($f[$i][$j+1][1]//'') eq $h);      # Vertically below
 
 #     | A     --+   |C       D
 #     +--     B |   +--    --+--
 #                   |        |
 
-          my $D = $l && $r && $b && !$a;
+          my $D = $l && $r && $b;
           my $C = $a && $r && $b;
-          my $A = $a && $r && !$b;
-          my $B = $l && $b && !$r && !$a;
+          my $A = $a && $r;
+          my $B = $l && $b;
 
           my @B = my @A = (r=>    Fw, fill=>"darkRed");                         # Fiber connections
           my @C =         (r=>1.5*Fw, fill=>"darkRed");
 
-          if ($A)                                                               # Draw corners
-           {$svg->line  (x1=>$i+1/2, y1=>$j,     x2=>$i+1,   y2=>$j+1/2, @h);
-            $svg->circle(cx=>$i+1/2, cy=>$j,     @A);
-            $svg->circle(cx=>$i+1,   cy=>$j+1/2, @A);
-           }
-          if ($B)
-           {$svg->line  (x1=>$i,     y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1, @h);
-            $svg->circle(cx=>$i,     cy=>$j+1/2, @B);
-            $svg->circle(cx=>$i+1/2, cy=>$j+1,   @B);
-           }
           if ($C)
            {$svg->line(x1=>$i+1/2,   y1=>$j,     x2=>$i+1/2, y2=>$j+1,   @h);
             $svg->line(x1=>$i+1/2,   y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
             $svg->circle(cx=>$i+1/2, cy=>$j+1/2, @C);
            }
-          if ($D)
+          elsif ($D)
            {$svg->line(x1=>$i,       y1=>$j+1/2, x2=>$i+1,   y2=>$j+1/2, @h);
             $svg->line(x1=>$i+1/2,   y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1,   @h);
             $svg->circle(cx=>$i+1/2, cy=>$j+1/2, @C);
+           }
+          elsif ($A)                                                               # Draw corners
+           {$svg->line  (x1=>$i+1/2, y1=>$j,     x2=>$i+1,   y2=>$j+1/2, @h);
+            $svg->circle(cx=>$i+1/2, cy=>$j,     @A);
+            $svg->circle(cx=>$i+1,   cy=>$j+1/2, @A);
+           }
+          elsif ($B)
+           {$svg->line  (x1=>$i,     y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1, @h);
+            $svg->circle(cx=>$i,     cy=>$j+1/2, @B);
+            $svg->circle(cx=>$i+1/2, cy=>$j+1,   @B);
            }
          }
         else                                                                    # Straight
@@ -2047,7 +2062,7 @@ Other circuit diagrams can be seen in folder: L<lib/Silicon/svg|https://github.c
 Design a L<silicon|https://en.wikipedia.org/wiki/Silicon> L<chip|https://en.wikipedia.org/wiki/Integrated_circuit> by combining L<logic gates|https://en.wikipedia.org/wiki/Logic_gate> and sub L<chips|https://en.wikipedia.org/wiki/Integrated_circuit>.
 
 
-Version 20231111.
+Version 20231118.
 
 
 The following sections describe the methods in each functional area of this
@@ -2101,7 +2116,7 @@ B<Example:>
     ok($s->value("and1") == 1);
    }
   
-  if (1)                                                                          # 4 bit equal 
+  if (1)                                                                           # 4 bit equal 
    {my $B = 4;                                                                    # Number of bits
   
   
@@ -2119,11 +2134,11 @@ B<Example:>
   
     my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                           b1=>1, b2=>0, b3=>1, b4=>0},
-                          svg=>q(svg/Equals),                                     # Svg drawing of layout
-                          collapse=>q(svg/EqualsCollapse));
+                          svg=>q(svg/Equals));                                    # Svg drawing of layout
   
     is_deeply($s->steps,        3);                                               # Three steps
     is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
+    is_deeply(substr(md5_hex(readFile $s->svg), 0, 4), '9ff8');
   
     my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                           b1=>1, b2=>0, b3=>1, b4=>0});
@@ -3081,7 +3096,7 @@ B<Example:>
     $o->install($i, {%i}, {%o});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     my %d = $o->setBits('i', 1);
-    my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
+    my $s = $o->simulate({%d}, svg=>"svg/notb1");
   
     is_deeply($s->steps,  2);
     is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
@@ -3360,7 +3375,8 @@ B<Example:>
   
     for   my $i(0..2**$B-1)                                                       # Each possible number
      {for my $j(0..2**$B-1)                                                       # Each possible number
-       {my %a = $c->setBits('a', $i);                                             # Number a
+       {#$i = 2; $j = 1;
+        my %a = $c->setBits('a', $i);                                             # Number a
         my %b = $c->setBits('b', $j);                                             # Number b
   
         my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>"svg/CompareGt$B"):()); # Svg drawing of layout
@@ -3748,8 +3764,7 @@ B<Example:>
     my %w = setWords($c, 'w', reverse 1..$W);
   
     for my $k(0..$W)                                                              # Each possible key
-     {my $k = 3;
-      my %k = setBits($c, 'k', $k);
+     {my %k = setBits($c, 'k', $k);
   
       my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
@@ -3902,7 +3917,7 @@ B<Example:>
 
     $o->install($i, {%i}, {%o});
     my %d = $o->setBits('i', 1);
-    my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
+    my $s = $o->simulate({%d}, svg=>"svg/notb1");
   
     is_deeply($s->steps,  2);
     is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
@@ -3943,7 +3958,7 @@ B<Example:>
 
     $o->install($i, {%i}, {%o});
     my %d = $o->setWords('i', 1);
-    my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
+    my $s = $o->simulate({%d}, svg=>"svg/notw1");
   
     is_deeply($s->steps,  2);
     is_deeply($s->values, { "(not 1 n_1_1)" => 0, "i_1_1" => 1, "N_1_1" => 0 });
@@ -4101,6 +4116,40 @@ Simulate the action of the L<logic gates|https://en.wikipedia.org/wiki/Logic_gat
 B<Example:>
 
 
+  if (1)                                                                           # 4 bit equal 
+   {my $B = 4;                                                                    # Number of bits
+  
+    my $c = Silicon::Chip::newChip(title=><<"END");                               # Create chip
+  $B Bit Equals
+  END
+    $c->input ("a$_")                 for 1..$B;                                  # First number
+    $c->input ("b$_")                 for 1..$B;                                  # Second number
+  
+    $c->nxor  ("e$_", "a$_", "b$_")   for 1..$B;                                  # Test each bit for equality
+    $c->and   ("and", {map{$_=>"e$_"}     1..$B});                                # And tests together to get total equality
+  
+    $c->output("out", "and");                                                     # Output gate
+  
+  
+    my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+                          b1=>1, b2=>0, b3=>1, b4=>0},
+                          svg=>q(svg/Equals));                                    # Svg drawing of layout
+  
+    is_deeply($s->steps,        3);                                               # Three steps
+    is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
+    is_deeply(substr(md5_hex(readFile $s->svg), 0, 4), '9ff8');
+  
+  
+    my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+                          b1=>1, b2=>0, b3=>1, b4=>0});
+    is_deeply($t->value("out"), 0);                                               # Out is 0 for not equals
+   }
+  
+
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
+  
   if (1)                                                                          
    {my $i = newChip(name=>"inner");
        $i->input ("Ii");
@@ -4122,10 +4171,16 @@ B<Example:>
     $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
   
   
-    my $s = $o->simulate({Oi1=>1}, printOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+    my $s = $o->simulate({Oi1=>1}, svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
     is_deeply($s->value("Oo"), 0);
     is_deeply($s->steps,       4);
+  
+  
+    my $t = $o->simulate({Oi1=>0});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+    is_deeply($t->value("Oo"), 1);
+    is_deeply($t->steps,       4);
    }
   
 
@@ -4181,6 +4236,10 @@ Gate sequence number - this allows us to display the gates in the order they wer
 =head4 gates
 
 Gates in chip
+
+=head4 height
+
+Height of drawing
 
 =head4 inPlay
 
@@ -4423,7 +4482,7 @@ under the same terms as Perl itself.
 #D0 Tests                                                                       # Tests and examples
 goto finish if caller;                                                          # Skip testing if we are being called as a module
 clearFolder(q(svg), 99);                                                        # Clear the output svg folder
-eval "use Test::More tests=>544";
+eval "use Test::More tests=>547";
 eval "Test::More->builder->output('/dev/null')" if -e q(/home/phil/);
 eval {goto latest};
 
@@ -4598,7 +4657,7 @@ if (1)                                                                          
  }
 
 #latest:;
-if (1)                                                                          # 4 bit equal #TnewChip
+if (1)                                                                          #Tsimulate # 4 bit equal #TnewChip
  {my $B = 4;                                                                    # Number of bits
 
   my $c = Silicon::Chip::newChip(title=><<"END");                               # Create chip
@@ -4614,11 +4673,11 @@ END
 
   my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                         b1=>1, b2=>0, b3=>1, b4=>0},
-                        svg=>q(svg/Equals),                                     # Svg drawing of layout
-                        collapse=>q(svg/EqualsCollapse));
+                        svg=>q(svg/Equals));                                    # Svg drawing of layout
 
   is_deeply($s->steps,        3);                                               # Three steps
   is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
+  is_deeply(substr(md5_hex(readFile $s->svg), 0, 4), '9ff8');
 
   my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                         b1=>1, b2=>0, b3=>1, b4=>0});
@@ -4688,7 +4747,8 @@ END
 
   for   my $i(0..2**$B-1)                                                       # Each possible number
    {for my $j(0..2**$B-1)                                                       # Each possible number
-     {my %a = $c->setBits('a', $i);                                             # Number a
+     {#$i = 2; $j = 1;
+      my %a = $c->setBits('a', $i);                                             # Number a
       my %b = $c->setBits('b', $j);                                             # Number b
 
       my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>"svg/CompareGt$B"):()); # Svg drawing of layout
@@ -4775,7 +4835,7 @@ if (1)                                                                          
   my %o = connectBits($i, 'o', $o, 'I');
   $o->install($i, {%i}, {%o});
   my %d = $o->setBits('i', 1);
-  my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
+  my $s = $o->simulate({%d}, svg=>"svg/notb1");
 
   is_deeply($s->steps,  2);
   is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
@@ -4796,7 +4856,7 @@ if (1)                                                                          
   my %o = connectWords($i, 'o', $o, 'I', 1, 1);
   $o->install($i, {%i}, {%o});
   my %d = $o->setWords('i', 1);
-  my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
+  my $s = $o->simulate({%d}, svg=>"svg/notw1");
 
   is_deeply($s->steps,  2);
   is_deeply($s->values, { "(not 1 n_1_1)" => 0, "i_1_1" => 1, "N_1_1" => 0 });
@@ -4823,9 +4883,13 @@ if (1)                                                                          
   $o->install($i, {Ii=>"Oo2"}, {Io=>"Oi3"});
   $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
 
-  my $s = $o->simulate({Oi1=>1}, printOff=>"dump/not3", svg=>"svg/not3");
+  my $s = $o->simulate({Oi1=>1}, svg=>"svg/not3");
   is_deeply($s->value("Oo"), 0);
   is_deeply($s->steps,       4);
+
+  my $t = $o->simulate({Oi1=>0});
+  is_deeply($t->value("Oo"), 1);
+  is_deeply($t->steps,       4);
  }
 
 #latest:;
@@ -4966,8 +5030,7 @@ END
   my %w = setWords($c, 'w', reverse 1..$W);
 
   for my $k(0..$W)                                                              # Each possible key
-   {my $k = 3;
-    my %k = setBits($c, 'k', $k);
+   {my %k = setBits($c, 'k', $k);
     my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());
     is_deeply($s->steps, 3);
     is_deeply($s->bInt('M'),$k ? 2**($W-$k) : 0);
@@ -5244,8 +5307,7 @@ if (1)                                                                          
   my %a = map {(n('ia', $_)=>1)} 1..8;
   my %b = map {(n('ib', $_)=>1)} 1..8;
   my $s = $c->simulate({%a, %b, a=>0}, svg=>q(svg/collapseLeft));
-  #say STDERR md5_hex(readFile $s->svg);
-  ok(md5_hex(readFile $s->svg) =~ m(\A3820));
+  is_deeply(substr(md5_hex(readFile $s->svg), 0, 4), q(850e));
  }
 
 done_testing();
