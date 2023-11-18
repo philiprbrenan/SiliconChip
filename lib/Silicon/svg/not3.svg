@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg height="100%" viewBox="0 0 5 5" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="3" x="1" y="0"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="2" x="2" y="1"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="1" x="3" y="2"/>
+<text fill="darkGreen" font-size="0.125" stroke-width="0.0078125" text-anchor="end" x="4" y="0.15625">4 steps</text>
+<text fill="darkGreen" font-size="0.125" stroke-width="0.0078125" text-anchor="end" x="4" y="0.3125">1 thick</text>
+<text fill="darkGreen" font-size="0.125" stroke-width="0.0078125" text-anchor="end" x="4" y="0.46875">4 wide</text>
+<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="0">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.583333333333333">Oi1</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="1" x="1" y="1"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="1" y="1">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="2" y="2">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="1.5" y="1.41666666666667">not</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="1.5" y="1.58333333333333">(inner 1 In)</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="1.5" y="1">1</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="1" x="2" y="2"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="2" y="2">1</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="3" y="3">2</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="2.41666666666667">not</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="2.58333333333333">(inner 2 In)</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="2">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="1" x="3" y="3"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="3" y="3">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="4" y="4">3</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="3.5" y="3.41666666666667">not</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="3.5" y="3.58333333333333">(inner 3 In)</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="3.5" y="3">1</text>
+<circle cx="2.5" cy="3.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="2" y="3">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="3.41666666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="3.58333333333333">Oo</text>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="1.5" y1="0.5" y2="1"/>
+<circle cx="1" cy="0.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="1.5" cy="1" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="2" x2="2.5" y1="1.5" y2="2"/>
+<circle cx="2" cy="1.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="2.5" cy="2" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="3" x2="3.5" y1="2.5" y2="3"/>
+<circle cx="3" cy="2.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="3.5" cy="3" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+</svg>
