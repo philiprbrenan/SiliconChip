@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg height="100%" viewBox="0 0 38 32" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="0"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="1"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="2"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="3"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="4"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="5"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="6"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="7"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="8"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="9"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="10"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="11"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="12"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="13"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="14"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="1" y="15"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="34" x="3" y="16"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="5" y="17"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="30" x="7" y="18"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="28" x="9" y="19"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="26" x="11" y="20"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="24" x="13" y="21"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="22" x="15" y="22"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="20" x="17" y="23"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="18" x="19" y="24"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="16" x="21" y="25"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="14" x="23" y="26"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="12" x="25" y="27"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="8" x="29" y="28"/>
+<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="4" x="33" y="29"/>
+<text fill="darkGreen" font-size="0.96875" stroke-width="0.060546875" text-anchor="end" x="37" y="1.2109375">Choose one of 4 words of 3 bits
+</text>
+<text fill="darkGreen" font-size="0.96875" stroke-width="0.060546875" text-anchor="end" x="37" y="2.421875">3 steps</text>
+<text fill="darkGreen" font-size="0.96875" stroke-width="0.060546875" text-anchor="end" x="37" y="3.6328125">16 thick</text>
+<text fill="darkGreen" font-size="0.96875" stroke-width="0.060546875" text-anchor="end" x="37" y="4.84375">37 wide</text>
+<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="0">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.583333333333333">w_1_1</text>
+<circle cx="0.5" cy="1.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="1">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="1.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="1.58333333333333">w_1_2</text>
+<circle cx="0.5" cy="2.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="2">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="2.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="2.58333333333333">w_1_3</text>
+<circle cx="0.5" cy="3.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="3">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="3.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="3.58333333333333">w_2_1</text>
+<circle cx="0.5" cy="4.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="4">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="4.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="4.58333333333333">w_2_2</text>
+<circle cx="0.5" cy="5.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="5">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="5.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="5.58333333333333">w_2_3</text>
+<circle cx="0.5" cy="6.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="6">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="6.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="6.58333333333333">w_3_1</text>
+<circle cx="0.5" cy="7.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="7">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="7.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="7.58333333333333">w_3_2</text>
+<circle cx="0.5" cy="8.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="8">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="8.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="8.58333333333333">w_3_3</text>
+<circle cx="0.5" cy="9.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="9">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="9.41666666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="9.58333333333333">w_4_1</text>
+<circle cx="0.5" cy="10.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="10">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="10.4166666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="10.5833333333333">w_4_2</text>
+<circle cx="0.5" cy="11.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="11">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="11.4166666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="11.5833333333333">w_4_3</text>
+<circle cx="0.5" cy="12.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="12">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="12.4166666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="12.5833333333333">m_1</text>
+<circle cx="0.5" cy="13.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="13">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="13.4166666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="13.5833333333333">m_2</text>
+<circle cx="0.5" cy="14.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="14">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="14.4166666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="14.5833333333333">m_3</text>
+<circle cx="0.5" cy="15.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="15">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="15.4166666666667">input</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="15.5833333333333">m_4</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="1" y="16"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="1" y="16">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="3" y="17">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2" y="16.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2" y="16.5833333333333">W.a_1_1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="1.5" y="16">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="16">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="3" y="17"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="3" y="17">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="5" y="18">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="4" y="17.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="4" y="17.5833333333333">W.a_1_2</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="3.5" y="17">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="4.5" y="17">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="5" y="18"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="5" y="18">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="7" y="19">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="6" y="18.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="6" y="18.5833333333333">W.a_1_3</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="5.5" y="18">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="6.5" y="18">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="7" y="19"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="7" y="19">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="9" y="20">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="8" y="19.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="8" y="19.5833333333333">W.a_2_1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="7.5" y="19">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="8.5" y="19">1</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="9" y="20"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="9" y="20">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="11" y="21">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="10" y="20.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="10" y="20.5833333333333">W.a_2_2</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="9.5" y="20">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="10.5" y="20">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="11" y="21"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="11" y="21">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="13" y="22">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="12" y="21.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="12" y="21.5833333333333">W.a_2_3</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="11.5" y="21">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="12.5" y="21">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="13" y="22"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="13" y="22">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="15" y="23">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="14" y="22.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="14" y="22.5833333333333">W.a_3_1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="13.5" y="22">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="14.5" y="22">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="15" y="23"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="15" y="23">1</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="17" y="24">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="16" y="23.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="16" y="23.5833333333333">W.a_3_2</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="15.5" y="23">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="16.5" y="23">1</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="17" y="24"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="17" y="24">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="19" y="25">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="18" y="24.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="18" y="24.5833333333333">W.a_3_3</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="17.5" y="24">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="18.5" y="24">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="19" y="25"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="19" y="25">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="21" y="26">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="20" y="25.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="20" y="25.5833333333333">W.a_4_1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="19.5" y="25">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="20.5" y="25">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="21" y="26"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="21" y="26">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="23" y="27">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="22" y="26.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="22" y="26.5833333333333">W.a_4_2</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="21.5" y="26">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="22.5" y="26">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="23" y="27"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="23" y="27">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="25" y="28">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="24" y="27.4166666666667">and</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="24" y="27.5833333333333">W.a_4_3</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="23.5" y="27">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="24.5" y="27">1</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="4" x="25" y="28"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="25" y="28">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="29" y="29">2</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="27" y="28.4166666666667">or</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="27" y="28.5833333333333">W_1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="25.5" y="28">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="26.5" y="28">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="27.5" y="28">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="28.5" y="28">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="4" x="29" y="29"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="29" y="29">1</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="33" y="30">2</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="31" y="29.4166666666667">or</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="31" y="29.5833333333333">W_2</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="29.5" y="29">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="30.5" y="29">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="31.5" y="29">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="32.5" y="29">0</text>
+<rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="4" x="33" y="30"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="33" y="30">0</text>
+<text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="37" y="31">2</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="35" y="30.4166666666667">or</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="35" y="30.5833333333333">W_3</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="33.5" y="30">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="34.5" y="30">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="35.5" y="30">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="36.5" y="30">0</text>
+<circle cx="24.5" cy="28.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="24" y="28">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="24.5" y="28.4166666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="24.5" y="28.5833333333333">o_1</text>
+<circle cx="28.5" cy="29.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="28" y="29">1</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="28.5" y="29.4166666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="28.5" y="29.5833333333333">o_2</text>
+<circle cx="32.5" cy="30.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="32" y="30">0</text>
+<text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="32.5" y="30.4166666666667">output</text>
+<text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="32.5" y="30.5833333333333">o_3</text>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="2" y1="12.5" y2="12.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1.5" x2="1.5" y1="12.5" y2="13"/>
+<circle cx="1.5" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.03125" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="2" x2="2.5" y1="0.5" y2="1"/>
+<circle cx="2" cy="0.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="2.5" cy="1" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="3" x2="4" y1="12.5" y2="12.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="3.5" x2="3.5" y1="12.5" y2="13"/>
+<circle cx="3.5" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.03125" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="4" x2="4.5" y1="1.5" y2="2"/>
+<circle cx="4" cy="1.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="4.5" cy="2" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="5" x2="5.5" y1="12.5" y2="13"/>
+<circle cx="5" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="5.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="6" x2="6.5" y1="2.5" y2="3"/>
+<circle cx="6" cy="2.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="6.5" cy="3" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="7" x2="7.5" y1="3.5" y2="4"/>
+<circle cx="7" cy="3.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="7.5" cy="4" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="7.5" x2="8" y1="12" y2="12.5"/>
+<circle cx="7.5" cy="12" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="8" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="7" x2="8" y1="13.5" y2="13.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="7.5" x2="7.5" y1="13.5" y2="14"/>
+<circle cx="7.5" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.03125" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="8" x2="8.5" y1="12.5" y2="13"/>
+<circle cx="8" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="8.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="9" x2="9.5" y1="4.5" y2="5"/>
+<circle cx="9" cy="4.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="9.5" cy="5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="9.5" x2="10" y1="12" y2="12.5"/>
+<circle cx="9.5" cy="12" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="10" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="9" x2="10" y1="13.5" y2="13.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="9.5" x2="9.5" y1="13.5" y2="14"/>
+<circle cx="9.5" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.03125" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="10" x2="10.5" y1="12.5" y2="13"/>
+<circle cx="10" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="10.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="11" x2="11.5" y1="5.5" y2="6"/>
+<circle cx="11" cy="5.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="11.5" cy="6" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="11.5" x2="12" y1="12" y2="12.5"/>
+<circle cx="11.5" cy="12" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="12" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="11" x2="11.5" y1="13.5" y2="14"/>
+<circle cx="11" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="11.5" cy="14" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="12" x2="12.5" y1="12.5" y2="13"/>
+<circle cx="12" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="12.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="13" x2="13.5" y1="6.5" y2="7"/>
+<circle cx="13" cy="6.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="13.5" cy="7" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="13.5" x2="14" y1="13" y2="13.5"/>
+<circle cx="13.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="14" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="13" x2="14" y1="14.5" y2="14.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="13.5" x2="13.5" y1="14.5" y2="15"/>
+<circle cx="13.5" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.03125" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="14" x2="14.5" y1="11.5" y2="12"/>
+<circle cx="14" cy="11.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="14.5" cy="12" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="14.5" x2="15" y1="12" y2="12.5"/>
+<circle cx="14.5" cy="12" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="15" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="14" x2="14.5" y1="13.5" y2="14"/>
+<circle cx="14" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="14.5" cy="14" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="15" x2="15.5" y1="7.5" y2="8"/>
+<circle cx="15" cy="7.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="15.5" cy="8" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="15.5" x2="16" y1="13" y2="13.5"/>
+<circle cx="15.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="16" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="15" x2="16" y1="14.5" y2="14.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="15.5" x2="15.5" y1="14.5" y2="15"/>
+<circle cx="15.5" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.03125" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="16" x2="16.5" y1="8.5" y2="9"/>
+<circle cx="16" cy="8.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="16.5" cy="9" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="16.5" x2="17" y1="11" y2="11.5"/>
+<circle cx="16.5" cy="11" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="17" cy="11.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="16" x2="16.5" y1="13.5" y2="14"/>
+<circle cx="16" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="16.5" cy="14" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="17" x2="17.5" y1="11.5" y2="12"/>
+<circle cx="17" cy="11.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="17.5" cy="12" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="17.5" x2="18" y1="13" y2="13.5"/>
+<circle cx="17.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="18" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="17" x2="17.5" y1="14.5" y2="15"/>
+<circle cx="17" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="17.5" cy="15" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="18" x2="18.5" y1="9.5" y2="10"/>
+<circle cx="18" cy="9.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="18.5" cy="10" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="18.5" x2="19" y1="11" y2="11.5"/>
+<circle cx="18.5" cy="11" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="19" cy="11.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="18" x2="18.5" y1="13.5" y2="14"/>
+<circle cx="18" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="18.5" cy="14" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="19" x2="19.5" y1="11.5" y2="12"/>
+<circle cx="19" cy="11.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="19.5" cy="12" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="19.5" x2="20" y1="14" y2="14.5"/>
+<circle cx="19.5" cy="14" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="20" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="19" x2="20" y1="15.5" y2="15.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="19.5" x2="19.5" y1="15.5" y2="16"/>
+<circle cx="19.5" cy="15.5" fill="darkRed" font-size="0.166666666666667" r="0.03125" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="20" x2="20.5" y1="10.5" y2="11"/>
+<circle cx="20" cy="10.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="20.5" cy="11" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="20.5" x2="21" y1="11" y2="11.5"/>
+<circle cx="20.5" cy="11" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="21" cy="11.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="20" x2="20.5" y1="12.5" y2="13"/>
+<circle cx="20" cy="12.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="20.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="20.5" x2="21" y1="13" y2="13.5"/>
+<circle cx="20.5" cy="13" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="21" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="20" x2="20.5" y1="14.5" y2="15"/>
+<circle cx="20" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="20.5" cy="15" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="21" x2="21.5" y1="11.5" y2="12"/>
+<circle cx="21" cy="11.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="21.5" cy="12" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="21.5" x2="22" y1="14" y2="14.5"/>
+<circle cx="21.5" cy="14" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="22" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="21" x2="22" y1="15.5" y2="15.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="21.5" x2="21.5" y1="15.5" y2="16"/>
+<circle cx="21.5" cy="15.5" fill="darkRed" font-size="0.166666666666667" r="0.03125" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="22" x2="22.5" y1="14.5" y2="15"/>
+<circle cx="22" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="22.5" cy="15" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="23" x2="23.5" y1="13.5" y2="14"/>
+<circle cx="23" cy="13.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="23.5" cy="14" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="23.5" x2="24" y1="14" y2="14.5"/>
+<circle cx="23.5" cy="14" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="24" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="23" x2="23.5" y1="15.5" y2="16"/>
+<circle cx="23" cy="15.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="23.5" cy="16" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="24" x2="24.5" y1="14.5" y2="15"/>
+<circle cx="24" cy="14.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="24.5" cy="15" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="25" x2="25.5" y1="16.5" y2="17"/>
+<circle cx="25" cy="16.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="25.5" cy="17" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="26" x2="26.5" y1="19.5" y2="20"/>
+<circle cx="26" cy="19.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="26.5" cy="20" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="27" x2="27.5" y1="18.5" y2="19"/>
+<circle cx="27" cy="18.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="27.5" cy="19" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="27.5" x2="28" y1="19" y2="19.5"/>
+<circle cx="27.5" cy="19" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="28" cy="19.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="27" x2="27.5" y1="22.5" y2="23"/>
+<circle cx="27" cy="22.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="27.5" cy="23" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="28" x2="28.5" y1="17.5" y2="18"/>
+<circle cx="28" cy="17.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="28.5" cy="18" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="28.5" x2="29" y1="22" y2="22.5"/>
+<circle cx="28.5" cy="22" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="29" cy="22.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="28" x2="28.5" y1="25.5" y2="26"/>
+<circle cx="28" cy="25.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="28.5" cy="26" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="29" x2="29.5" y1="22.5" y2="23"/>
+<circle cx="29" cy="22.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="29.5" cy="23" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="30" x2="30.5" y1="20.5" y2="21"/>
+<circle cx="30" cy="20.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="30.5" cy="21" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="31" x2="31.5" y1="19.5" y2="20"/>
+<circle cx="31" cy="19.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="31.5" cy="20" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="31.5" x2="32" y1="20" y2="20.5"/>
+<circle cx="31.5" cy="20" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="32" cy="20.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="31" x2="31.5" y1="21.5" y2="22"/>
+<circle cx="31" cy="21.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="31.5" cy="22" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="31.5" x2="32" y1="22" y2="22.5"/>
+<circle cx="31.5" cy="22" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="32" cy="22.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="31" x2="31.5" y1="23.5" y2="24"/>
+<circle cx="31" cy="23.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="31.5" cy="24" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="32" x2="32.5" y1="20.5" y2="21"/>
+<circle cx="32" cy="20.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="32.5" cy="21" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="32.5" x2="33" y1="25" y2="25.5"/>
+<circle cx="32.5" cy="25" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="33" cy="25.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="32" x2="32.5" y1="26.5" y2="27"/>
+<circle cx="32" cy="26.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="32.5" cy="27" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="33" x2="33.5" y1="22.5" y2="23"/>
+<circle cx="33" cy="22.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="33.5" cy="23" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="33.5" x2="34" y1="23" y2="23.5"/>
+<circle cx="33.5" cy="23" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="34" cy="23.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="33" x2="33.5" y1="25.5" y2="26"/>
+<circle cx="33" cy="25.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="33.5" cy="26" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="34" x2="34.5" y1="23.5" y2="24"/>
+<circle cx="34" cy="23.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="34.5" cy="24" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="35" x2="35.5" y1="24.5" y2="25"/>
+<circle cx="35" cy="24.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="35.5" cy="25" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="36" x2="36.5" y1="27.5" y2="28"/>
+<circle cx="36" cy="27.5" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<circle cx="36.5" cy="28" fill="darkRed" font-size="0.166666666666667" r="0.0208333333333333" stroke-width="0.0104166666666667"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="2" y1="0.5" y2="0.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="4" y1="1.5" y2="1.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="6" y1="2.5" y2="2.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="7" y1="3.5" y2="3.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="9" y1="4.5" y2="4.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="11" y1="5.5" y2="5.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="13" y1="6.5" y2="6.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="15" y1="7.5" y2="7.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="16" y1="8.5" y2="8.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="18" y1="9.5" y2="9.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="20" y1="10.5" y2="10.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="14" y1="11.5" y2="11.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="7" y1="13.5" y2="13.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1.5" x2="1.5" y1="13" y2="16"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="13" y1="14.5" y2="14.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="19" y1="15.5" y2="15.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="2.5" x2="2.5" y1="1" y2="16"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="2" x2="3" y1="12.5" y2="12.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="3.5" x2="3.5" y1="13" y2="17"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="3" x2="25" y1="16.5" y2="16.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="4.5" x2="4.5" y1="2" y2="17"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="4" x2="5" y1="12.5" y2="12.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="5.5" x2="5.5" y1="13" y2="18"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="5" x2="28" y1="17.5" y2="17.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="6.5" x2="6.5" y1="3" y2="18"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="7.5" x2="7.5" y1="4" y2="12"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="7.5" x2="7.5" y1="14" y2="19"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="7" x2="27" y1="18.5" y2="18.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="8" x2="9" y1="13.5" y2="13.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="8.5" x2="8.5" y1="13" y2="19"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="9.5" x2="9.5" y1="5" y2="12"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="9.5" x2="9.5" y1="14" y2="20"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="9" x2="26" y1="19.5" y2="19.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="10" x2="11" y1="13.5" y2="13.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="10.5" x2="10.5" y1="13" y2="20"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="11.5" x2="11.5" y1="6" y2="12"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="11.5" x2="11.5" y1="14" y2="21"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="11" x2="30" y1="20.5" y2="20.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="12.5" x2="12.5" y1="13" y2="21"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="13.5" x2="13.5" y1="7" y2="13"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="13.5" x2="13.5" y1="15" y2="22"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="13" x2="31" y1="21.5" y2="21.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="14" x2="15" y1="14.5" y2="14.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="14.5" x2="14.5" y1="14" y2="22"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="15.5" x2="15.5" y1="8" y2="13"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="15" x2="20" y1="12.5" y2="12.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="15.5" x2="15.5" y1="15" y2="23"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="15" x2="27" y1="22.5" y2="22.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="16.5" x2="16.5" y1="9" y2="11"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="16" x2="17" y1="14.5" y2="14.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="16.5" x2="16.5" y1="14" y2="23"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="17.5" x2="17.5" y1="12" y2="13"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="17.5" x2="17.5" y1="15" y2="24"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="17" x2="31" y1="23.5" y2="23.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="18.5" x2="18.5" y1="10" y2="11"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="18.5" x2="18.5" y1="14" y2="24"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="19.5" x2="19.5" y1="12" y2="14"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="19.5" x2="19.5" y1="16" y2="25"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="19" x2="35" y1="24.5" y2="24.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="20" x2="21" y1="15.5" y2="15.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="20.5" x2="20.5" y1="15" y2="25"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="21.5" x2="21.5" y1="12" y2="14"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="21" x2="23" y1="13.5" y2="13.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="21.5" x2="21.5" y1="16" y2="26"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="21" x2="28" y1="25.5" y2="25.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="22" x2="23" y1="15.5" y2="15.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="22.5" x2="22.5" y1="15" y2="26"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="23.5" x2="23.5" y1="16" y2="27"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="23" x2="32" y1="26.5" y2="26.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="24.5" x2="24.5" y1="15" y2="27"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="25.5" x2="25.5" y1="17" y2="28"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="25" x2="36" y1="27.5" y2="27.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="26.5" x2="26.5" y1="20" y2="28"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="27.5" x2="27.5" y1="23" y2="28"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="28.5" x2="28.5" y1="18" y2="22"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="28" x2="31" y1="19.5" y2="19.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="28.5" x2="28.5" y1="26" y2="28"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="29.5" x2="29.5" y1="23" y2="29"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="30.5" x2="30.5" y1="21" y2="29"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="31.5" x2="31.5" y1="24" y2="29"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="32.5" x2="32.5" y1="21" y2="25"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="32" x2="33" y1="22.5" y2="22.5"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="32.5" x2="32.5" y1="27" y2="29"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="33.5" x2="33.5" y1="26" y2="30"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="34.5" x2="34.5" y1="24" y2="30"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="35.5" x2="35.5" y1="25" y2="30"/>
+<line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="36.5" x2="36.5" y1="28" y2="30"/>
+</svg>
