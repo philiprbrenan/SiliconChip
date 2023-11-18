@@ -661,7 +661,7 @@ Create an **input** bus made of words.
          $c->outputWords(qw(o i));
     
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-      my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+      my $s = $c->simulate({%d}, svg=>q(svg/words2));
     
       is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
@@ -669,7 +669,7 @@ Create an **input** bus made of words.
     
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
 </div>
 
 #### outputWords ($chip, $name, $input, %options)
@@ -694,7 +694,7 @@ Create an **output** bus made of words.
 
     
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-      my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+      my $s = $c->simulate({%d}, svg=>q(svg/words2));
     
       is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
@@ -702,7 +702,7 @@ Create an **output** bus made of words.
     
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
 </div>
 
 #### notWords($chip, $name, $input, %options)
@@ -803,7 +803,7 @@ Create a **not** bus made of words.
          $c->outputWords(qw(o i));
     
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-      my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+      my $s = $c->simulate({%d}, svg=>q(svg/words2));
     
       is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
@@ -811,7 +811,7 @@ Create a **not** bus made of words.
     
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
 </div>
 
 #### andWordsX   ($chip, $name, $input, %options)
@@ -912,7 +912,7 @@ Create a **not** bus made of words.
          $c->outputWords(qw(o i));
     
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-      my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+      my $s = $c->simulate({%d}, svg=>q(svg/words2));
     
       is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
@@ -920,7 +920,7 @@ Create a **not** bus made of words.
     
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
 </div>
 
 #### orWordsX($chip, $name, $input, %options)
@@ -1361,7 +1361,7 @@ Compare two unsigned binary integers of a specified width returning **1** if the
          {my %a = $c->setBits('a', $i);                                             # Number a
           my %b = $c->setBits('b', $j);                                             # Number b
     
-          my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>q(svg/CompareEq)):());   # Svg drawing of layout
+          my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>q(svg/CompareEq)):());  # Svg drawing of layout
     
           is_deeply($s->value("out"), $i == $j ? 1 : 0);                            # Equal
           is_deeply($s->steps, 3);                                                  # Number of steps to stability
@@ -1404,7 +1404,7 @@ Compare two unsigned binary integers and return **1** if the first integer is mo
           my %a = $c->setBits('a', $i);                                             # Number a
           my %b = $c->setBits('b', $j);                                             # Number b
     
-          my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>q(svg/CompareGt)):());   # Svg drawing of layout
+          my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>q(svg/CompareGt)):());  # Svg drawing of layout
           is_deeply($s->value("out"), $i > $j ? 1 : 0);                             # More than
           is_deeply($s->steps, 4);                                                  # Number of steps to stability
          }
@@ -1445,7 +1445,7 @@ Compare two unsigned binary integers **a**, **b** of a specified width. Output *
          {my %a = $c->setBits('a', $i);                                             # Number a
           my %b = $c->setBits('b', $j);                                             # Number b
     
-          my $s = $c->simulate({%a, %b}, $i==1&&$j==2?(svg=>q(svg/CompareLt)):());   # Svg drawing of layout
+          my $s = $c->simulate({%a, %b}, $i==1&&$j==2?(svg=>q(svg/CompareLt)):());  # Svg drawing of layout
           is_deeply($s->value("out"), $i < $j ? 1 : 0);                             # More than
           is_deeply($s->steps, 4);                                                  # Number of steps to stability
          }
@@ -2133,7 +2133,7 @@ Represent the state of words in the simulation results as an array of unsigned b
          $c->outputWords(qw(o i));
     
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-      my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+      my $s = $c->simulate({%d}, svg=>q(svg/words2));
     
       is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
@@ -2141,7 +2141,7 @@ Represent the state of words in the simulation results as an array of unsigned b
     
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
 </div>
 
 ## Silicon::Chip::Simulation::wordXToInteger   ($simulation, $output, %options)
@@ -2163,7 +2163,7 @@ Represent the state of words in the simulation results as an array of unsigned b
          $c->outputWords(qw(o i));
     
       my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-      my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+      my $s = $c->simulate({%d}, svg=>q(svg/words2));
     
       is_deeply([$s->wInt('o')], [0..3]);
       is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
@@ -2171,7 +2171,7 @@ Represent the state of words in the simulation results as an array of unsigned b
     
 
 <div>
-    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
 </div>
 
 ## simulate($chip, $inputs, %options)
