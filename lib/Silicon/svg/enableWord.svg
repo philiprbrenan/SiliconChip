@@ -123,63 +123,39 @@
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="1.5" y1="0.5" y2="1"/>
 <circle cx="1" cy="0.5" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="1.5" cy="1" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="2" y1="1.5" y2="1.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="1.5" x2="1.5" y1="1" y2="2"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="2" y1="2.5" y2="2.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="1.5" x2="1.5" y1="2" y2="3"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="2" y1="3.5" y2="3.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="1.5" x2="1.5" y1="3" y2="4"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="2" y1="4.5" y2="4.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="1.5" x2="1.5" y1="4" y2="5"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="2" x2="3" y1="1.5" y2="1.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="2" x2="3" y1="2.5" y2="2.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="2" x2="3" y1="3.5" y2="3.5"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="2" x2="3" y1="4.5" y2="4.5"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="2.5" x2="2.5" y1="4.5" y2="5"/>
 <circle cx="2.5" cy="4.5" fill="darkRed" font-size="0.2" r="0.06" stroke-width="0.02"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="3" x2="3.5" y1="1.5" y2="2"/>
 <circle cx="3" cy="1.5" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="3.5" cy="2" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="3" x2="4" y1="2.5" y2="2.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="3.5" x2="3.5" y1="2" y2="3"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="3" x2="4" y1="3.5" y2="3.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="3.5" x2="3.5" y1="3" y2="4"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="3" x2="4" y1="4.5" y2="4.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="3.5" x2="3.5" y1="4" y2="5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="3.5" x2="3.5" y1="5" y2="6"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="4" x2="5" y1="2.5" y2="2.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="4" x2="5" y1="3.5" y2="3.5"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="4" x2="5" y1="4.5" y2="4.5"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="4.5" x2="4.5" y1="4.5" y2="5"/>
 <circle cx="4.5" cy="4.5" fill="darkRed" font-size="0.2" r="0.06" stroke-width="0.02"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="4.5" x2="4.5" y1="5" y2="6"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="5" x2="5.5" y1="2.5" y2="3"/>
 <circle cx="5" cy="2.5" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="5.5" cy="3" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="5" x2="6" y1="3.5" y2="3.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="5.5" x2="5.5" y1="3" y2="4"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="5" x2="6" y1="4.5" y2="4.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="5.5" x2="5.5" y1="4" y2="5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="5.5" x2="5.5" y1="5" y2="6"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="5.5" x2="5.5" y1="6" y2="7"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="6" x2="7" y1="3.5" y2="3.5"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="6" x2="7" y1="4.5" y2="4.5"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="6.5" x2="6.5" y1="4.5" y2="5"/>
 <circle cx="6.5" cy="4.5" fill="darkRed" font-size="0.2" r="0.06" stroke-width="0.02"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="6.5" x2="6.5" y1="5" y2="6"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="6.5" x2="6.5" y1="6" y2="7"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="7" x2="7.5" y1="3.5" y2="4"/>
 <circle cx="7" cy="3.5" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="7.5" cy="4" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="7" x2="8" y1="4.5" y2="4.5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="7.5" x2="7.5" y1="4" y2="5"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="7.5" x2="7.5" y1="5" y2="6"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="7.5" x2="7.5" y1="6" y2="7"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="7.5" x2="7.5" y1="7" y2="8"/>
 <line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="8" x2="8.5" y1="4.5" y2="5"/>
 <circle cx="8" cy="4.5" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
 <circle cx="8.5" cy="5" fill="darkRed" font-size="0.2" r="0.04" stroke-width="0.02"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="8.5" x2="8.5" y1="5" y2="6"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="8.5" x2="8.5" y1="6" y2="7"/>
-<line fill="transparent" font-size="0.2" stroke="darkblue" stroke-width="0.04" x1="8.5" x2="8.5" y1="7" y2="8"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="3" y1="1.5" y2="1.5"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1.5" x2="1.5" y1="1" y2="5"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="5" y1="2.5" y2="2.5"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="7" y1="3.5" y2="3.5"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="1" x2="2" y1="4.5" y2="4.5"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="3.5" x2="3.5" y1="2" y2="6"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="3" x2="4" y1="4.5" y2="4.5"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="4.5" x2="4.5" y1="5" y2="6"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="5.5" x2="5.5" y1="3" y2="7"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="5" x2="6" y1="4.5" y2="4.5"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="6.5" x2="6.5" y1="5" y2="7"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="7" x2="8" y1="4.5" y2="4.5"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="7.5" x2="7.5" y1="4" y2="8"/>
+<line fill="transparent" font-size="0.2" stroke="darkgreen" stroke-width="0.04" x1="8.5" x2="8.5" y1="5" y2="8"/>
 </svg>
