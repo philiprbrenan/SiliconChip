@@ -30,7 +30,7 @@ my sub gateOuterOutput    {6}                                                   
 
 my $possibleTypes = q(and|continue|gt|input|lt|nand|nor|not|nxor|one|or|output|xor|zero);#Substitute: possible gate types
 
-sub debugMask {0}                                                               # adds a grid and fiber names ot a mask to help debug fibers if true
+sub debugMask {0}                                                               # Adds a grid and fiber names to a mask to help debug fibers if true.
 
 #D1 Construct                                                                   # Construct a L<silicon> L<chip> using standard L<lgs>, components and sub chips combined via buses.
 
@@ -710,7 +710,7 @@ my sub firstLastOne($)                                                          
   ($f, $l)
  }
 
-my sub layoutInputBus(@)                                                        # Given an array of bit strings lay them out from left to right in lines so that the B<1>s of each possible pairs of bit strings do not overlap per L<canBothFitOnSameLine>.  Returns an array mapping the strings to lines.  There is no reason to suppose that the proposed layout is optimal - this is a packing problem with all the usual difficulties associated with such problems.  This layout requires three levels. 1: Down from input gate. 2: horizontal until vertically above a gate we wish to connect this input pin to.  3: down to the gate we wish to connect to.  Three levels is enough because in the worst case each input gate can have its oen horizontal wich we can reach because the gates are spaced  horizontally.  Each such horizontal can be connected vertically on level 3 to an input of a non input gate because no two input gates are connected to the same pin on any other gate.
+my sub layoutInputBus(@)                                                        # Given an array of bit strings lay them out from left to right in lines so that the B<1>s of each possible pairs of bit strings do not overlap per L<canBothFitOnSameLine>.  Returns an array mapping the strings to lines.  There is no reason to suppose that the proposed layout is optimal - this is a packing problem with all the usual difficulties associated with such problems.  This layout requires three levels. 1: Down from input gate. 2: horizontal until vertically above a gate we wish to connect this input pin to.  3: down to the gate we wish to connect to.  Three levels is enough because in the worst case each input gate can have its own horizontal which we can reach because the gates are spaced  horizontally.  Each such horizontal can be connected vertically on level 3 to an input of a non input gate because no two input gates are connected to the same pin on any other gate.
  {my (@a) = @_;                                                                 # Array of bit strings to be laid out
 
   my @l;                                                                        # Proposed input bus lines
@@ -776,7 +776,7 @@ sub printSvg($%)                                                                
   for my $i(keys @$iG)                                                          # Position of each input gate
    {my $G = $$iG[$i];                                                           # Gate name
     my $g = $$gates{$G};                                                        # Gate
-    $p{$G} = newGatePosition(gate=>$g, x=>$i, y=>0, width=>1);                  # Position input gate. TRhe gates are drawn horizontally across the top with the input bus beneath them.
+    $p{$G} = newGatePosition(gate=>$g, x=>$i, y=>0, width=>1);                  # Position input gate. The gates are drawn horizontally across the top with the input bus beneath them.
    }
 
   my $W = 0;                                                                    # Number of inputs to all the non IO gates
@@ -820,7 +820,7 @@ sub printSvg($%)                                                                
       my ($f, $l) = firstLastOne($iBus[$i]);                                    # Limits on bus line for this input gate
       $L->busStart = $f; $L->busEnd = $l;                                       # Save limits on bus line for this input gate
       my $y = 1/2 + $B;                                                         # Vertical position of input bus line
-      my $c = q(#DC143C);                                                       # Spanish crimson for horizontal input bus lines
+      my $c = q(#DC143C);                                                       # B<Spanish Crimson> for horizontal input bus lines
       if ($f != $l)                                                             # Horizontal input bar required for this gate
        {$s->line(x1 => $f-1/2, x2 => $l-1/2, y1 => $y, y2 => $y, stroke => $c); # Draw level 2 input bus line
        }
@@ -1107,7 +1107,7 @@ my sub layoutAsFiberBundle($%)                                                  
           for my $I(reverse 0..i-1)                                             # Look for an opposite corner
            {last if $j+2 >= $fibers[$I]->$#*;
             last   unless defined(h($I, j)) and h($I, j) eq $a;                 # Make sure horizontal is occupied with expected bus line
-            last   if  defined h($I, j+1);                                      # Horizontal is occupied so we will not be able to repurpose it
+            last   if  defined h($I, j+1);                                      # Horizontal is occupied so we will not be able to reuse it
             k = $I if !defined v($I, j+1);                                      # Possible opposite because it is not being used vertically
            }
 
@@ -1140,7 +1140,7 @@ my sub layoutAsFiberBundle($%)                                                  
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going down
           for my $J(j..scalar($fibers[i-1]->$#*))                               # Look for an opposite corner
            {last unless defined(v(i,   $J)) and v(i,   $J) eq a;                # Make sure vertical is occupied with expected fiber
-            last   if   defined(v(i-1, $J)) and v(i-1, $J) ne a;                # Vertical is occupied so we will not be able to repurpose it
+            last   if   defined(v(i-1, $J)) and v(i-1, $J) ne a;                # Vertical is occupied so we will not be able to reuse it
             k = $J if  !defined(h(i-1, $J));                                    # Possible corner as horizontal is free
            }
 
@@ -1216,7 +1216,7 @@ sub Silicon::Chip::Layout::draw($%)                                             
     font_size    => fs,
     fill         => q(transparent)});
 
-  my $svg = Svg::Simple::new(@defaults, %options, grid=>debugMask ? 1 : 0);     # Draw each gate via Svg. Grid set to 1 produces a grid that can be helfpul debugging layout problems
+  my $svg = Svg::Simple::new(@defaults, %options, grid=>debugMask ? 1 : 0);     # Draw each gate via Svg. Grid set to 1 produces a grid that can be helpful debugging layout problems
 
   if (1)                                                                        # Show squares in play with a small number of rectangles
    {my @i = map {$_ ? [@$_] : $_} @inPlay;                                      # Deep copy
@@ -1358,10 +1358,10 @@ sub Silicon::Chip::Layout::draw($%)                                             
         my $v = $f[$i][$j][1];                                                  # Vertical
 
         if (defined($h) and defined($v) and $h eq $v)                           # Cross
-         {my $l = !$i[$i-1][$j] || ($i[$i-1][$j] && ($f[$i-1][$j][0]//'') eq $h);     # Left horizontal
-          my $r =             $i[$i+1][$j] && ($f[$i+1][$j][0]//'') eq $h;      # Right horizontal
-          my $a = $j >  0 &&  $i[$i][$j-1] && ($f[$i][$j-1][1]//'') eq $h;      # Vertically above
-          my $b = $j >= $f[$i]->$#* || ($i[$i][$j+1] && ($f[$i][$j+1][1]//'') eq $h);      # Vertically below
+         {my $l = !$i[$i-1][$j]     || ($i[$i-1][$j] && ($f[$i-1][$j][0]//'') eq $h); # Left horizontal
+          my $r =                       $i[$i+1][$j] && ($f[$i+1][$j][0]//'') eq $h;  # Right horizontal
+          my $a = $j >  0           &&  $i[$i][$j-1] && ($f[$i][$j-1][1]//'') eq $h;  # Vertically above
+          my $b = $j >= $f[$i]->$#* || ($i[$i][$j+1] && ($f[$i][$j+1][1]//'') eq $h); # Vertically below
 
 #     | A     --+   |C       D
 #     +--     B |   +--    --+--
@@ -1385,7 +1385,7 @@ sub Silicon::Chip::Layout::draw($%)                                             
             $svg->line(x1=>$i+1/2,   y1=>$j+1/2, x2=>$i+1/2, y2=>$j+1,   @h);
             $svg->circle(cx=>$i+1/2, cy=>$j+1/2, @C);
            }
-          elsif ($A)                                                               # Draw corners
+          elsif ($A)                                                            # Draw corners
            {$svg->line  (x1=>$i+1/2, y1=>$j,     x2=>$i+1,   y2=>$j+1/2, @h);
             $svg->circle(cx=>$i+1/2, cy=>$j,     @A);
             $svg->circle(cx=>$i+1,   cy=>$j+1/2, @A);
@@ -1426,7 +1426,7 @@ sub Silicon::Chip::Layout::draw($%)                                             
             $$V = undef;                                                        # Erase line as no longer needed
             $e  = $J;                                                           # Current known end of the line
            }
-          $svg->line(x1=>$i+1/2, y1=>$j, x2=>$i+1/2, y2=>$e+1, @vc);              # Draw vertical line
+          $svg->line(x1=>$i+1/2, y1=>$j, x2=>$i+1/2, y2=>$e+1, @vc);            # Draw vertical line
          }
        }
      }
@@ -2685,14 +2685,14 @@ B<Example:>
        $c->outputWords(qw(o i));
   
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-    my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+    my $s = $c->simulate({%d}, svg=>q(svg/words2));
   
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
   
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
   
 
 =head4 outputWords ($chip, $name, $input, %options)
@@ -2718,14 +2718,14 @@ B<Example:>
 
   
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-    my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+    my $s = $c->simulate({%d}, svg=>q(svg/words2));
   
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
   
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
   
 
 =head4 notWords($chip, $name, $input, %options)
@@ -2825,14 +2825,14 @@ B<Example:>
        $c->outputWords(qw(o i));
   
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-    my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+    my $s = $c->simulate({%d}, svg=>q(svg/words2));
   
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
   
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
   
 
 =head4 andWordsX   ($chip, $name, $input, %options)
@@ -2932,14 +2932,14 @@ B<Example:>
        $c->outputWords(qw(o i));
   
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-    my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+    my $s = $c->simulate({%d}, svg=>q(svg/words2));
   
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
   
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
   
 
 =head4 orWordsX($chip, $name, $input, %options)
@@ -3385,7 +3385,7 @@ B<Example:>
        {my %a = $c->setBits('a', $i);                                             # Number a
         my %b = $c->setBits('b', $j);                                             # Number b
   
-        my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>q(svg/CompareEq)):());   # Svg drawing of layout
+        my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>q(svg/CompareEq)):());  # Svg drawing of layout
   
         is_deeply($s->value("out"), $i == $j ? 1 : 0);                            # Equal
         is_deeply($s->steps, 3);                                                  # Number of steps to stability
@@ -3428,7 +3428,7 @@ B<Example:>
         my %a = $c->setBits('a', $i);                                             # Number a
         my %b = $c->setBits('b', $j);                                             # Number b
   
-        my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>q(svg/CompareGt)):());   # Svg drawing of layout
+        my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>q(svg/CompareGt)):());  # Svg drawing of layout
         is_deeply($s->value("out"), $i > $j ? 1 : 0);                             # More than
         is_deeply($s->steps, 4);                                                  # Number of steps to stability
        }
@@ -3469,7 +3469,7 @@ B<Example:>
        {my %a = $c->setBits('a', $i);                                             # Number a
         my %b = $c->setBits('b', $j);                                             # Number b
   
-        my $s = $c->simulate({%a, %b}, $i==1&&$j==2?(svg=>q(svg/CompareLt)):());   # Svg drawing of layout
+        my $s = $c->simulate({%a, %b}, $i==1&&$j==2?(svg=>q(svg/CompareLt)):());  # Svg drawing of layout
         is_deeply($s->value("out"), $i < $j ? 1 : 0);                             # More than
         is_deeply($s->steps, 4);                                                  # Number of steps to stability
        }
@@ -4153,14 +4153,14 @@ B<Example:>
        $c->outputWords(qw(o i));
   
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-    my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+    my $s = $c->simulate({%d}, svg=>q(svg/words2));
   
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
   
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
   
 
 =head2 Silicon::Chip::Simulation::wordXToInteger   ($simulation, $output, %options)
@@ -4183,14 +4183,14 @@ B<Example:>
        $c->outputWords(qw(o i));
   
     my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-    my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+    my $s = $c->simulate({%d}, svg=>q(svg/words2));
   
     is_deeply([$s->wInt('o')], [0..3]);
     is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
    }
   
 
-=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words$W.svg">
+=for html <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/words2.svg">
   
 
 =head2 simulate($chip, $inputs, %options)
@@ -4783,7 +4783,7 @@ END
      {my %a = $c->setBits('a', $i);                                             # Number a
       my %b = $c->setBits('b', $j);                                             # Number b
 
-      my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>q(svg/CompareEq)):());   # Svg drawing of layout
+      my $s = $c->simulate({%a, %b}, $i==1&&$j==1?(svg=>q(svg/CompareEq)):());  # Svg drawing of layout
 
       is_deeply($s->value("out"), $i == $j ? 1 : 0);                            # Equal
       is_deeply($s->steps, 3);                                                  # Number of steps to stability
@@ -4807,7 +4807,7 @@ END
       my %a = $c->setBits('a', $i);                                             # Number a
       my %b = $c->setBits('b', $j);                                             # Number b
 
-      my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>q(svg/CompareGt)):());   # Svg drawing of layout
+      my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>q(svg/CompareGt)):());  # Svg drawing of layout
       is_deeply($s->value("out"), $i > $j ? 1 : 0);                             # More than
       is_deeply($s->steps, 4);                                                  # Number of steps to stability
      }
@@ -4829,7 +4829,7 @@ END
      {my %a = $c->setBits('a', $i);                                             # Number a
       my %b = $c->setBits('b', $j);                                             # Number b
 
-      my $s = $c->simulate({%a, %b}, $i==1&&$j==2?(svg=>q(svg/CompareLt)):());   # Svg drawing of layout
+      my $s = $c->simulate({%a, %b}, $i==1&&$j==2?(svg=>q(svg/CompareLt)):());  # Svg drawing of layout
       is_deeply($s->value("out"), $i < $j ? 1 : 0);                             # More than
       is_deeply($s->steps, 4);                                                  # Number of steps to stability
      }
@@ -5159,11 +5159,12 @@ if (1)                                                                          
      $c->outputWords(qw(o i));
 
   my %d = setWords($c, 'i', 0b000, 0b001, 0b010, 0b011);
-  my $s = $c->simulate({%d}, svg=>q(svg/words$W));
+  my $s = $c->simulate({%d}, svg=>q(svg/words2));
 
   is_deeply([$s->wInt('o')], [0..3]);
   is_deeply([$s->wordXToInteger('o')], [10, 12, 0]);
  }
+
 
 #latest:;
 if (1)
