@@ -71,7 +71,7 @@
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="3.41666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="3.58333333333333">i_4</text>
 <circle cx="0.5" cy="4.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="4">0</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="4">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="4.41666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="4.58333333333333">i_5</text>
 <circle cx="0.5" cy="5.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
@@ -95,7 +95,7 @@
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="9.41666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="9.58333333333333">i_10</text>
 <circle cx="0.5" cy="10.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="10">1</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="10">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="10.4166666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="10.5833333333333">i_11</text>
 <circle cx="0.5" cy="11.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
@@ -139,11 +139,11 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="4.5" y="18.5833333333333">m.n_4</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="4.5" y="18">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="1" x="5" y="19"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="5" y="19">1</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="5" y="19">0</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="6" y="20">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="5.5" y="19.4166666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="5.5" y="19.5833333333333">m.n_5</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="5.5" y="19">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="5.5" y="19">1</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="1" x="6" y="20"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="6" y="20">1</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="7" y="21">1</text>
@@ -175,11 +175,11 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="10.5" y="24.5833333333333">m.n_10</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="10.5" y="24">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="1" x="11" y="25"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="11" y="25">0</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="11" y="25">1</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="12" y="26">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="11.5" y="25.4166666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="11.5" y="25.5833333333333">m.n_11</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="11.5" y="25">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="11.5" y="25">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="1" x="12" y="26"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="12" y="26">1</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="13" y="27">1</text>
@@ -226,18 +226,18 @@
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="20.5" y="32">1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="21.5" y="32">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="22" y="33"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="22" y="33">0</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="22" y="33">1</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="24" y="34">2</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="23" y="33.4166666666667">and</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="23" y="33.5833333333333">m.a_5</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="22.5" y="33">1</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="23.5" y="33">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="23.5" y="33">1</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="24" y="34"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="24" y="34">0</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="26" y="35">2</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="25" y="34.4166666666667">and</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="25" y="34.5833333333333">m.a_6</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="24.5" y="34">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="24.5" y="34">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="25.5" y="34">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="26" y="35"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="26" y="35">0</text>
@@ -268,18 +268,18 @@
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="32.5" y="38">1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="33.5" y="38">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="34" y="39"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="34" y="39">1</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="34" y="39">0</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="36" y="40">2</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="35" y="39.4166666666667">and</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="35" y="39.5833333333333">m.a_11</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="34.5" y="39">1</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="35.5" y="39">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="35.5" y="39">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="36" y="40"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="36" y="40">0</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="38" y="41">2</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="37" y="40.4166666666667">and</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="37" y="40.5833333333333">m.a_12</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="36.5" y="40">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="36.5" y="40">1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="37.5" y="40">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="2" x="38" y="41"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="38" y="41">0</text>
@@ -308,20 +308,20 @@
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="48" y="44.4166666666667">or</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="48" y="44.5833333333333">m_1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="44.5" y="44">0</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="45.5" y="44">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="45.5" y="44">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="46.5" y="44">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="47.5" y="44">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="48.5" y="44">0</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="49.5" y="44">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="49.5" y="44">1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="50.5" y="44">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="51.5" y="44">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="8" x="52" y="45"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="52" y="45">1</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="52" y="45">0</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="60" y="46">3</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="56" y="45.4166666666667">or</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="56" y="45.5833333333333">m_2</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="52.5" y="45">0</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="53.5" y="45">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="53.5" y="45">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="54.5" y="45">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="55.5" y="45">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="56.5" y="45">0</text>
@@ -329,7 +329,7 @@
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="58.5" y="45">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="59.5" y="45">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="8" x="60" y="46"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="60" y="46">0</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="60" y="46">1</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="68" y="47">3</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="64" y="46.4166666666667">or</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="64" y="46.5833333333333">m_3</text>
@@ -338,16 +338,16 @@
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="62.5" y="46">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="63.5" y="46">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="64.5" y="46">0</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="65.5" y="46">0</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="65.5" y="46">1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="66.5" y="46">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="67.5" y="46">0</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="8" x="68" y="47"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="68" y="47">1</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="68" y="47">0</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="76" y="48">3</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="72" y="47.4166666666667">or</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="72" y="47.5833333333333">m_4</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="68.5" y="47">0</text>
-<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="69.5" y="47">1</text>
+<text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="69.5" y="47">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="70.5" y="47">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="71.5" y="47">0</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="72.5" y="47">0</text>
@@ -359,15 +359,15 @@
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="43.5" y="44.4166666666667">output</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="43.5" y="44.5833333333333">o_1</text>
 <circle cx="51.5" cy="45.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="51" y="45">1</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="51" y="45">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="51.5" y="45.4166666666667">output</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="51.5" y="45.5833333333333">o_2</text>
 <circle cx="59.5" cy="46.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="59" y="46">0</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="59" y="46">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="59.5" y="46.4166666666667">output</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="59.5" y="46.5833333333333">o_3</text>
 <circle cx="67.5" cy="47.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
-<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="67" y="47">1</text>
+<text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="67" y="47">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="67.5" y="47.4166666666667">output</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="67.5" y="47.5833333333333">o_4</text>
 <line fill="transparent" font-size="0.166666666666667" stroke="darkgreen" stroke-width="0.0208333333333333" x1="1" x2="2" y1="0.5" y2="0.5"/>
