@@ -45,7 +45,7 @@ Other circuit diagrams can be seen in folder: [lib/Silicon/svg](https://github.c
 
 Design a [silicon](https://en.wikipedia.org/wiki/Silicon) [chip](https://en.wikipedia.org/wiki/Integrated_circuit) by combining [logic gates](https://en.wikipedia.org/wiki/Logic_gate) and sub [chips](https://en.wikipedia.org/wiki/Integrated_circuit).
 
-Version 20231111.
+Version 20231118.
 
 The following sections describe the methods in each functional area of this
 module.  For an alphabetic listing of all methods by name see [Index](#index).
@@ -97,7 +97,7 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
       ok($s->value("and1") == 1);
      }
     
-    if (1)                                                                          # 4 bit equal 
+    if (1)                                                                           # 4 bit equal 
      {my $B = 4;                                                                    # Number of bits
     
     
@@ -115,11 +115,11 @@ Create a new [chip](https://en.wikipedia.org/wiki/Integrated_circuit).
     
       my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values
                             b1=>1, b2=>0, b3=>1, b4=>0},
-                            svg=>q(svg/Equals),                                     # Svg drawing of layout
-                            collapse=>q(svg/EqualsCollapse));
+                            svg=>q(svg/Equals));                                    # Svg drawing of layout
     
       is_deeply($s->steps,        3);                                               # Three steps
       is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
+      is_deeply(substr(md5_hex(readFile $s->svg), 0, 4), '9ff8');
     
       my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,
                             b1=>1, b2=>0, b3=>1, b4=>0});
@@ -1063,7 +1063,7 @@ Install a [chip](https://en.wikipedia.org/wiki/Integrated_circuit) within anothe
       $o->install($i, {%i}, {%o});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       my %d = $o->setBits('i', 1);
-      my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
+      my $s = $o->simulate({%d}, svg=>"svg/notb1");
     
       is_deeply($s->steps,  2);
       is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
@@ -1334,7 +1334,8 @@ Compare two unsigned binary integers and return **1** if the first integer is mo
     
       for   my $i(0..2**$B-1)                                                       # Each possible number
        {for my $j(0..2**$B-1)                                                       # Each possible number
-         {my %a = $c->setBits('a', $i);                                             # Number a
+         {#$i = 2; $j = 1;
+          my %a = $c->setBits('a', $i);                                             # Number a
           my %b = $c->setBits('b', $j);                                             # Number b
     
           my $s = $c->simulate({%a, %b}, $i==2&&$j==1?(svg=>"svg/CompareGt$B"):()); # Svg drawing of layout
@@ -1714,8 +1715,7 @@ Choose one of a specified number of words **w**, each of a specified width, usin
       my %w = setWords($c, 'w', reverse 1..$W);
     
       for my $k(0..$W)                                                              # Each possible key
-       {my $k = 3;
-        my %k = setBits($c, 'k', $k);
+       {my %k = setBits($c, 'k', $k);
     
         my $s = $c->simulate({%k, %w}, $k == 3 ? (svg=>q(svg/findWord)) : ());  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
@@ -1868,7 +1868,7 @@ Create a connection list connecting a set of output bits on the one chip to a se
 
       $o->install($i, {%i}, {%o});
       my %d = $o->setBits('i', 1);
-      my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
+      my $s = $o->simulate({%d}, svg=>"svg/notb1");
     
       is_deeply($s->steps,  2);
       is_deeply($s->values, {"(not 1 n_1)"=>0, "i_1"=>1, "N_1"=>0 });
@@ -1908,7 +1908,7 @@ Create a connection list connecting a set of words on the outer chip to a set of
 
       $o->install($i, {%i}, {%o});
       my %d = $o->setWords('i', 1);
-      my $s = $o->simulate({%d}, printOff=>"dump/not1", svg=>"svg/not1");
+      my $s = $o->simulate({%d}, svg=>"svg/notw1");
     
       is_deeply($s->steps,  2);
       is_deeply($s->values, { "(not 1 n_1_1)" => 0, "i_1_1" => 1, "N_1_1" => 0 });
@@ -2062,6 +2062,42 @@ Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gat
 
 **Example:**
 
+    if (1)                                                                           # 4 bit equal 
+     {my $B = 4;                                                                    # Number of bits
+    
+      my $c = Silicon::Chip::newChip(title=><<"END");                               # Create chip
+    $B Bit Equals
+    END
+      $c->input ("a$_")                 for 1..$B;                                  # First number
+      $c->input ("b$_")                 for 1..$B;                                  # Second number
+    
+      $c->nxor  ("e$_", "a$_", "b$_")   for 1..$B;                                  # Test each bit for equality
+      $c->and   ("and", {map{$_=>"e$_"}     1..$B});                                # And tests together to get total equality
+    
+      $c->output("out", "and");                                                     # Output gate
+    
+    
+      my $s = $c->simulate({a1=>1, a2=>0, a3=>1, a4=>0,                             # Input gate values  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+                            b1=>1, b2=>0, b3=>1, b4=>0},
+                            svg=>q(svg/Equals));                                    # Svg drawing of layout
+    
+      is_deeply($s->steps,        3);                                               # Three steps
+      is_deeply($s->value("out"), 1);                                               # Out is 1 for equals
+      is_deeply(substr(md5_hex(readFile $s->svg), 0, 4), '9ff8');
+    
+    
+      my $t = $c->simulate({a1=>1, a2=>1, a3=>1, a4=>0,  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+                            b1=>1, b2=>0, b3=>1, b4=>0});
+      is_deeply($t->value("out"), 0);                                               # Out is 0 for not equals
+     }
+    
+
+<div>
+    <img src="https://raw.githubusercontent.com/philiprbrenan/SiliconChip/main/lib/Silicon/svg/Equals.svg">
+</div>
+
     if (1)                                                                          
      {my $i = newChip(name=>"inner");
          $i->input ("Ii");
@@ -2083,10 +2119,16 @@ Simulate the action of the [logic gates](https://en.wikipedia.org/wiki/Logic_gat
       $o->install($i, {Ii=>"Oo3"}, {Io=>"Oi4"});
     
     
-      my $s = $o->simulate({Oi1=>1}, printOff=>"dump/not3", svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+      my $s = $o->simulate({Oi1=>1}, svg=>"svg/not3");  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
 
       is_deeply($s->value("Oo"), 0);
       is_deeply($s->steps,       4);
+    
+    
+      my $t = $o->simulate({Oi1=>0});  # 𝗘𝘅𝗮𝗺𝗽𝗹𝗲
+
+      is_deeply($t->value("Oo"), 1);
+      is_deeply($t->steps,       4);
      }
     
 
@@ -2133,6 +2175,10 @@ Gate sequence number - this allows us to display the gates in the order they wer
 #### gates
 
 Gates in chip
+
+#### height
+
+Height of drawing
 
 #### inPlay
 
