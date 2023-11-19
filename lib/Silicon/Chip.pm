@@ -998,6 +998,7 @@ my sub layoutAsFiberBundle($%)                                                  
    }
 
   my @fibers;                                                                   # Squares of the page, each of which can either be undefined or contain the name of the fiber crossing it from left to right or up and down
+  my %corners;                                                                  # Corners of the fibers that we can currently hope to collapse
   my @inPlay;                                                                   # Squares of the page in play
   my @positions;                                                                # Position of each gate indexed by position in layout
   my %positions;                                                                # Position of each gate indexed by gate name
@@ -1058,10 +1059,13 @@ my sub layoutAsFiberBundle($%)                                                  
     for my $i(keys @i)                                                          # Connections to each gate
      {my $D = $i[$i];                                                           # Driving gate name
       my $d = $positions{$D};                                                   # Driving gate position
-      my $X = $p->x+$i;                                                         # X position of input pin to gate
-      my $Y = $p->y;                                                            # Y position of input pin to gate
-      $fibers[$_][$d->y][0] = $D for $d->x+$d->width..$X;                       # Horizontal line
-      $fibers[$X][$_]   [1] = $D for $d->y..$Y-1;                               # Vertical line
+      my $x = $d->x;                                                            # X position of driving gate
+      my $y = $d->y;                                                            # Y position of driving gate
+      my $X = $p->x+$i;                                                         # X position of input pin to driven gate
+      my $Y = $p->y;                                                            # Y position of input pin to driven gate
+      $fibers[$_][$y][0] = $D for $x+$d->width..$X;                             # Horizontal line
+      $fibers[$X][$_][1] = $D for $y..$Y-1;                                     # Vertical line
+      $corners{$X}{$y}++;                                                       # Corner position
       if (!$g->io)                                                              # Mark column as in play
        {for my $j(0..$Y-1)
          {$inPlay[$X][$j] = 1;
@@ -1073,18 +1077,10 @@ my sub layoutAsFiberBundle($%)                                                  
   my sub collapseFibers()                                                       # Perform one collapse pass of the fibers returning the number of collapses performed
    {my $changes = 0;                                                            # Number of changes made in this pass
 
-    my sub removeOrphans($)                                                     # Remove any vertical orphans in the specified column
-     {my ($i) = @_;                                                             # Column to check
-      for my $j(keys $fibers[$i]->@*)
-       {my $h = $fibers[$i][$j][0];                                             # Horizontal line
-        my $v = $fibers[$i][$j][1];                                             # Vertical line
-        last if defined($h) and defined($v) and $h eq $v;                       # Found the vertical so we can stop
-        $fibers[$i][$j][1] = undef;                                             # Remove vertical as it never meets a corresponding horizontal and so is of no use
-       }
-     }
-
-    for my $i(keys @fibers)                                                     # Examine each cell for a corner that we can collapse either left or down
-     {for my $j(keys $fibers[$i]->@*)
+#    for my $i(keys @fibers)                                                     # Examine each cell for a corner that we can collapse either left or down
+#     {for my $j(keys $fibers[$i]->@*)
+    for   my $i(sort {$a <=> $b} keys %corners)                                 # Examine each corner
+     {for my $j(sort {$a <=> $b} keys $corners{$i}->%*)
        {my sub i() {$i}
         my sub j() {$j}
         my sub h($$) :lvalue {my ($i, $j) = @_; return undef unless $i >= 0 and $j >= 0 and $inPlay[$i][$j]; $fibers[$i][$j][0]} # A horizontal element relative to the current corner
@@ -1106,7 +1102,8 @@ my sub layoutAsFiberBundle($%)                                                  
          {my $k; my sub k() :lvalue {$k}                                        # Position of new corner going left
           for my $I(reverse 0..i-1)                                             # Look for an opposite corner
            {last if $j+2 >= $fibers[$I]->$#*;
-            last   unless defined(h($I, j)) and h($I, j) eq $a;                 # Make sure horizontal is occupied with expected bus line
+            my $h = h($I, j);                                                   # Make sure horizontal is occupied with expected bus line
+            last   unless defined($h) and $h eq $a;                             # Make sure horizontal is occupied with expected bus line
             last   if  defined h($I, j+1);                                      # Horizontal is occupied so we will not be able to reuse it
             k = $I if !defined v($I, j+1);                                      # Possible opposite because it is not being used vertically
            }
@@ -1121,14 +1118,15 @@ my sub layoutAsFiberBundle($%)                                                  
             for my $I(k+1..i)                                                   # Route along lower side
              {h($I, j  ) = undef;                                               # Remove upper side
               h($I, j+1) = a;                                                   # Add lower side
-              if (defined(v($I, j)) and v($I, j) eq a)                          # Crossing a T so we need to move the cross down one
+              my $v = v($I, j);                                                 # Crossing a T so we need to move the cross down one
+              if (defined($v) and $v eq a)                                      # Crossing a T so we need to move the cross down one
                {v($I, j)   = undef;                                             # Remove upper cross
                 v($I, j+1) = a;                                                 # Enable lower cross
                }
              }
             ++$changes; $wentLeft++;
-            #removeOrphans(k)   if k;
-            #removeOrphans(k-1) if k;
+            $corners{$k}{$j}++;                                                 # Corner position upper left
+            $corners{$i}{$j+1}++;                                               # Corner position lower right
            }
          }
 #  d        |x           |
@@ -1158,10 +1156,11 @@ my sub layoutAsFiberBundle($%)                                                  
               v(i-1, $J) = a;                                                   # Add left side
              }
             ++$changes;
-            #removeOrphans(i+1);
-            #removeOrphans(i);
+            $corners{$i-1}{$j}++;                                               # Corner position upper left
+            $corners{$i}{$k}++;                                                 # Corner position lower right
            }
          }
+        delete $corners{$i}{$j};                                                # Corner has been processed
        }
      }
 
