@@ -2,45 +2,6 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 <svg height="100%" viewBox="0 0 50 41" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="48" x="1" y="0"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="48" x="1" y="1"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="46" x="3" y="2"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="46" x="3" y="3"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="44" x="5" y="4"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="44" x="5" y="5"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="42" x="7" y="6"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="42" x="7" y="7"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="40" x="9" y="8"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="40" x="9" y="9"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="40" x="9" y="10"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="38" x="11" y="11"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="38" x="11" y="12"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="13" y="13"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="36" x="13" y="14"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="34" x="15" y="15"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="34" x="15" y="16"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="17" y="17"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="17" y="18"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="17" y="19"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="30" x="19" y="20"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="30" x="19" y="21"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="28" x="21" y="22"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="28" x="21" y="23"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="26" x="23" y="24"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="26" x="23" y="25"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="24" x="25" y="26"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="24" x="25" y="27"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="24" x="25" y="28"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="22" x="27" y="29"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="22" x="27" y="30"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="20" x="29" y="31"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="20" x="29" y="32"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="18" x="31" y="33"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="18" x="31" y="34"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="16" x="33" y="35"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="12" x="37" y="36"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="8" x="41" y="37"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="4" x="45" y="38"/>
 <text fill="darkGreen" font-size="1.25" stroke-width="0.078125" text-anchor="end" x="49" y="1.5625">3 steps</text>
 <text fill="darkGreen" font-size="1.25" stroke-width="0.078125" text-anchor="end" x="49" y="3.125">23 thick</text>
 <text fill="darkGreen" font-size="1.25" stroke-width="0.078125" text-anchor="end" x="49" y="4.6875">49 wide</text>
