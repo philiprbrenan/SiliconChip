@@ -2,17 +2,6 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 <svg height="100%" viewBox="0 0 34 13" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="1" y="0"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="1" y="1"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="1" y="2"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="1" y="3"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="1" y="4"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="1" y="5"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="1" y="6"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="32" x="1" y="7"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="24" x="9" y="8"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="16" x="17" y="9"/>
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="8" x="25" y="10"/>
 <text fill="darkGreen" font-size="0.375" stroke-width="0.0234375" text-anchor="end" x="33" y="0.46875">2 steps</text>
 <text fill="darkGreen" font-size="0.375" stroke-width="0.0234375" text-anchor="end" x="33" y="0.9375">8 thick</text>
 <text fill="darkGreen" font-size="0.375" stroke-width="0.0234375" text-anchor="end" x="33" y="1.40625">33 wide</text>
