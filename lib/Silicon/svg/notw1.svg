@@ -2,7 +2,6 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
 <svg height="100%" viewBox="0 0 3 3" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 
-<rect fill="mistyrose" font-size="0.166666666666667" height="1" stroke="transparent" stroke-width="0.0104166666666667" width="1" x="1" y="0"/>
 <text fill="darkGreen" font-size="0.0625" stroke-width="0.00390625" text-anchor="end" x="2" y="0.078125">2 steps</text>
 <text fill="darkGreen" font-size="0.0625" stroke-width="0.00390625" text-anchor="end" x="2" y="0.15625">1 thick</text>
 <text fill="darkGreen" font-size="0.0625" stroke-width="0.00390625" text-anchor="end" x="2" y="0.234375">2 wide</text>
