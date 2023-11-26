@@ -5,12 +5,13 @@
 <text fill="darkGreen" font-size="0.03125" stroke-width="0.001953125" text-anchor="end" x="1" y="0.0390625">2 steps</text>
 <text fill="darkGreen" font-size="0.03125" stroke-width="0.001953125" text-anchor="end" x="1" y="0.078125">0 thick</text>
 <text fill="darkGreen" font-size="0.03125" stroke-width="0.001953125" text-anchor="end" x="1" y="0.1171875">1 wide</text>
+<text fill="darkGreen" font-size="0.03125" stroke-width="0.001953125" text-anchor="end" x="1" y="0.15625">1 high</text>
 <rect fill="transparent" font-size="0.166666666666667" height="1" stroke="green" stroke-width="0.0104166666666667" width="1" x="0" y="0"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="0">1</text>
 <text fill="darkBlue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="end" x="1" y="1">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.416666666666667">one</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.583333333333333">o</text>
-<circle cx="-0.5" cy="0.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
+<circle cx="-0.5" cy="0.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="-1" y="0">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="-0.5" y="0.416666666666667">output</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="-0.5" y="0.583333333333333">O</text>
