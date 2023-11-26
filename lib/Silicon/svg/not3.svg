@@ -5,7 +5,8 @@
 <text fill="darkGreen" font-size="0.125" stroke-width="0.0078125" text-anchor="end" x="4" y="0.15625">4 steps</text>
 <text fill="darkGreen" font-size="0.125" stroke-width="0.0078125" text-anchor="end" x="4" y="0.3125">1 thick</text>
 <text fill="darkGreen" font-size="0.125" stroke-width="0.0078125" text-anchor="end" x="4" y="0.46875">4 wide</text>
-<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text fill="darkGreen" font-size="0.125" stroke-width="0.0078125" text-anchor="end" x="4" y="0.625">4 high</text>
+<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="0">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.583333333333333">Oi1</text>
@@ -27,7 +28,7 @@
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="3.5" y="3.41666666666667">not</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="3.5" y="3.58333333333333">(inner 3 In)</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="3.5" y="3">1</text>
-<circle cx="2.5" cy="3.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
+<circle cx="2.5" cy="3.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="2" y="3">0</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="3.41666666666667">output</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="3.58333333333333">Oo</text>
