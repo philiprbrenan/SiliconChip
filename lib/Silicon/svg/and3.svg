@@ -5,11 +5,12 @@
 <text fill="darkGreen" font-size="0.21875" stroke-width="0.013671875" text-anchor="end" x="7" y="0.2734375">3 steps</text>
 <text fill="darkGreen" font-size="0.21875" stroke-width="0.013671875" text-anchor="end" x="7" y="0.546875">3 thick</text>
 <text fill="darkGreen" font-size="0.21875" stroke-width="0.013671875" text-anchor="end" x="7" y="0.8203125">7 wide</text>
-<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<text fill="darkGreen" font-size="0.21875" stroke-width="0.013671875" text-anchor="end" x="7" y="1.09375">7 high</text>
+<circle cx="0.5" cy="0.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="0">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.416666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="0.583333333333333">i11</text>
-<circle cx="0.5" cy="1.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<circle cx="0.5" cy="1.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="0" y="1">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="1.41666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="0.5" y="1.58333333333333">i12</text>
@@ -20,11 +21,11 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2" y="2.58333333333333">and1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="1.5" y="2">1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="2">1</text>
-<circle cx="2.5" cy="3.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<circle cx="2.5" cy="3.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="2" y="3">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="3.41666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="3.58333333333333">i21</text>
-<circle cx="2.5" cy="4.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
+<circle cx="2.5" cy="4.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="2" y="4">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="4.41666666666667">input</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="2.5" y="4.58333333333333">i22</text>
@@ -42,7 +43,7 @@
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="6" y="6.58333333333333">and</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="5.5" y="6">1</text>
 <text dominant-baseline="hanging" fill="darkRed" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="6.5" y="6">1</text>
-<circle cx="4.5" cy="6.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="red" stroke-width="0.0104166666666667"/>
+<circle cx="4.5" cy="6.5" fill="transparent" font-size="0.166666666666667" r="0.5" stroke="blue" stroke-width="0.0104166666666667"/>
 <text dominant-baseline="hanging" fill="black" font-size="0.333333333333333" stroke-width="0.0208333333333333" text-anchor="start" x="4" y="6">1</text>
 <text dominant-baseline="auto" fill="red" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="4.5" y="6.41666666666667">output</text>
 <text dominant-baseline="hanging" fill="darkblue" font-size="0.166666666666667" stroke-width="0.0104166666666667" text-anchor="middle" x="4.5" y="6.58333333333333">o</text>
